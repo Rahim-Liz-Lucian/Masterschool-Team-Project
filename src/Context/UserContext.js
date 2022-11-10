@@ -4,7 +4,7 @@ export const UserContext = React.createContext();
 
 export function UserProvider({children}) {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
-    const [userName, setUserName] = useState("hi")
+    const [userName, setUserName] = useState("")
     const [userEmail, setUserEmail] = useState("")
     const [userCity, setUserCity] = useState("")
     
@@ -15,4 +15,3 @@ export function UserProvider({children}) {
     )
 
 }
-

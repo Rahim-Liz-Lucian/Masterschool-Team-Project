@@ -8,6 +8,7 @@ import {
 import Homepage from "./components/Homepage"
 import NotFound from "./components/NotFound"
 import Login from "./components/Login"
+import SignUp from "./components/SignUp"
 import RestrictedPage from "./components/RestrictedPage"
 import { UserProvider } from './Context/UserContext';
 
@@ -19,6 +20,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Homepage/>}/>
           <Route path="/login" element={<Login/>}/>
+          <Route path="/signup" element={<SignUp/>}/>
           <Route path="/restrictedpage" element={<RestrictedPage/>}/>
           <Route path="*" element={<NotFound />}/>
         </Routes>
