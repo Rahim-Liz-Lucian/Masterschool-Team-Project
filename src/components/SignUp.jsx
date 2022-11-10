@@ -1,15 +1,13 @@
 import {useState, useContext} from "react"
 import { UserContext } from "../Context/UserContext";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import {firebaseApp, db, auth} from "../firebase"
+import {createUserWithEmailAndPassword } from "firebase/auth";
+import {db, auth} from "../firebase"
 import { doc, setDoc } from "firebase/firestore"; 
 import { useNavigate } from "react-router-dom";
 
-//const auth = getAuth();
-
 const SignUp = () => {
     const navigate = useNavigate();
-    const {setUserName, setUserEmail, setIsLoggedIn, setUserCity, setDbRefId, setAccessToken, setRefreshToken} = useContext(UserContext)
+    const {setUserName, setUserEmail, setIsLoggedIn, setUserCity, setDbRefId} = useContext(UserContext)
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [city, setCity] = useState("")
@@ -19,15 +17,12 @@ const SignUp = () => {
     const handleSignUp = () => {
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                // Signed in 
                 const user = userCredential.user;
                 console.log(user)
                 setUserEmail(email)
                 setUserName(name)
                 setUserCity(city)
                 setIsLoggedIn(true)
-                setAccessToken(user.stsTokenManager.accessToken)
-                setRefreshToken(user.stsTokenManager.refreshToken)
                 handleAddUserInfoIntoDb(user.uid)
 
                 // ...

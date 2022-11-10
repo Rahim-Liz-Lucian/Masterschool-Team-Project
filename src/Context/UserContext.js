@@ -1,4 +1,8 @@
-import React, {createContext, useState} from "react"
+import React, {createContext, useState, useEffect} from "react"
+import {onAuthStateChanged } from "firebase/auth";
+import {auth} from "../firebase"
+import { doc, getDoc } from "firebase/firestore";
+import {db} from "../firebase"
 
 export const UserContext = React.createContext();
 
@@ -8,11 +12,34 @@ export function UserProvider({children}) {
     const [userEmail, setUserEmail] = useState("")
     const [userCity, setUserCity] = useState("")
     const [dbRefId, setDbRefId] = useState(0)
-    const [accessToken, setAccessToken] = useState("")
-    const [refreshToken, setRefreshToken] = useState("")
+
+    const handleGetUserDataFromDb = async (uuid) => {
+        const docRef = doc(db, "users", uuid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const data = docSnap.data()
+            setUserName(data.name)
+            setUserEmail(data.email)
+            setUserCity(data.city)
+            setIsLoggedIn(true)
+            setDbRefId(uuid)
+        }
+
+    }
+
+    useEffect(() => {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+              // https://firebase.google.com/docs/reference/js/firebase.User
+              const uid = user.uid;
+              handleGetUserDataFromDb(uid)
+              // ...
+            }
+          });
+    },[])
     
     return (
-        <UserContext.Provider value={{isLoggedIn, setIsLoggedIn, userName, setUserName, userEmail, setUserEmail, userCity, setUserCity, dbRefId, setDbRefId, accessToken, setAccessToken, refreshToken, setRefreshToken}}>
+        <UserContext.Provider value={{isLoggedIn, setIsLoggedIn, userName, setUserName, userEmail, setUserEmail, userCity, setUserCity, dbRefId, setDbRefId, handleGetUserDataFromDb}}>
             {children}
         </UserContext.Provider>
     )
