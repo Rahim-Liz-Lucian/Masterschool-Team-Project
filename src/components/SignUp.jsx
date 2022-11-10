@@ -1,8 +1,15 @@
 import {useState, useContext} from "react"
 import { UserContext } from "../Context/UserContext";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import {firebaseApp, db} from "../firebase"
+import { doc, setDoc } from "firebase/firestore"; 
+import { useNavigate } from "react-router-dom";
+
+const auth = getAuth();
 
 const SignUp = () => {
-    const {setUserName, setUserEmail, setIsLoggedIn, setUserCity} = useContext(UserContext)
+    const navigate = useNavigate();
+    const {setUserName, setUserEmail, setIsLoggedIn, setUserCity, setDbRefId, setAccessToken, setRefreshToken} = useContext(UserContext)
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [city, setCity] = useState("")
@@ -10,7 +17,42 @@ const SignUp = () => {
     const [repeatPassword, setRepeatPassword] = useState("")
 
     const handleSignUp = () => {
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed in 
+                const user = userCredential.user;
+                console.log(user)
+                setUserEmail(email)
+                setUserName(name)
+                setUserCity(city)
+                setIsLoggedIn(true)
+                setAccessToken(user.stsTokenManager.accessToken)
+                setRefreshToken(user.stsTokenManager.refreshToken)
+                handleAddUserInfoIntoDb(user.uid)
+
+                // ...
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(`error code: ${errorCode}\n error message: ${errorMessage}`)
+            });
         console.log("signup")
+    }
+
+    const handleAddUserInfoIntoDb = async (uuid) => {
+        try {
+            await setDoc(doc(db, "users", uuid), {
+                name: name,
+                email: email,
+                city: city
+              });
+            setDbRefId(uuid)
+            navigate("/");
+          } catch (e) {
+            console.error("Error adding document: ", e);
+          }
+
     }
 
     return ( 

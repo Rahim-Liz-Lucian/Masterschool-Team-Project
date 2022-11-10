@@ -1,15 +1,49 @@
 import Navigation from "./Navigation"
 import { useState, useContext } from "react"
-import {Link} from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom"
 import {UserContext} from "../Context/UserContext"
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {firebaseApp, db} from "../firebase"
+import { doc, getDoc } from "firebase/firestore";
+//test123 password
 
+const auth = getAuth();
 const Login = () => {
-    const {setUserName, setUserEmail, setIsLoggedIn, setUserCity} = useContext(UserContext)
+    const navigate = useNavigate();
+    const {setUserName, setUserEmail, setUserCity, setIsLoggedIn, setAccessToken, setRefreshToken, setDbRefId} = useContext(UserContext)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
     const handleLogin = () => {
-        console.log("login")
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed in 
+                const user = userCredential.user;
+                console.log("logged in")
+                setAccessToken(user.stsTokenManager.accessToken)
+                setRefreshToken(user.stsTokenManager.refreshToken)
+                handleGetUserDataFromDb(user.uid)
+                // ...
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(`error code: ${errorCode}\n error message: ${errorMessage}`)
+            });
+    }
+
+    const handleGetUserDataFromDb = async (uuid) => {
+        const docRef = doc(db, "users", uuid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            setUserName(docSnap.name)
+            setUserEmail(docSnap.email)
+            setUserCity(docSnap.city)
+            setIsLoggedIn(true)
+            setDbRefId(uuid)
+            navigate("/");
+        }
+
     }
 
     return ( 
