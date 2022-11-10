@@ -30,7 +30,6 @@ export function UserProvider({children}) {
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
-              // https://firebase.google.com/docs/reference/js/firebase.User
               const uid = user.uid;
               handleGetUserDataFromDb(uid)
               // ...

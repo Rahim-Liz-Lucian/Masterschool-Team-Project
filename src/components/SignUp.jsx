@@ -18,14 +18,11 @@ const SignUp = () => {
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 const user = userCredential.user;
-                console.log(user)
                 setUserEmail(email)
                 setUserName(name)
                 setUserCity(city)
                 setIsLoggedIn(true)
                 handleAddUserInfoIntoDb(user.uid)
-
-                // ...
             })
             .catch((error) => {
                 const errorCode = error.code;

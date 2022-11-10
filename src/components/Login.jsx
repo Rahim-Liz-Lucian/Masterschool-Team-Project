@@ -14,9 +14,7 @@ const Login = () => {
     const handleLogin = () => {
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
-                // Signed in 
                 const user = userCredential.user;
-                console.log("logged in")
                 handleGetUserDataFromDb(user.uid)
                 navigate("/")
                 // ...
