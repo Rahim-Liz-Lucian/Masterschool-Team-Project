@@ -3,11 +3,11 @@ import { useState, useContext } from "react"
 import {Link, useNavigate} from "react-router-dom"
 import {UserContext} from "../Context/UserContext"
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import {firebaseApp, db} from "../firebase"
+import {firebaseApp, db, auth} from "../firebase"
 import { doc, getDoc } from "firebase/firestore";
 //test123 password
 
-const auth = getAuth();
+//const auth = getAuth();
 const Login = () => {
     const navigate = useNavigate();
     const {setUserName, setUserEmail, setUserCity, setIsLoggedIn, setAccessToken, setRefreshToken, setDbRefId} = useContext(UserContext)
