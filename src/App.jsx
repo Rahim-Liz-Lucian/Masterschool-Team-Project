@@ -8,19 +8,29 @@ import {
 import Homepage from "./components/Homepage"
 import NotFound from "./components/NotFound"
 import Login from "./components/Login"
-import RestrictedPage from "./components/RestrictedPage"
+import SignUp from "./components/SignUp"
+import UploadProduct from "./components/UploadProduct"
+import { UserProvider } from './Context/UserContext';
+import { ProductProvider } from './Context/ProductContext';
+import Navigation from "./components/Navigation"
 
 function App() {
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Homepage/>}/>
-        <Route path="/login" element={<Login/>}/>
-        <Route path="/restrictedpage" element={<RestrictedPage/>}/>
-        <Route path="*" element={<NotFound />}/>
-      </Routes>
-    </BrowserRouter>
+      <ProductProvider>
+        <UserProvider>
+          <BrowserRouter>
+          <Navigation/>
+            <Routes>
+              <Route path="/" element={<Homepage/>}/>
+              <Route path="/login" element={<Login/>}/>
+              <Route path="/signup" element={<SignUp/>}/>
+              <Route path="/upload" element={<UploadProduct/>}/>
+              <Route path="*" element={<NotFound />}/>
+            </Routes>
+          </BrowserRouter>
+        </UserProvider>
+      </ProductProvider>
   );
 }
 
