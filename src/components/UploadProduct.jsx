@@ -28,7 +28,6 @@ const UploadProduct = () => {
                 userUploaded: userName
               }
             await setDoc(doc(db, "products", uuidv4()), newProduct);
-            
             setProducts([...products, newProduct])
             navigate("/");
           } catch (e) {

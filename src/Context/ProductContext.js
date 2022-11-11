@@ -12,10 +12,13 @@ export function ProductProvider({children}) {
 
     const handleGetProductsFromDb = async() => {
         const querySnapshot = await getDocs(collection(db, "products"));
+        const productsInDb = []
         querySnapshot.forEach((doc) => {
             const data = doc.data();
-            setProducts([...products, data])
-});
+            productsInDb.push(data)
+            
+        });
+        setProducts(productsInDb)
     }
 
     useEffect(() => {

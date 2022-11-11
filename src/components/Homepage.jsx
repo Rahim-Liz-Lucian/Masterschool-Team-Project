@@ -8,6 +8,7 @@ import {auth} from "../firebase"
 const Homepage = () => {
     const {userName, userEmail, userCity, isLoggedIn, dbRefId, setUserName, setUserEmail, setIsLoggedIn, setUserCity, setDbRefId, setAccessToken, setRefreshToken} = useContext(UserContext)
     const {products} = useContext(ProductContext)
+    
     return ( 
         <>
             <h1>Homepage</h1>
