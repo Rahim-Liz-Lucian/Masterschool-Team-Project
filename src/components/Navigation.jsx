@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
+import {useState, useContext} from "react"
+import { UserContext } from "../Context/UserContext";
 
 const Navigation = () => {
+    const {isLoggedIn} = useContext(UserContext)
     return ( 
         <>
             <div>
@@ -8,7 +11,7 @@ const Navigation = () => {
                 <br/>
                 <Link to="/login">Login</Link>
                 <br/>
-                <Link to="/restrictedpage">Restricted Page</Link>
+                {isLoggedIn && <Link to="/upload">Upload Product</Link>}
             </div>
         </>
      );

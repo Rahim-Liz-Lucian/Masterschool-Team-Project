@@ -1,4 +1,4 @@
-import Navigation from "./Navigation"
+
 import { useState, useContext } from "react"
 import {Link, useNavigate} from "react-router-dom"
 import {UserContext} from "../Context/UserContext"
@@ -27,9 +27,7 @@ const Login = () => {
     }
 
     return ( 
-        <>
-            <Navigation/>
-            
+        <>       
             <section className="vh-100" >
                 <div className="container h-100">
                     <div className="row d-flex justify-content-center align-items-center h-100">
