@@ -9,7 +9,7 @@ const Navigation = () => {
             <div>
                 <Link to="/">Homepage</Link>
                 <br/>
-                <Link to="/login">Login</Link>
+                {!isLoggedIn && <Link to="/login">Login</Link>}
                 <br/>
                 {isLoggedIn && <Link to="/upload">Upload Product</Link>}
             </div>

@@ -1,7 +1,4 @@
-import React, {createContext, useState, useEffect} from "react"
-import {onAuthStateChanged } from "firebase/auth";
-import {auth} from "../firebase"
-import { doc, getDoc } from "firebase/firestore";
+import React, {useState, useEffect} from "react"
 import {db} from "../firebase"
 import { collection, getDocs } from "firebase/firestore"; 
 
