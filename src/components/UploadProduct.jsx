@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 const UploadProduct = () => {
     const navigate = useNavigate();
 
-    const {userName} = useContext(UserContext)
+    const {userName, dbRefId, userEmail, userCity} = useContext(UserContext)
     const {products, setProducts} = useContext(ProductContext)
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
@@ -25,7 +25,12 @@ const UploadProduct = () => {
                 tags: tags,
                 expirationDate: expirationDate,
                 location: location,
-                userUploaded: userName
+                userUploaded: {
+                    userName: userName,
+                    userEmail: userEmail,
+                    userCity: userCity,
+                    userId: dbRefId
+                }
               }
             await setDoc(doc(db, "products", uuidv4()), newProduct);
             setProducts([...products, newProduct])
