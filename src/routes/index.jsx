@@ -1,38 +1,33 @@
-import styled from "styled-components";
-import { Link } from "wouter";
-
-// Create a Title component that'll render an <h1> tag with some styles
-const Title = styled.h1`
-font-size: 1.5em;
-text-align: center;
-color: palevioletred;
-`;
-
-// Create a Wrapper component that'll render a <section> tag with some styles
-const Wrapper = styled.section`
-padding: 4em;
-background: papayawhip;
-width: 100vw;
-height: 100vh;
-display: flex;
-justify-content: center;
-text-align: center;
-`;
-
+import { useState } from 'preact/hooks';
+import preactLogo from '../assets/preact.svg';
+import './index.css';
+import { addOne } from '../utils';
 
 export default function Page() {
-    // Use Title and Wrapper like any other React component – except they're styled!
+    const [count, setCount] = useState(0);
+
     return (
-        <Wrapper>
-            <Title>
-                Hello World!
-            </Title>
-
-            <Link href="/users/JohnDoe">
-                <a className="link">Profile</a>
-            </Link>
-
-            <p>This is just an example page using styled components within Preact</p>
-        </Wrapper>
+        <>
+            <div>
+                <a href="https://vitejs.dev" target="_blank">
+                    <img src="/vite.svg" class="logo" alt="Vite logo" />
+                </a>
+                <a href="https://preactjs.com" target="_blank">
+                    <img src={preactLogo} class="logo preact" alt="Preact logo" />
+                </a>
+            </div>
+            <h1>Vite + Preact</h1>
+            <div class="card">
+                <button onClick={() => setCount((count) => addOne(count))}>
+                    count is {count}
+                </button>
+                <p>
+                    Edit <code>src/app.tsx</code> and save to test HMR
+                </p>
+            </div>
+            <p class="read-the-docs">
+                Click on the Vite and Preact logos to learn more
+            </p>
+        </>
     );
 }
