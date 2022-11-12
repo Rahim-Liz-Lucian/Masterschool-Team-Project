@@ -1,5 +1,5 @@
 {
-    "name": "rll",
+    "name": "@wasteless/wasteless",
     "private": true,
     "version": "0.0.0",
     "type": "module",
@@ -15,7 +15,8 @@
     },
     "dependencies": {
         "preact": "^10.11.2",
-        "styled-components": "^5.3.6"
+        "styled-components": "^5.3.6",
+        "wouter": "^2.8.1"
     },
     "devDependencies": {
         "@preact/preset-vite": "^2.4.0",
