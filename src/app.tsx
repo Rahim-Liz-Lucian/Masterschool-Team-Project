@@ -1,4 +1,4 @@
-import { Route } from "wouter";
+import { Link, Route } from "wouter-preact";
 // NOTE these are just for examples
 import TypedPage from "./routes/x/typed";
 import StyledPage from "./routes/x/styled";
@@ -15,7 +15,10 @@ export function App() {
         <AuthContext>
             <Route path="/">
                 This is the home page
+                <Link href="/sign-in">Sign In?</Link>
+                <Link href="/sign-up">Sign Up?</Link>
             </Route>
+
             <Route path="/dashboard" component={DashBoardPage} />
             <Route path="/sign-in" component={SignInPage} />
             <Route path="/sign-up" component={SignUpPage} />

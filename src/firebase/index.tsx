@@ -62,8 +62,6 @@ export const authContext = () => {
             return unsubscribe;
         }, [me]);
 
-
-
         const value = {
             user: me,
             authSignUp,

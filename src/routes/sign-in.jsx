@@ -1,4 +1,4 @@
-import { useRef } from "preact/hooks";
+import { useEffect, useRef } from "preact/hooks";
 import { useAuthContext } from "../firebase";
 import { Link, useLocation } from "wouter";
 
@@ -16,11 +16,12 @@ export default function Page() {
         const password = formData.get("password");
 
         try {
-            const { user: { uid } } = await authSignIn(email, password);
+            await authSignIn(email, password);
             setLocation("/dashboard");
         } catch (error) {
             console.error(`failed to login user: ${error.message}`);
         }
+
     }
 
     // if user is already signed-in 
@@ -36,11 +37,11 @@ export default function Page() {
             <form ref={formRef} onSubmit={handleUserRegistration}>
                 <label htmlFor="email">
                     <span>Email:</span>
-                    <input required type="email" name="email" id="email" />
+                    <input required type="email" name="email" id="email" placeholder={"Enter email"} />
                 </label>
                 <label htmlFor="password">
                     <span>Password:</span>
-                    <input required type="password" name="password" id="password" />
+                    <input required type="password" name="password" id="password" placeholder={"Enter password"} />
                 </label>
                 <button type="submit">Sign-in</button>
             </form>

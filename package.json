@@ -14,7 +14,8 @@
         "firebase": "^9.14.0",
         "preact": "^10.11.2",
         "styled-components": "^5.3.6",
-        "wouter": "^2.8.1"
+        "wouter": "^2.8.1",
+        "wouter-preact": "^2.8.1"
     },
     "devDependencies": {
         "@preact/preset-vite": "^2.4.0",

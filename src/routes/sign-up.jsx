@@ -21,6 +21,8 @@ export default function Page() {
         } catch (error) {
             console.error(`failed to create user: ${error.message}`);
         }
+
+        formRef.current.reset();
     }
 
     // if user is already signed-in 
