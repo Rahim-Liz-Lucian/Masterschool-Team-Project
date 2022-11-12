@@ -73,10 +73,9 @@ export const useIndex = () => {
 
 export const useApp = () => {
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(fireAuth, next => {
+        return onAuthStateChanged(fireAuth, next => {
             userSignal.value = next;
         });
-        return unsubscribe;
     }, []);
 
     return { user: userSignal };

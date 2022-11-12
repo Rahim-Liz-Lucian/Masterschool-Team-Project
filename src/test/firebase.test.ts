@@ -1,6 +1,6 @@
 import { async } from "@firebase/util";
 import { User } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { arrayUnion, doc, DocumentData, getDoc, setDoc, SetOptions, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes } from "firebase/storage";
 import { describe, assert, test, expect } from "vitest";
 import { authDelete, authSignUp, fireStorage, fireStore } from "../firebase";
@@ -38,19 +38,6 @@ describe("firebase.test", () => {
         }
     }
 
-    // test("upload a product to firebase", async () => {
-    //     const ok = await uploadProduct({ uid: "QrQPMb4LvsdzxY0yq9dAcgljDai2" });
-    //     expect(ok).toBe(true);
-    // });
-
-    // test("upload a file to firebase", async () => {
-    //     // return link to photo probably
-    //     const _ = await uploadProductImage({ uid: "QrQPMb4LvsdzxY0yq9dAcgljDai2", fileName: "some-photo" });
-
-    // });
-
-    // test removing product from database
-
     test("upload an image to the database", async () => {
         // upload image to client
         const fileName = "test-photo.jpg";
@@ -61,14 +48,43 @@ describe("firebase.test", () => {
         const arrBuf = await blob.arrayBuffer();
 
         // save to storage
-        const fileRef = ref(fireStorage, `image/${fileName}`);
+        const uid = "QrQPMb4LvsdzxY0yq9dAcgljDai2";
+        const fileRef = ref(fireStorage, `image/${uid}/${fileName}`);
         const result = await uploadBytes(fileRef, arrBuf, { contentType: blob.type });
 
         expect(result.metadata.fullPath).not.toBe("");
 
         // make a reference in firestore
-        const uid = "QrQPMb4LvsdzxY0yq9dAcgljDai2";
         const docRef = doc(fireStore, "product", uid);
-        const _ = await setDoc(docRef, { filePath: result.metadata.fullPath });
+        const _ = await setDoc(docRef, { filePath: fileRef.fullPath });
+    });
+
+    test("inserting and array into firebase", async () => {
+        const product = arrayUnion({ name: 'foo', counter: 1 }, { name: 'bar', counter: 2 }, { name: 'baz', counter: 3 });
+
+        const uid = "QrQPMb4LvsdzxY0yq9dAcgljDai2";
+        const docRef = doc(fireStore, "__t", uid);
+
+        // create a new object
+        const _1 = await setDoc(docRef, { product });
+
+        // update that object on a upload
+        const _2 = await updateDoc(docRef, {
+            product: arrayUnion({ name: 'xyz', counter: 4 }),
+        });
+
+        // update that object on a upload
+        const _3 = await setDoc(docRef, {
+            product: arrayUnion({ name: 'abc', counter: 5 }),
+        }, { merge: true });
+        // }, { merge: true, mergeFields: ["product"] }); // NOTE this option does not work
+        // const _2 = await setDoc(docRef, { data: [{ name: 'xyz', counter: 1 }], name: "__test__" }, { merge: true });
+
+        // using a helper function 
+        // addProduct({ uid, doc: { name: "mno" } });
     });
 });
+
+// function addProduct(args: { uid: string, doc: DocumentData; }, opt?: SetOptions) { 
+//     setDoc
+// }

@@ -1,24 +1,81 @@
-import { useRef } from "preact/hooks";
+// FIXME loading an image and documents from collection needs cleaning up
+import { arrayUnion, doc, getDoc, setDoc } from "firebase/firestore";
+import { getDownloadURL, ref } from "firebase/storage";
+import { useEffect, useRef, useState } from "preact/hooks";
 import { Redirect } from "wouter-preact";
+import { fireStorage, fireStore } from "../firebase";
 import { useDashboard } from "../hook";
+// components
+import ProductCard from "../component/ProductCard";
+import ProductUploadForm from "../component/ProductUploadForm";
+
+// utils
+
+async function getProductsDocument(u) {
+    if (!u) return;
+    const docRef = doc(fireStore, "product", u.uid);
+    const snapShot = await getDoc(docRef);
+    // NOTE `snapShot.get` to get a single field from the document 
+    // FIXME if error then return error to user
+    return snapShot.data();
+}
+
+async function appendProductsDocument({ uid, product }) {
+    const docRef = doc(fireStore, "product", uid);
+    const entry = { ...product, id: crypto.randomUUID() };
+    await setDoc(docRef, { product: arrayUnion(entry) }, { merge: true });
+    // FIXME if error then return error to user
+    return entry;
+}
+
+// utils
 
 export default function Page() {
     const { handleSignOut, user } = useDashboard();
     const formRef = useRef();
+    const imgRef = useRef();
 
-    function handleProductUpload(e) {
-        e.preventDefault();
 
-        const formData = new FormData(formRef.current);
-
-        for (const [key, value] of formData) {
-            console.log(`key: ${key}, value: ${value}`);
-        }
-    }
-
+    // NOTE this must behave like a type guard
     if (!user.value) return (
         <Redirect to="/" />
     );
+
+    const [products, setProducts] = useState([]);
+
+
+    async function handleProductUpload(e) {
+        e.preventDefault();
+        console.log(formRef.current);
+
+        const [title, description, dateString] = new FormData(formRef.current).values();
+        // TODO error handling of input fields
+        const item = await appendProductsDocument({ uid: user.value.uid, product: { title, description, dateString } });
+        console.log(`added new item with id: ${item.id}`);
+        setProducts([...products, item]);
+    }
+
+    // TODO loading state while data is being fetched from fireBase
+    // NOTE look into caching
+
+    useEffect(() => {
+        (async () => {
+            const data = await getProductsDocument(user.value); // TODO there is an assumption that this value exists
+            setProducts(data.product);
+        })();
+    }, []);
+
+    // not required
+    useEffect(() => {
+        (async () => {
+            // this is getting the data from 
+            const fileRef = ref(fireStorage, `image/${user.value.uid}/test-photo.jpg`);
+            const url = await getDownloadURL(fileRef);
+            imgRef.current.setAttribute('src', url);
+        })();
+    }, []);
+
+    // TODO check why I can't use `ref` and have to define a variable called `form`
 
     return (
         <div>
@@ -29,26 +86,22 @@ export default function Page() {
                 <p>Email: {user.peek().email}</p>
             </div>
 
+
+
             <div>
                 Upload a new product
-                <form ref={formRef} onSubmit={handleProductUpload} style={{ display: "flex", flexDirection: "column" }}>
-                    <label htmlFor="title">
-                        <span>Title:</span>
-                        <input type="text" name="title" id="title" required />
-                    </label>
+                <ProductUploadForm form={formRef} onSubmit={handleProductUpload} />
+            </div>
 
-                    <label htmlFor="description">
-                        <span>Description:</span>
-                        <textarea name="description" id="description" cols="30" rows="10" style={{ resize: "none" }}></textarea>
-                    </label>
+            <div>
+                <img
+                    ref={imgRef}
+                    width={100}
+                    alt="" />
 
-                    <label htmlFor="expiration">
-                        <span>Expiration Date:</span>
-                        <input type="date" name="expiration" id="expiration" />
-                    </label>
-
-                    <button type="submit">Upload</button>
-                </form>
+                {products.map(product => (
+                    <div key={product.id}><ProductCard product={product} /></div>
+                ))}
             </div>
 
             <button onClick={handleSignOut}>
