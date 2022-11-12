@@ -55,7 +55,7 @@ export async function authDelete(user: User) {
 }
 
 export const authContext = () => {
-    return function ({ children }: { children: JSX.Element[]; }) {
+    return function ({ children }: { children: JSX.Element; }) {
         const [me, setMe] = useState<User | null>();
 
         // I don't think I need to have a dependency in here
