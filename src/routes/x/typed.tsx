@@ -1,8 +1,9 @@
 import { useState } from 'preact/hooks';
-import preactLogo from '../assets/preact.svg';
-import './index.css';
-import { addOne } from '../utils';
+import preactLogo from '../../assets/preact.svg';
+import './typed.css';
+import { addOne } from '../../utils';
 
+// example using tsx for the component
 export default function Page() {
     const [count, setCount] = useState(0);
 
