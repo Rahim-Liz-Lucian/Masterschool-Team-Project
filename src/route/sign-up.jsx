@@ -13,7 +13,7 @@ export default function Page() {
         <div>
             <h1>Sign-up</h1>
 
-            <form ref={formRef} onSubmit={handleUserRegistration}>
+            <form ref={formRef} onSubmit={handleUserRegistration} style={{ display: "flex", flexDirection: "column" }}>
                 <label htmlFor="email">
                     <span>Email:</span>
                     <input required type="email" name="email" id="email" />
