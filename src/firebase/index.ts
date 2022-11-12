@@ -3,6 +3,7 @@ import { createUserWithEmailAndPassword, deleteUser, onAuthStateChanged, signInW
 // TODO find the location of this function to 
 // minimise the import size
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 import { signal } from "@preact/signals";
 
 const fireApp = initializeApp({
@@ -36,9 +37,9 @@ export async function authDelete(user: User) {
     await deleteUser(user);
 }
 
-// No longer required to pass context
+// NOTE in replacement for context API
 export const userSignal = signal(fireAuth.currentUser);
 
-// there has to be a state change
+export const fireStore = getFirestore(fireApp);
 
-const fireStore = getFirestore(fireApp);
+export const fireStorage = getStorage(fireApp);
