@@ -1,5 +1,6 @@
+import { Route } from "wouter";
 import Index from "./routes";
-import { Link, Route } from "wouter";
+import SignUp from "./routes/sign-up";
 
 // may need a stylesheet reset
 export function App() {
@@ -11,6 +12,8 @@ export function App() {
             <Route path="/users/:username">
                 {(params) => <div>Hello, {params.username}!</div>}
             </Route>
+
+            <Route path="/sign-up" component={SignUp} />
         </>
     );
 }

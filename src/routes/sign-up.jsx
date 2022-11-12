@@ -1,8 +1,10 @@
 import { useRef } from "preact/hooks";
+import { useAuthContext } from "../firestore";
 
 const { log: $ } = console;
 
 const usePage = () => {
+    // const { } = useAuthContext();
     const formRef = useRef();
 
     function handleSignUp(e) {
@@ -11,6 +13,7 @@ const usePage = () => {
         const formData = new FormData(formRef.current);
         $(formData);
     }
+
 
 
     return { formRef, handleSignUp };
