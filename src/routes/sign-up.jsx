@@ -23,16 +23,15 @@ export default function Page() {
         }
     }
 
+    // if user is already signed-in 
+    // redirect to dashboard
+    // FIXME this is not a good way to handle redirect
+    // please fix 
+    if (user) setLocation("/dashboard");
+
     return (
         <div>
             <h1>Sign-up</h1>
-            {user && (
-                <div>
-                    <h3>Current user logged in</h3>
-                    <p>Uid: {user.uid}</p>
-                    <p>Email: {user.email}</p>
-                </div>
-            )}
 
             <form ref={formRef} onSubmit={handleUserRegistration}>
                 <label htmlFor="email">

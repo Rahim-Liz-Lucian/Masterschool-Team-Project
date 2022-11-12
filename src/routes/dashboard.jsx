@@ -13,7 +13,6 @@ export default function Page() {
         } catch (error) {
             console.error(`Error signing-out ${user.uid}`);
         }
-        alert("signing-out");
     }
 
     if (!user) return (
@@ -21,7 +20,6 @@ export default function Page() {
             <h1>User not logged in ☹️</h1>
             <Link href="/sign-in">Sign In?</Link>
         </div>
-
     );
 
     return (
@@ -35,9 +33,9 @@ export default function Page() {
                 </div>
             )}
 
-            <Link href="/sign-in" onClick={handleSignOut}>
+            <button onClick={handleSignOut}>
                 Log out
-            </Link>
+            </button>
         </div>
     );
 }
