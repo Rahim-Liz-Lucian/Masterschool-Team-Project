@@ -10,8 +10,12 @@
         "test": "vitest",
         "coverage": "vitest run --coverage"
     },
+    "resolutions": {
+        "styled-components": "^5"
+    },
     "dependencies": {
-        "preact": "^10.11.2"
+        "preact": "^10.11.2",
+        "styled-components": "^5.3.6"
     },
     "devDependencies": {
         "@preact/preset-vite": "^2.4.0",
