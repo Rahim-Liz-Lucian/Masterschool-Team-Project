@@ -1,11 +1,11 @@
 import { initializeApp } from "firebase/app";
-import { createUserWithEmailAndPassword, deleteUser, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, User, UserCredential } from "firebase/auth";
+import { createUserWithEmailAndPassword, deleteUser, onAuthStateChanged, signInWithEmailAndPassword, signOut, User, inMemoryPersistence, browserSessionPersistence, getAuth } from "firebase/auth";
 // TODO find the location of this function to 
 // minimise the import size
 import { getFirestore } from "firebase/firestore";
 import { createContext } from "preact";
 import { useContext, useEffect, useState } from "preact/hooks";
-import { signal } from "@preact/signals";
+// import { signal } from "@preact/signals";
 
 const fireApp = initializeApp({
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -34,11 +34,7 @@ const AuthContext = createContext<Auth>({});
 export async function authSignUp(email: string, password: string) {
     // Firebase is setting local storage for us using tokens
     // so is automatically logging user after refresh
-    const cred = createUserWithEmailAndPassword(fireAuth, email, password);
-    // fireAuth.updateCurrentUser
-
-    // TODO check if this needs to return a user?
-    return cred;
+    return createUserWithEmailAndPassword(fireAuth, email, password);
 }
 
 export async function authSignIn(email: string, password: string) {
@@ -54,25 +50,28 @@ export async function authDelete(user: User) {
     await deleteUser(user);
 }
 
+// export const user = signal()
+
 export const authContext = () => {
     return function ({ children }: { children: JSX.Element; }) {
-        const [me, setMe] = useState<User | null>();
+        const [current, setCurrent] = useState<User | null>(fireAuth.currentUser);
 
         // I don't think I need to have a dependency in here
         useEffect(() => {
             const unsubscribe = onAuthStateChanged(fireAuth, user => {
-                setMe(user);
+                setCurrent(user);
             });
-
             return unsubscribe;
         }, []);
 
         return (
-            <AuthContext.Provider value={{ user: me }}>
+            <AuthContext.Provider value={{ user: current }}>
                 {children}
             </AuthContext.Provider>
         );
     };
 };
+
+// there has to be a state change
 
 const fireStore = getFirestore(fireApp);

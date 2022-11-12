@@ -3,6 +3,7 @@ import { Link, Route, Switch } from "wouter-preact";
 import TypedPage from "./route/x/typed";
 import StyledPage from "./route/x/styled";
 // NOTE app starts here
+import IndexPage from "./route";
 import NotFoundPage from "./route/404";
 import DashBoardPage from "./route/dashboard";
 import SignUpPage from "./route/sign-up";
@@ -15,11 +16,7 @@ export function App() {
     return (
         <AuthContext>
             <Switch>
-                <Route path="/">
-                    This is the home page
-                    <Link href="/sign-in">Sign In?</Link>
-                    <Link href="/sign-up">Sign Up?</Link>
-                </Route>
+                <Route path="/" component={IndexPage} />
 
                 <Route path="/dashboard" component={DashBoardPage} />
                 <Route path="/sign-in" component={SignInPage} />

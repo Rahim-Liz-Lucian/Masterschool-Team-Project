@@ -57,7 +57,7 @@ export const useDashboard = () => {
     const [_, setLocation] = useLocation();
 
 
-    async function handleSignOut(e: Event) {
+    async function handleSignOut(_e: Event) {
         try {
             await authSignOut();
             setLocation("/sign-in");
@@ -68,8 +68,4 @@ export const useDashboard = () => {
     }
 
     return { user, handleSignOut };
-};
-
-export const useApp = () => {
-
 };
