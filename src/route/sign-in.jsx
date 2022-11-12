@@ -1,30 +1,12 @@
-import { useEffect, useRef } from "preact/hooks";
-import { useAuthContext } from "../firebase";
-import { Link, useLocation, Redirect } from "wouter-preact";
+import { Link, Redirect } from "wouter-preact";
+import { useSignIn } from "../hook";
 
 export default function Page() {
-    const formRef = useRef();
-    const { user, authSignIn } = useAuthContext();
-    const [_, setLocation] = useLocation();
+    const { formRef, user, handleUserRegistration } = useSignIn();
 
-    async function handleUserRegistration(e) {
-        e.preventDefault();
-
-        const formData = new FormData(formRef.current);
-
-        const email = formData.get("email");
-        const password = formData.get("password");
-
-        try {
-            await authSignIn(email, password);
-            setLocation("/dashboard");
-        } catch (error) {
-            console.error(`failed to login user: ${error.message}`);
-        }
-
-    }
-
-    if (user) return <Redirect to="/dashboard" />;
+    if (user) return (
+        <Redirect to="/dashboard" />
+    );
 
     return (
         <div>
