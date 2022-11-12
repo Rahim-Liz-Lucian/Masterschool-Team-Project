@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, User, UserCredential } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, User, UserCredential } from "firebase/auth";
 // TODO find the location of this function to 
 // minimise the import size
 import { getFirestore } from "firebase/firestore";
@@ -22,6 +22,7 @@ type Auth = {
     // if undefined then this will block
     user?: User;
     authSignUp: (email: string, password: string) => Promise<UserCredential>;
+    authSignIn: (email: string, password: string) => Promise<UserCredential>;
 };
 
 export const useAuthContext = () => {
@@ -29,13 +30,18 @@ export const useAuthContext = () => {
 };
 
 const AuthContext = createContext<Auth>({
-    authSignUp
+    authSignUp,
+    authSignIn,
 });
 
 async function authSignUp(email: string, password: string) {
     // Firebase is setting local storage for us using tokens
     // so is automatically logging user after refresh
     return createUserWithEmailAndPassword(fireAuth, email, password);
+}
+
+async function authSignIn(email: string, password: string) {
+    return signInWithEmailAndPassword(fireAuth, email, password);
 }
 
 export const authContext = () => {
@@ -54,7 +60,8 @@ export const authContext = () => {
 
         const value = {
             user: me,
-            authSignUp
+            authSignUp,
+            authSignIn
         };
 
         return (
