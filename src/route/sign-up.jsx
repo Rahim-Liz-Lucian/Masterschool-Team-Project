@@ -23,12 +23,7 @@ export default function Page() {
         }
     }
 
-    // if user is already signed-in 
-    // redirect to dashboard
-    // FIXME this is not a good way to handle redirect
-    // please fix 
     if (user) return <Redirect to="/dashboard" />;
-
 
     return (
         <div>

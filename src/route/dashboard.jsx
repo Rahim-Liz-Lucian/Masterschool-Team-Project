@@ -34,5 +34,3 @@ export default function Page() {
         </div>
     );
 }
-
-// bar___123
