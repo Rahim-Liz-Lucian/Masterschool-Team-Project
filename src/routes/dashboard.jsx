@@ -5,6 +5,7 @@ export default function Page() {
     const { user, authSignOut } = useAuthContext();
     const [_, setLocation] = useLocation();
 
+
     async function handleSignOut(e) {
         try {
             await authSignOut();
@@ -14,6 +15,14 @@ export default function Page() {
         }
         alert("signing-out");
     }
+
+    if (!user) return (
+        <div>
+            <h1>User not logged in ☹️</h1>
+            <Link href="/sign-in">Sign In?</Link>
+        </div>
+
+    );
 
     return (
         <div>
