@@ -5,7 +5,7 @@ import { useSignUp } from "../hook";
 export default function Page() {
     const { formRef, user, handleUserRegistration } = useSignUp();
 
-    if (user.value) return (
+    if (user) return (
         <Redirect to="/dashboard" />
     );
 
