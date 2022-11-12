@@ -1,5 +1,5 @@
 import { useAuthContext } from "../firebase";
-import { Link, useLocation } from "wouter";
+import { Redirect, useLocation } from "wouter-preact";
 
 export default function Page() {
     const { user, authSignOut } = useAuthContext();
@@ -15,12 +15,7 @@ export default function Page() {
         }
     }
 
-    if (!user) return (
-        <div>
-            <h1>User not logged in ☹️</h1>
-            <Link href="/sign-in">Sign In?</Link>
-        </div>
-    );
+    if (!user) return <Redirect to="/" />;
 
     return (
         <div>

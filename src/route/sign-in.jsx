@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "preact/hooks";
 import { useAuthContext } from "../firebase";
-import { Link, useLocation } from "wouter";
+import { Link, useLocation, Redirect } from "wouter-preact";
 
 export default function Page() {
     const formRef = useRef();
@@ -29,6 +29,7 @@ export default function Page() {
     // FIXME this is not a good way to handle redirect
     // please fix 
     // if (user) setLocation("/dashboard");
+    if (user) return <Redirect to="/dashboard" />;
 
     return (
         <div>
