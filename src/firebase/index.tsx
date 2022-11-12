@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, User, UserCredential } from "firebase/auth";
+import { createUserWithEmailAndPassword, deleteUser, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, User, UserCredential } from "firebase/auth";
 // TODO find the location of this function to 
 // minimise the import size
 import { getFirestore } from "firebase/firestore";
@@ -36,18 +36,22 @@ const AuthContext = createContext<Auth>({
     authSignOut,
 });
 
-async function authSignUp(email: string, password: string) {
+export async function authSignUp(email: string, password: string) {
     // Firebase is setting local storage for us using tokens
     // so is automatically logging user after refresh
     return createUserWithEmailAndPassword(fireAuth, email, password);
 }
 
-async function authSignIn(email: string, password: string) {
+export async function authSignIn(email: string, password: string) {
     return signInWithEmailAndPassword(fireAuth, email, password);
 }
 
-async function authSignOut() {
+export async function authSignOut() {
     signOut(fireAuth);
+}
+
+export async function authDelete(user: User) {
+    await deleteUser(user);
 }
 
 export const authContext = () => {
