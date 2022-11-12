@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, User, UserCredential } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, User, UserCredential } from "firebase/auth";
 // TODO find the location of this function to 
 // minimise the import size
 import { getFirestore } from "firebase/firestore";
@@ -20,9 +20,10 @@ const fireAuth = getAuth(fireApp);
 type Auth = {
     // If user then we are authorized
     // if undefined then this will block
-    user?: User;
-    authSignUp: (email: string, password: string) => Promise<UserCredential>;
-    authSignIn: (email: string, password: string) => Promise<UserCredential>;
+    user?: User | null;
+    authSignUp(email: string, password: string): Promise<UserCredential>;
+    authSignIn(email: string, password: string): Promise<UserCredential>;
+    authSignOut(): Promise<void>;
 };
 
 export const useAuthContext = () => {
@@ -32,6 +33,7 @@ export const useAuthContext = () => {
 const AuthContext = createContext<Auth>({
     authSignUp,
     authSignIn,
+    authSignOut,
 });
 
 async function authSignUp(email: string, password: string) {
@@ -44,13 +46,17 @@ async function authSignIn(email: string, password: string) {
     return signInWithEmailAndPassword(fireAuth, email, password);
 }
 
+async function authSignOut() {
+    signOut(fireAuth);
+}
+
 export const authContext = () => {
     return function ({ children }: { children: JSX.Element[]; }) {
-        const [me, setMe] = useState<User | undefined>();
+        const [me, setMe] = useState<User | null>();
 
         useEffect(() => {
             const unsubscribe = onAuthStateChanged(fireAuth, user => {
-                user && setMe(user);
+                setMe(user);
             });
 
             return unsubscribe;
@@ -61,7 +67,8 @@ export const authContext = () => {
         const value = {
             user: me,
             authSignUp,
-            authSignIn
+            authSignIn,
+            authSignOut
         };
 
         return (
