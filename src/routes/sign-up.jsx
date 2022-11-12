@@ -1,10 +1,11 @@
 import { useRef } from "preact/hooks";
 import { useAuthContext } from "../firebase";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 export default function Page() {
     const formRef = useRef();
     const { user, authSignUp } = useAuthContext();
+    const [_, setLocation] = useLocation();
 
     async function handleUserRegistration(e) {
         e.preventDefault();
@@ -16,6 +17,7 @@ export default function Page() {
 
         try {
             await authSignUp(email, password);
+            setLocation("/dashboard");
         } catch (error) {
             console.error(`failed to create user: ${error.message}`);
         }
@@ -26,7 +28,7 @@ export default function Page() {
             <h1>Sign-up</h1>
             {user && (
                 <div>
-                    <h3>Creation successful</h3>
+                    <h3>Current user logged in</h3>
                     <p>Uid: {user.uid}</p>
                     <p>Email: {user.email}</p>
                 </div>

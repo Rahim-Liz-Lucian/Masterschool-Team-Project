@@ -1,10 +1,11 @@
 import { useRef } from "preact/hooks";
 import { useAuthContext } from "../firebase";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 export default function Page() {
     const formRef = useRef();
     const { user, authSignIn } = useAuthContext();
+    const [_, setLocation] = useLocation();
 
     async function handleUserRegistration(e) {
         e.preventDefault();
@@ -16,7 +17,7 @@ export default function Page() {
 
         try {
             const { user: { uid } } = await authSignIn(email, password);
-            console.log(`logged in with user ${uid}`);
+            setLocation("/dashboard");
         } catch (error) {
             console.error(`failed to login user: ${error.message}`);
         }
@@ -27,7 +28,7 @@ export default function Page() {
             <h1>Sign-in</h1>
             {user && (
                 <div>
-                    <h3>Creation successful</h3>
+                    <h3>Current user logged in</h3>
                     <p>Uid: {user.uid}</p>
                     <p>Email: {user.email}</p>
                 </div>
@@ -46,7 +47,6 @@ export default function Page() {
             </form>
 
             <Link href="/sign-up">Don't have an account?</Link>
-
         </div>
     );
 }
