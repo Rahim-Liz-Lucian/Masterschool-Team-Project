@@ -36,6 +36,8 @@ const AuthContext = createContext<Auth>({
     authSignOut,
 });
 
+// TODO rename these helper functions
+
 export async function authSignUp(email: string, password: string) {
     // Firebase is setting local storage for us using tokens
     // so is automatically logging user after refresh

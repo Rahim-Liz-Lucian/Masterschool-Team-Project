@@ -4,9 +4,12 @@ import { authDelete, authSignUp } from "../firebase";
 
 describe("firebase.test", () => {
     let testUser: User;
+
     test("subscribe user", async () => {
-        const [email, password] = ["__automated__@mail.net", "__test12?*"];
+        const [email, password] = ["__automated__@mail.net", "__auto%212?*"];
         const cred = await authSignUp(email, password);
+
+        // set user
         testUser = cred.user;
     });
 
