@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "preact/hooks";
-import { authSignIn, authSignOut, authSignUp, userSignal, fireAuth } from "../firebase";
+import { fireAuth, authSignIn, authSignOut, authSignUp, userSignal } from "../firebase";
 import { useLocation } from "wouter-preact";
 import { onAuthStateChanged } from "firebase/auth";
 

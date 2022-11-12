@@ -8,8 +8,13 @@ import NotFoundPage from "./route/404";
 import DashBoardPage from "./route/dashboard";
 import SignUpPage from "./route/sign-up";
 import SignInPage from "./route/sign-in";
+import { useApp } from "./hook";
 
 export function App() {
+    // NOTE init application with `useApp` hook
+    // This could very much just be context
+    const _ = useApp();
+
     return (
         <Switch>
             <Route path="/" component={IndexPage} />

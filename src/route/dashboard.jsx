@@ -4,8 +4,6 @@ import { useDashboard } from "../hook";
 export default function Page() {
     const { handleSignOut, user } = useDashboard();
 
-
-
     if (!user.value) return (
         <Redirect to="/" />
     );
