@@ -1,11 +1,11 @@
 import { Link, Route } from "wouter-preact";
 // NOTE these are just for examples
-import TypedPage from "./routes/x/typed";
-import StyledPage from "./routes/x/styled";
+import TypedPage from "./route/x/typed";
+import StyledPage from "./route/x/styled";
 // NOTE app starts here
-import DashBoardPage from "./routes/dashboard";
-import SignUpPage from "./routes/sign-up";
-import SignInPage from "./routes/sign-in";
+import DashBoardPage from "./route/dashboard";
+import SignUpPage from "./route/sign-up";
+import SignInPage from "./route/sign-in";
 import { authContext } from "./firebase";
 
 export function App() {
