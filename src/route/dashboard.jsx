@@ -1,11 +1,10 @@
 import { Redirect } from "wouter-preact";
-import { testUser as user } from "../firebase";
 import { useDashboard } from "../hook";
 
 export default function Page() {
-    const { handleSignOut } = useDashboard();
+    const { user, handleSignOut } = useDashboard();
 
-    if (!user.value) return (
+    if (!user) return (
         <Redirect to="/" />
     );
 
@@ -14,8 +13,8 @@ export default function Page() {
             <h1>Dashboard</h1>
             <div>
                 <h3>Current user logged in</h3>
-                <p>Uid: {user.value.uid}</p>
-                <p>Email: {user.value.email}</p>
+                <p>Uid: {user.uid}</p>
+                <p>Email: {user.email}</p>
             </div>
 
             <button onClick={handleSignOut}>

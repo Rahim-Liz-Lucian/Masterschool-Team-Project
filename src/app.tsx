@@ -6,22 +6,14 @@ import StyledPage from "./route/x/styled";
 import DashBoardPage from "./route/dashboard";
 import SignUpPage from "./route/sign-up";
 import SignInPage from "./route/sign-in";
-import { authContext, counter, setupAuthObserver } from "./firebase";
-import { useEffect } from "preact/hooks";
+import { authContext } from "./firebase";
 
 export function App() {
-    // const AuthContext = authContext();
-
-    useEffect(() => {
-        const unsubscribe = setupAuthObserver();
-        // maybe this will work
-        return unsubscribe;
-    }, []);
+    const AuthContext = authContext();
 
     return (
-        <div>
+        <AuthContext>
             <Route path="/">
-                {counter}
                 This is the home page
                 <Link href="/sign-in">Sign In?</Link>
                 <Link href="/sign-up">Sign Up?</Link>
@@ -33,6 +25,6 @@ export function App() {
 
             <Route path="/x/typed" component={TypedPage} />
             <Route path="/x/styled" component={StyledPage} />
-        </div>
+        </AuthContext>
     );
 }

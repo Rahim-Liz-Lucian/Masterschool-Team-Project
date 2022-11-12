@@ -22,20 +22,13 @@ type Auth = {
     // If user then we are authorized
     // if undefined then this will block
     user?: User | null;
-    authSignUp(email: string, password: string): Promise<UserCredential>;
-    authSignIn(email: string, password: string): Promise<UserCredential>;
-    authSignOut(): Promise<void>;
 };
 
 export const useAuthContext = () => {
     return useContext(AuthContext);
 };
 
-const AuthContext = createContext<Auth>({
-    authSignUp,
-    authSignIn,
-    authSignOut,
-});
+const AuthContext = createContext<Auth>({});
 
 // TODO rename these helper functions
 export async function authSignUp(email: string, password: string) {
@@ -61,16 +54,6 @@ export async function authDelete(user: User) {
     await deleteUser(user);
 }
 
-export const counter = signal(0);
-
-export const testUser = signal<User | null>(null);
-
-export const setupAuthObserver = () => {
-    return onAuthStateChanged(fireAuth, user => {
-        testUser.value = user;
-    });
-};
-
 export const authContext = () => {
     return function ({ children }: { children: JSX.Element[]; }) {
         const [me, setMe] = useState<User | null>();
@@ -78,15 +61,14 @@ export const authContext = () => {
         // I don't think I need to have a dependency in here
         useEffect(() => {
             const unsubscribe = onAuthStateChanged(fireAuth, user => {
-                // setMe(user);
-
+                setMe(user);
             });
 
             return unsubscribe;
         }, []);
 
         return (
-            <AuthContext.Provider value={{ user: me, authSignUp, authSignIn, authSignOut }}>
+            <AuthContext.Provider value={{ user: me }}>
                 {children}
             </AuthContext.Provider>
         );
