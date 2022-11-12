@@ -1,5 +1,6 @@
 import { useRef } from "preact/hooks";
 import { useAuthContext } from "../firebase";
+import { Link } from "wouter";
 
 export default function Page() {
     const formRef = useRef();
@@ -43,6 +44,7 @@ export default function Page() {
                 <button type="submit">Sign-up</button>
             </form>
 
+            <Link href="/sign-in">Already have an account?</Link>
         </div>
     );
 }
