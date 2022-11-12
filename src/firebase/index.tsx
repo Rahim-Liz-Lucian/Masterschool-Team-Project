@@ -5,6 +5,7 @@ import { createUserWithEmailAndPassword, deleteUser, getAuth, onAuthStateChanged
 import { getFirestore } from "firebase/firestore";
 import { createContext } from "preact";
 import { useContext, useEffect, useState } from "preact/hooks";
+import { signal } from "@preact/signals";
 
 const fireApp = initializeApp({
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -55,9 +56,20 @@ export async function authSignOut() {
     signOut(fireAuth);
 }
 
+// not being used
 export async function authDelete(user: User) {
     await deleteUser(user);
 }
+
+export const counter = signal(0);
+
+export const testUser = signal<User | null>(null);
+
+export const setupAuthObserver = () => {
+    return onAuthStateChanged(fireAuth, user => {
+        testUser.value = user;
+    });
+};
 
 export const authContext = () => {
     return function ({ children }: { children: JSX.Element[]; }) {
@@ -66,7 +78,8 @@ export const authContext = () => {
         // I don't think I need to have a dependency in here
         useEffect(() => {
             const unsubscribe = onAuthStateChanged(fireAuth, user => {
-                setMe(user);
+                // setMe(user);
+
             });
 
             return unsubscribe;

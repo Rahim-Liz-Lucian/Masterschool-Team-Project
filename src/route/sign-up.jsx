@@ -1,10 +1,12 @@
 import { Link, Redirect } from "wouter-preact";
 import { useSignUp } from "../hook";
+import { testUser as user } from "../firebase";
+
 
 export default function Page() {
-    const { formRef, user, handleUserRegistration } = useSignUp();
+    const { formRef, handleUserRegistration } = useSignUp();
 
-    if (user) return (
+    if (user.value) return (
         <Redirect to="/dashboard" />
     );
 

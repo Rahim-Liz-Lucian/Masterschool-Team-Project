@@ -11,6 +11,7 @@
         "coverage": "vitest run --coverage"
     },
     "dependencies": {
+        "@preact/signals": "^1.1.2",
         "firebase": "^9.14.0",
         "preact": "^10.11.2",
         "styled-components": "^5.3.6",

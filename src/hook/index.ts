@@ -1,5 +1,5 @@
 import { useRef } from "preact/hooks";
-import { useAuthContext } from "../firebase";
+import { counter, useAuthContext } from "../firebase";
 import { useLocation } from "wouter-preact";
 
 export const useSignIn = () => {
@@ -9,6 +9,8 @@ export const useSignIn = () => {
 
     async function handleUserRegistration(e: Event) {
         e.preventDefault();
+
+        counter.value++;
 
         const formData = new FormData(formRef.current);
 
@@ -35,6 +37,8 @@ export const useSignUp = () => {
     async function handleUserRegistration(e: Event) {
         e.preventDefault();
 
+        counter.value++;
+
         const formData = new FormData(formRef.current);
 
         const email = formData.get("email")?.toString() ?? "";
@@ -58,6 +62,8 @@ export const useDashboard = () => {
 
 
     async function handleSignOut(e: Event) {
+        counter.value++;
+
         try {
             await authSignOut();
             setLocation("/sign-in");
