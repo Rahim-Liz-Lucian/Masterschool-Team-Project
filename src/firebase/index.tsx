@@ -37,11 +37,14 @@ const AuthContext = createContext<Auth>({
 });
 
 // TODO rename these helper functions
-
 export async function authSignUp(email: string, password: string) {
     // Firebase is setting local storage for us using tokens
     // so is automatically logging user after refresh
-    return createUserWithEmailAndPassword(fireAuth, email, password);
+    const cred = createUserWithEmailAndPassword(fireAuth, email, password);
+    // fireAuth.updateCurrentUser
+
+    // TODO check if this needs to return a user?
+    return cred;
 }
 
 export async function authSignIn(email: string, password: string) {
@@ -60,23 +63,17 @@ export const authContext = () => {
     return function ({ children }: { children: JSX.Element[]; }) {
         const [me, setMe] = useState<User | null>();
 
+        // I don't think I need to have a dependency in here
         useEffect(() => {
             const unsubscribe = onAuthStateChanged(fireAuth, user => {
                 setMe(user);
             });
 
             return unsubscribe;
-        }, [me]);
-
-        const value = {
-            user: me,
-            authSignUp,
-            authSignIn,
-            authSignOut
-        };
+        }, []);
 
         return (
-            <AuthContext.Provider value={value}>
+            <AuthContext.Provider value={{ user: me, authSignUp, authSignIn, authSignOut }}>
                 {children}
             </AuthContext.Provider>
         );
