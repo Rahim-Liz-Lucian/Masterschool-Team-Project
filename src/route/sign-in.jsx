@@ -3,9 +3,9 @@ import { useSignIn } from "../hook";
 
 
 export default function Page() {
-    const { formRef, user, handleUserRegistration } = useSignIn();
+    const { formRef, handleUserLogin, user } = useSignIn();
 
-    if (user) return (
+    if (user.value) return (
         <Redirect to="/dashboard" />
     );
 
@@ -13,7 +13,7 @@ export default function Page() {
         <div>
             <h1>Sign-in</h1>
 
-            <form ref={formRef} onSubmit={handleUserRegistration}>
+            <form ref={formRef} onSubmit={handleUserLogin}>
                 <label htmlFor="email">
                     <span>Email:</span>
                     <input required type="email" name="email" id="email" placeholder={"Enter email"} />

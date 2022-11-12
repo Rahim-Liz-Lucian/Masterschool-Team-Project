@@ -1,15 +1,14 @@
-import { Link, Redirect } from "wouter-preact";
-import { useAuthContext } from "../firebase";
-import { useDashboard } from "../hook";
+import { Link } from "wouter-preact";
+import { useIndex } from "../hook";
 
 export default function Page() {
-    const { user, isLoading } = useAuthContext();
     // isLoading, if no user, 
+    const { user } = useIndex();
 
     // delay
 
     // NOTE pop-in as first render will always be undefined
-    if (user) return (
+    if (user.value) return (
         <div>
             This is the home page
             <Link href="/dashboard">Goto Dashboard</Link>

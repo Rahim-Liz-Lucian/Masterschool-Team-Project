@@ -1,13 +1,13 @@
-import { useRef } from "preact/hooks";
-import { authSignIn, authSignOut, authSignUp, useAuthContext } from "../firebase";
+import { useEffect, useRef } from "preact/hooks";
+import { authSignIn, authSignOut, authSignUp, userSignal, fireAuth } from "../firebase";
 import { useLocation } from "wouter-preact";
+import { onAuthStateChanged } from "firebase/auth";
 
 export const useSignIn = () => {
     const formRef = useRef();
-    const { user } = useAuthContext();
     const [_, setLocation] = useLocation();
 
-    async function handleUserRegistration(e: Event) {
+    async function handleUserLogin(e: Event) {
         e.preventDefault();
 
         const formData = new FormData(formRef.current);
@@ -24,12 +24,11 @@ export const useSignIn = () => {
         }
     }
 
-    return { formRef, user, handleUserRegistration };
+    return { formRef, handleUserLogin, user: userSignal };
 };
 
 export const useSignUp = () => {
     const formRef = useRef();
-    const { user } = useAuthContext();
     const [_, setLocation] = useLocation();
 
     async function handleUserRegistration(e: Event) {
@@ -49,13 +48,11 @@ export const useSignUp = () => {
         }
     }
 
-    return { formRef, user, handleUserRegistration };
+    return { formRef, handleUserRegistration, user: userSignal };
 };
 
 export const useDashboard = () => {
-    const { user } = useAuthContext();
     const [_, setLocation] = useLocation();
-
 
     async function handleSignOut(_e: Event) {
         try {
@@ -63,9 +60,24 @@ export const useDashboard = () => {
             setLocation("/sign-in");
         } catch (error) {
             // NOTE user must exist in this context
-            console.error(`Error signing-out ${user!.uid}`);
+            console.error(`error signing-out user`);
         }
     }
 
-    return { user, handleSignOut };
+    return { handleSignOut, user: userSignal };
+};
+
+export const useIndex = () => {
+    return { user: userSignal };
+};
+
+export const useApp = () => {
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(fireAuth, next => {
+            userSignal.value = next;
+        });
+        return unsubscribe;
+    }, []);
+
+    return { user: userSignal };
 };

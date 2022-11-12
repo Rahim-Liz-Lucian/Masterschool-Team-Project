@@ -1,11 +1,9 @@
 import { initializeApp } from "firebase/app";
-import { createUserWithEmailAndPassword, deleteUser, onAuthStateChanged, signInWithEmailAndPassword, signOut, User, inMemoryPersistence, browserSessionPersistence, getAuth } from "firebase/auth";
+import { createUserWithEmailAndPassword, deleteUser, onAuthStateChanged, signInWithEmailAndPassword, signOut, User, getAuth } from "firebase/auth";
 // TODO find the location of this function to 
 // minimise the import size
 import { getFirestore } from "firebase/firestore";
-import { createContext } from "preact";
-import { useContext, useEffect, useState } from "preact/hooks";
-// import { signal } from "@preact/signals";
+import { signal } from "@preact/signals";
 
 const fireApp = initializeApp({
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -16,19 +14,7 @@ const fireApp = initializeApp({
     appId: import.meta.env.VITE_FIREBASE_APP_ID
 });
 
-const fireAuth = getAuth(fireApp);
-
-type Auth = {
-    // If user then we are authorized
-    // if undefined then this will block
-    user?: User | null;
-};
-
-export const useAuthContext = () => {
-    return useContext(AuthContext);
-};
-
-const AuthContext = createContext<Auth>({});
+export const fireAuth = getAuth(fireApp);
 
 // TODO rename these helper functions
 export async function authSignUp(email: string, password: string) {
@@ -50,27 +36,8 @@ export async function authDelete(user: User) {
     await deleteUser(user);
 }
 
-// export const user = signal()
-
-export const authContext = () => {
-    return function ({ children }: { children: JSX.Element; }) {
-        const [current, setCurrent] = useState<User | null>(fireAuth.currentUser);
-
-        // I don't think I need to have a dependency in here
-        useEffect(() => {
-            const unsubscribe = onAuthStateChanged(fireAuth, user => {
-                setCurrent(user);
-            });
-            return unsubscribe;
-        }, []);
-
-        return (
-            <AuthContext.Provider value={{ user: current }}>
-                {children}
-            </AuthContext.Provider>
-        );
-    };
-};
+// No longer required to pass context
+export const userSignal = signal(fireAuth.currentUser);
 
 // there has to be a state change
 
