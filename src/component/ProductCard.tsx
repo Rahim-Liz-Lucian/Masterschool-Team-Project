@@ -1,4 +1,4 @@
-import { Product } from "../firebase/product";
+import { Product } from "../firebase";
 
 export default function Card({ product, ...props }: React.HTMLAttributes<HTMLButtonElement> & { product: Product; }) {
     return (
