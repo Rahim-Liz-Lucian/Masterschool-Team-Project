@@ -1,8 +1,10 @@
 import { useRef } from "preact/hooks";
 import { Link, Redirect, useLocation } from "wouter-preact";
 import UserSignUpForm from "../component/UserSignUpForm";
-import { registerUser, userSignal } from "../firebase";
+import { fireAuth, fireStore, registerUser, userSignal } from "../firebase";
 import { FormEvent } from "react";
+import { doc, setDoc } from "firebase/firestore";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 export default function Page() {
     const { formRef, handleUserRegistration, user } = useSignUp();
@@ -26,13 +28,30 @@ export const useSignUp = () => {
     const formRef = useRef<HTMLFormElement>(null);
     const [_, setLocation] = useLocation();
 
+    const user = userSignal.peek();
+
     async function handleUserRegistration(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        const [email, password] = [...new FormData(formRef.current!).values()];
+        const [name, username, email, password, confirmPassword] = [...new FormData(formRef.current!).values()];
+
+        // 
 
         try {
-            await registerUser(email.toString(), password.toString());
+            console.log(`attempt to sign-up successful`);
+            console.log(email, username, name, password === confirmPassword);
+
+            const userCred = await createUserWithEmailAndPassword(fireAuth, email.toString(), password.toString());
+            // FIXME this depends on the prev line so if it fails need to delete the created user
+            const docRef = doc(fireStore, `users/${userCred.user.uid}`);
+            await Promise.all([
+                // TODO do I need to use `toString` for all FOrmDataEntry values
+                setDoc(docRef, { username: username.toString(), name: name.toString() }),
+                // userCred.user.phoneNumber;
+                // userCred.user.photoURL;
+                fireAuth.updateCurrentUser({ ...userCred.user, displayName: username.toString() })
+            ]);
+
             setLocation("/dashboard");
         } catch (error) {
             const e = error as Error;

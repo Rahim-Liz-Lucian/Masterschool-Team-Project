@@ -22,7 +22,7 @@ export default function Page() {
 
     return (
         <div>
-            <h1>Upload a product</h1>
+            <h1>Welcome {user.displayName}</h1>
             <br />
 
             <button onClick={handleSignOut}>Sign out</button>
@@ -44,7 +44,7 @@ const useDashboard = () => {
     const formRef = useRef<HTMLFormElement>(null);
     const [, setLocation] = useLocation();
 
-    const user = userSignal.peek();
+    const user = userSignal.peek(); // could assume that this is live
 
     useEffect(() => {
         const productCollectionRef = collection(fireStore, `users/${user?.uid}/products`);
