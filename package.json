@@ -1,5 +1,5 @@
 {
-    "name": "rll",
+    "name": "waste-less",
     "private": true,
     "version": "0.0.0",
     "type": "module",
@@ -12,6 +12,7 @@
     },
     "dependencies": {
         "@preact/signals": "^1.1.2",
+        "compressorjs": "^1.1.1",
         "firebase": "^9.14.0",
         "preact": "^10.11.2",
         "styled-components": "^5.3.6",
