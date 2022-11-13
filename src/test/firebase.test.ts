@@ -5,6 +5,7 @@ import { describe, assert, test, expect } from "vitest";
 import { unregisterUser, registerUser, fireStorage, fireStore } from "../firebase";
 import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
+import { appendUserProduct, Product, Profile, removeUserProduct, selectUserProduct, selectUserProductMany } from "../firebase/product";
 
 // admin@mail.com | thisisadmin1 | QrQPMb4LvsdzxY0yq9dAcgljDai2
 describe("firebase.test", () => {
@@ -79,7 +80,7 @@ describe("firebase.test", () => {
         expect(ok).toBe(true);
     });
 
-    test("get a product from the collection", async () => {
+    test.skip("get a product from the collection", async () => {
         const validId = "841d9fea-a65a-40c7-a155-7d20163a5ac9";
         let product = await selectUserProduct(admin, validId);
         expect(product).not.toBeInstanceOf(Error);
@@ -93,56 +94,3 @@ describe("firebase.test", () => {
         expect((products as DocumentData[]).length).toBe(2);
     });
 });
-
-type Profile = Pick<User, "uid"> & {
-    dietaryRequirements?: string[];
-    rating: number;
-};
-
-type Product = {
-    uid: string;
-    title: string;
-    quantity: number;
-};
-
-export async function appendUserProduct({ uid }: Profile, product: Product): Promise<true | Error> {
-    const docRef = doc(fireStore, `users/${uid}/products/${product.uid}`);
-    try {
-        let _ = await setDoc(docRef, product);
-        return true;
-    } catch (error) {
-        return error as Error;
-    }
-}
-
-export async function removeUserProduct({ uid }: Profile, productId: string): Promise<true | Error> {
-    const docRef = doc(fireStore, `users/${uid}/products/${productId}`);
-    try {
-        let _ = await deleteDoc(docRef);
-        return true;
-    } catch (error) {
-        return error as Error;
-    }
-}
-
-export async function selectUserProduct({ uid }: Profile, productId: string): Promise<DocumentData | Error> {
-    const docRef = doc(fireStore, `users/${uid}/products/${productId}`);
-    try {
-        let docSnap = await getDoc(docRef);
-        if (!docSnap.exists()) return Error(`user ${uid} does not have a product with id ${productId}`);
-        return docSnap.data();
-    } catch (error) {
-        return error as Error;
-    }
-}
-
-export async function selectUserProductMany({ uid }: Profile): Promise<DocumentData[] | Error> {
-    const colRef = collection(fireStore, `users/${uid}/products`);
-    try {
-        const snap = await getDocs(colRef);
-        if (snap.empty) return Error(`user ${uid} has no documents in the collection`);
-        return snap.docs.map(doc => doc.data());
-    } catch (error) {
-        return error as Error;
-    }
-}

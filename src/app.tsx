@@ -20,8 +20,8 @@ export function App() {
             <Route path="/" component={IndexPage} />
 
             <Route path="/dashboard" component={DashBoardPage} />
-            <Route path="/sign-in" component={SignInPage} />
-            <Route path="/sign-up" component={SignUpPage} />
+            {/* <Route path="/sign-in" component={SignInPage} /> */}
+            {/* <Route path="/sign-up" component={SignUpPage} /> */}
 
             <Route path="/x/typed" component={TypedPage} />
             <Route path="/x/styled" component={StyledPage} />
