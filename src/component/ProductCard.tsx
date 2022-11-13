@@ -1,6 +1,6 @@
 import { Product } from "../firebase/product";
 
-export default function Card({ product }: { product: Product; }) {
+export default function Card({ product, ...props }: React.HTMLAttributes<HTMLButtonElement> & { product: Product; }) {
     return (
         <div>
             Title {product.title}
@@ -11,6 +11,8 @@ export default function Card({ product }: { product: Product; }) {
 
             <img src={product.thumbnailUrl} alt={product.uid} width={100} />
             <br />
-        </div>
+
+            <button onClick={props.onClick}>Delete</button>
+        </div >
     );
 }

@@ -1,8 +1,8 @@
-import { Ref } from "react";
+import { Ref, HTMLAttributes } from "react";
 
-export default function Form(props: React.HTMLAttributes<HTMLFormElement> & { form: Ref<HTMLFormElement>; }) {
+export default function Form({ form, ...props }: HTMLAttributes<HTMLFormElement> & { form: Ref<HTMLFormElement>; }) {
     return (
-        <form {...props} ref={props.form} >
+        <form {...props} ref={form} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <label htmlFor="title">
                 <span>Title</span>
                 {/* NOTE prevent titles that start with white spaces */}

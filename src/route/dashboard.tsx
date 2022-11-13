@@ -1,6 +1,6 @@
 // NOTE these are just for examples
 // NOTE app starts here
-import { Product } from "../firebase/product";
+import { Product } from "../firebase";
 import { useEffect, useRef } from "preact/hooks";
 import { useSignal } from "@preact/signals";
 import { collection, deleteDoc, doc, onSnapshot, setDoc } from "firebase/firestore";

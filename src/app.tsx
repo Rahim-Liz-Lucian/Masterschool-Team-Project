@@ -8,20 +8,24 @@ import NotFoundPage from "./route/404";
 import DashBoardPage from "./route/dashboard";
 import SignUpPage from "./route/sign-up";
 import SignInPage from "./route/sign-in";
-import { useApp } from "./hook";
+import { onAuthStateChanged } from "firebase/auth";
+import { useEffect } from "preact/hooks";
+import { fireAuth, userSignal } from "./firebase";
 
 export function App() {
-    // NOTE init application with `useApp` hook
-    // This could very much just be context
-    // const _ = useApp();
+    useEffect(() => {
+        return onAuthStateChanged(fireAuth, next => {
+            userSignal.value = next;
+        });
+    }, []);
 
     return (
         <Switch>
             <Route path="/" component={IndexPage} />
 
             <Route path="/dashboard" component={DashBoardPage} />
-            {/* <Route path="/sign-in" component={SignInPage} /> */}
-            {/* <Route path="/sign-up" component={SignUpPage} /> */}
+            <Route path="/sign-in" component={SignInPage} />
+            <Route path="/sign-up" component={SignUpPage} />
 
             <Route path="/x/typed" component={TypedPage} />
             <Route path="/x/styled" component={StyledPage} />
