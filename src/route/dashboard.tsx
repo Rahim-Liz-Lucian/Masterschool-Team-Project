@@ -16,7 +16,7 @@ import { Redirect, useLocation } from "wouter-preact";
 export default function Page() {
     const { formRef, handleSubmit, handleDelete, products, user, handleSignOut } = useDashboard();
 
-    if (!user.value) return (
+    if (!user) return (
         <Redirect to="/" />
     );
 
@@ -30,23 +30,24 @@ export default function Page() {
             <ProductSubmitForm form={formRef} onSubmit={handleSubmit} />
             <br />
 
-            {products.value.map(product => (<div key={product.uid}>
-                <ProductCard product={product} onClick={handleDelete(product)} />
-            </div>))}
+            <div style={{ display: "flex" }}>
+                {products.value.map(product => (<div key={product.uid}>
+                    <ProductCard product={product} onClick={handleDelete(product)} />
+                </div>))}
+            </div>
         </div>
     );
 }
-
-// use the actual user object
-const ADMIN_UID = "QrQPMb4LvsdzxY0yq9dAcgljDai2";
 
 const useDashboard = () => {
     const products = useSignal<Product[]>([]);
     const formRef = useRef<HTMLFormElement>(null);
     const [, setLocation] = useLocation();
 
+    const user = userSignal.peek();
+
     useEffect(() => {
-        const productCollectionRef = collection(fireStore, `users/${ADMIN_UID}/products`);
+        const productCollectionRef = collection(fireStore, `users/${user?.uid}/products`);
         onSnapshot(productCollectionRef, next => {
             products.value = next.docs.map(doc => doc.data()) as Product[]; //ok
         });
@@ -55,7 +56,6 @@ const useDashboard = () => {
     const handleSignOut = async () => {
         await signOut(fireAuth);
         setLocation("/");
-
     };
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -78,24 +78,24 @@ const useDashboard = () => {
             // NOTE: maxWidth and maxHeight could be smaller
             quality: 0.6, maxWidth: 1500, maxHeight: 1000, error: (error) => console.error(error),
             async success(file) {
-                const fileRef = ref(fireStorage, `image/${ADMIN_UID}/products/${product.uid}`);
+                const fileRef = ref(fireStorage, `image/${user?.uid}/products/${product.uid}`);
                 const result = await uploadBytes(fileRef, file, { contentType: file.type });
                 const thumbnailUrl = await getDownloadURL(result.ref);
 
-                const docRef = doc(fireStore, `users/${ADMIN_UID}/products/${product.uid}`);
+                const docRef = doc(fireStore, `users/${user?.uid}/products/${product.uid}`);
                 const _ = await setDoc(docRef, { ...product, thumbnailUrl });
             },
         });
     };
 
     const handleDelete = (product: Product) => {
-        const thumbnailRef = ref(fireStorage, `image/${ADMIN_UID}/products/${product.uid}`);
-        const productRef = doc(fireStore, `users/${ADMIN_UID}/products/${product.uid}`);
-        //    using a higher order function to bypass needing to prop drill
+        const thumbnailRef = ref(fireStorage, `image/${user?.uid}/products/${product.uid}`);
+        const productRef = doc(fireStore, `users/${user?.uid}/products/${product.uid}`);
+        // NOTE using a higher order function to bypass needing to prop drill
         return async () => {
             Promise.all([deleteObject(thumbnailRef), deleteDoc(productRef)]);
         };
     };
 
-    return { formRef, handleSubmit, handleDelete, products, user: userSignal, handleSignOut };
+    return { formRef, handleSubmit, handleDelete, products, user, handleSignOut };
 };

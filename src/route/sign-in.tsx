@@ -1,5 +1,5 @@
 import { Link, Redirect, useLocation } from "wouter-preact";
-import UserLoginForm from "../component/UserLoginForm";
+import UserSignInForm from "../component/UserSignInForm";
 import { useRef } from "preact/hooks";
 import { loginUser, userSignal } from "../firebase";
 import { FormEvent } from "react";
@@ -7,7 +7,7 @@ import { FormEvent } from "react";
 export default function Page() {
     const { formRef, handleUserLogin, user } = useSignIn();
 
-    if (user.value) return (
+    if (user) return (
         <Redirect to="/dashboard" />
     );
 
@@ -15,7 +15,7 @@ export default function Page() {
         <div>
             <h1>Sign-in</h1>
 
-            <UserLoginForm form={formRef} onSubmit={handleUserLogin} />
+            <UserSignInForm form={formRef} onSubmit={handleUserLogin} />
             <Link href="/sign-up">Don't have an account?</Link>
         </div>
     );
@@ -26,6 +26,8 @@ export default function Page() {
 const useSignIn = () => {
     const formRef = useRef<HTMLFormElement>(null);
     const [_, setLocation] = useLocation();
+
+    const user = userSignal.peek();
 
     async function handleUserLogin(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -42,5 +44,5 @@ const useSignIn = () => {
         }
     }
 
-    return { formRef, handleUserLogin, user: userSignal };
+    return { formRef, handleUserLogin, user };
 };
