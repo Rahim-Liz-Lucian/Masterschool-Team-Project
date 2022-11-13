@@ -3,12 +3,13 @@
 import { Product } from "../firebase/product";
 import { useEffect, useRef } from "preact/hooks";
 import { useSignal } from "@preact/signals";
-import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, onSnapshot, setDoc } from "firebase/firestore";
 import { fireStorage, fireStore } from "../firebase";
 import React, { FormEvent, Ref } from "react";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import ProductSubmitForm from "../component/ProductSubmitForm";
 import ProductCard from "../component/ProductCard";
+import Compressor from 'compressorjs';
 
 // useSignal includes useMemo under the hood
 
@@ -30,11 +31,6 @@ const useDashboard = () => {
 
         const [title, quantity, thumbnail] = [...new FormData(formRef.current!).values()];
 
-        if (!title.toString().trim()) {
-            console.error("empty text field");
-            return;
-        }
-
         const product: Product = {
             // randomly generated
             uid: crypto.randomUUID(),
@@ -44,28 +40,37 @@ const useDashboard = () => {
             quantity: +quantity,
         };
 
-        // TODO: make file optional
-        const file = thumbnail as File;
-        createImageBitmap(file, {
+        // FIXME: make file optional
+        // const file = thumbnail as File;
+        const cjs = new Compressor(thumbnail as File, {
+            quality: 0.6, maxWidth: 1500, maxHeight: 1000, error: (error) => console.error(error),
+            async success(file) {
+                const fileRef = ref(fireStorage, `image/${ADMIN_UID}/products/${product.uid}`);
+                const result = await uploadBytes(fileRef, file, { contentType: file.type });
+                const thumbnailUrl = await getDownloadURL(result.ref);
 
-            resizeQuality: "high"
+                const docRef = doc(fireStore, `users/${ADMIN_UID}/products/${product.uid}`);
+                const _ = await setDoc(docRef, { ...product, thumbnailUrl });
+            },
         });
-
-        // // TODO compress image so that it is noot huge
-        // // https://img.ly/blog/how-to-compress-an-image-before-uploading-it-in-javascript/
-        // const fileRef = ref(fireStorage, `image/${ADMIN_UID}/products/${product.uid}`);
-        // const result = await uploadBytes(fileRef, file, { contentType: file.type });
-        // const thumbnailUrl = await getDownloadURL(result.ref);
-
-        // const docRef = doc(fireStore, `users/${ADMIN_UID}/products/${product.uid}`);
-        // const _ = await setDoc(docRef, { ...product, thumbnailUrl });
     };
 
-    return { formRef, handleSubmit, products };
+    const handleDelete = (product: Product) => {
+        const thumbnailRef = ref(fireStorage, `image/${ADMIN_UID}/products/${product.uid}`);
+        const productRef = doc(fireStore, `users/${ADMIN_UID}/products/${product.uid}`);
+        //    using a higher order function to bypass needing to prop drill
+        return async () => {
+            const _ = await Promise.all([deleteObject(thumbnailRef), deleteDoc(productRef)]);
+            console.log(`product with id:${product.uid} has been deleted`);
+        };
+    };
+
+    return { formRef, handleSubmit, handleDelete, products };
 };
 
 export default function Page() {
-    const { formRef, handleSubmit, products } = useDashboard();
+    const { formRef, handleSubmit, handleDelete, products } = useDashboard();
+
 
     return (
         <div>
@@ -76,10 +81,8 @@ export default function Page() {
             <br />
 
             {products.value.map(product => (<div key={product.uid}>
-                <ProductCard product={product} />
+                <ProductCard product={product} onClick={handleDelete(product)} />
             </div>))}
         </div>
     );
 }
-
-function compress;
