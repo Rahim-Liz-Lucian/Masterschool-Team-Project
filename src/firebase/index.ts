@@ -29,7 +29,12 @@ export const fireAuth = getAuth(fireApp);
  * @remarks
  * NOTE will need to explain the design decision
  */
-export const userSignal = signal(fireAuth.currentUser);
+export const userSignal = signal<User | null>(fireAuth.currentUser);
+
+export type PersonalInformation = {
+    name: string;
+    username: string;
+};
 
 /**
  * Registering a new user

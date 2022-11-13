@@ -1,9 +1,9 @@
 // NOTE these are just for examples
 // NOTE app starts here
-import { Product } from "../firebase";
+import { PersonalInformation, Product } from "../firebase";
 import { useEffect, useRef } from "preact/hooks";
 import { useSignal } from "@preact/signals";
-import { collection, deleteDoc, doc, onSnapshot, setDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, setDoc, where } from "firebase/firestore";
 import { fireAuth, fireStorage, fireStore, userSignal } from "../firebase";
 import { FormEvent } from "react";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
@@ -14,16 +14,30 @@ import { signOut } from "firebase/auth";
 import { Redirect, useLocation } from "wouter-preact";
 
 export default function Page() {
-    const { formRef, handleSubmit, handleDelete, products, user, handleSignOut } = useDashboard();
+    // TODO this should be split into two
+    const { formRef, handleSubmit, handleDelete, products, user, handleSignOut, perInfo } = useDashboard();
 
     if (!user) return (
         <Redirect to="/" />
     );
 
+    async function handleSearchUsers() {
+        const perInfoRef = collection(fireStore, `users`);
+
+        const constraint = where("name", "==", "Kristopher");
+        const qry = query(perInfoRef,);
+
+        const snap = await getDocs(qry);
+        console.log(snap.docs);
+    }
+
+
     return (
         <div>
-            <h1>Welcome {user.displayName}</h1>
+            <h1>Welcome {perInfo.value.name}!</h1>
             <br />
+
+            <button onClick={handleSearchUsers}>Search users</button>
 
             <button onClick={handleSignOut}>Sign out</button>
 
@@ -41,17 +55,29 @@ export default function Page() {
 
 const useDashboard = () => {
     const products = useSignal<Product[]>([]);
+    const perInfo = useSignal<Partial<PersonalInformation>>({});
+
     const formRef = useRef<HTMLFormElement>(null);
     const [, setLocation] = useLocation();
 
-    const user = userSignal.peek(); // could assume that this is live
+    const user = userSignal.value; // could assume that this is live
 
     useEffect(() => {
-        const productCollectionRef = collection(fireStore, `users/${user?.uid}/products`);
-        onSnapshot(productCollectionRef, next => {
-            products.value = next.docs.map(doc => doc.data()) as Product[]; //ok
-        });
+        (async () => {
+            const productCollectionRef = collection(fireStore, `users/${user?.uid}/products`);
+            onSnapshot(productCollectionRef, next => {
+                products.value = next.docs.map(doc => doc.data()) as Product[]; //ok
+            });
+
+            const docRef = doc(fireStore, `users/${user?.uid}`);
+            const snap = await getDoc(docRef);
+            if (snap.exists()) {
+                const { name, username } = snap.data();
+                perInfo.value = { name, username };
+            }
+        })();
     }, []);
+
 
     const handleSignOut = async () => {
         await signOut(fireAuth);
@@ -97,5 +123,5 @@ const useDashboard = () => {
         };
     };
 
-    return { formRef, handleSubmit, handleDelete, products, user, handleSignOut };
+    return { formRef, handleSubmit, handleDelete, products, user, handleSignOut, perInfo };
 };

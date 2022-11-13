@@ -23,5 +23,5 @@ export default function Page() {
 }
 
 export const useIndex = () => {
-    return { user: userSignal.peek() };
+    return { user: userSignal.value };
 };
