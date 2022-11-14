@@ -5,7 +5,7 @@ import { describe, assert, test, expect } from "vitest";
 import { unregisterUser, registerUser, fireStorage, fireStore } from "../firebase";
 import { readFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
-import { appendUserProduct, Product, Profile, removeUserProduct, selectUserProduct, selectUserProductMany } from "../firebase/product";
+import { appendUserProduct, Product, Profile, removeUserProduct, selectUserProduct, selectUserProductMany } from "../firebase";
 
 // admin@mail.com | thisisadmin1 | QrQPMb4LvsdzxY0yq9dAcgljDai2
 describe("firebase.test", () => {

@@ -1,7 +1,7 @@
 import { useRef } from "preact/hooks";
 import { Link, Redirect, useLocation } from "wouter-preact";
 import UserSignUpForm from "../component/UserSignUpForm";
-import { fireAuth, fireStore, registerUser, userSignal } from "../firebase";
+import { fireAuth, fireStore, registerUser, authCtx } from "../firebase";
 import { FormEvent } from "react";
 import { doc, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -28,14 +28,12 @@ export const useSignUp = () => {
     const formRef = useRef<HTMLFormElement>(null);
     const [_, setLocation] = useLocation();
 
-    const user = userSignal.value;
+    const user = authCtx.value;
 
     async function handleUserRegistration(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
         const [name, username, email, password, confirmPassword] = [...new FormData(formRef.current!).values()];
-
-        // 
 
         try {
             console.log(`attempt to sign-up successful`);

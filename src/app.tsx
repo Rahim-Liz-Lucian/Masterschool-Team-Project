@@ -1,32 +1,49 @@
-import { Route, Switch } from "wouter-preact";
+import { Link, Route, Switch } from "wouter-preact";
 // NOTE these are just for examples
 import TypedPage from "./route/x/typed";
 import StyledPage from "./route/x/styled";
 import RealTimePage from "./route/x/real-time";
 // NOTE app starts here
-import IndexPage from "./route";
 import NotFoundPage from "./route/404";
 import DashBoardPage from "./route/dashboard";
 import SignUpPage from "./route/sign-up";
 import SignInPage from "./route/sign-in";
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect } from "preact/hooks";
-import { fireAuth, fireStore, userSignal } from "./firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { fireAuth, authCtx, isPending } from "./firebase";
 
-export function App() {
+const useFirebaseAuthData = () => {
+
     useEffect(() => {
         return onAuthStateChanged(fireAuth, next => {
-            userSignal.value = next;
-            if (next) {
-                // TODO get avatar information 
-            }
+            [authCtx.value, isPending.value] = [next, false];
         });
     }, []);
 
+    return [authCtx.value, isPending.value] as const;
+};
+
+export function App() {
+    const [user, pending] = useFirebaseAuthData();
+
     return (
         <Switch>
-            <Route path="/" component={IndexPage} />
+            <Route path="/">
+                {pending ?
+                    <div>Loading...</div>
+                    :
+                    (<div>
+                        This is the home page
+                        {user ?
+                            <Link href="/dashboard">Goto Dashboard</Link>
+                            :
+                            (<>
+                                <Link href="/sign-in">Sign In?</Link>
+                                <Link href="/sign-up">Sign Up?</Link>
+                            </>)}
+                    </div>)
+                }
+            </Route>
 
             <Route path="/dashboard" component={DashBoardPage} />
             <Route path="/sign-in" component={SignInPage} />

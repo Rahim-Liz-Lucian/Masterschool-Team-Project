@@ -1,7 +1,7 @@
 import { Link, Redirect, useLocation } from "wouter-preact";
 import UserSignInForm from "../component/UserSignInForm";
 import { useRef } from "preact/hooks";
-import { loginUser, userSignal } from "../firebase";
+import { loginUser, authCtx } from "../firebase";
 import { FormEvent } from "react";
 
 export default function Page() {
@@ -27,7 +27,7 @@ const useSignIn = () => {
     const formRef = useRef<HTMLFormElement>(null);
     const [_, setLocation] = useLocation();
 
-    const user = userSignal.peek();
+    const user = authCtx.peek();
 
     async function handleUserLogin(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();

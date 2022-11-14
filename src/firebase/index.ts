@@ -29,7 +29,10 @@ export const fireAuth = getAuth(fireApp);
  * @remarks
  * NOTE will need to explain the design decision
  */
-export const userSignal = signal<User | null>(fireAuth.currentUser);
+export const authCtx = signal<User | null>(fireAuth.currentUser);
+
+export const isPending = signal(true);
+
 
 export type PersonalInformation = {
     name: string;
@@ -119,14 +122,3 @@ export async function appendProductsDocument({ uid }: User, { product }: { produ
     return entry;
 }
 
-export type Profile = Pick<User, "uid"> & {
-    dietaryRequirements?: string[];
-    rating: number;
-};
-
-export type ProductData = DocumentData | {
-    uid: string;
-    title: string;
-    quantity: number;
-    thumbnailUrl?: string;
-};
