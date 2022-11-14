@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "preact/hooks";
 import { Link } from "wouter-preact";
 import { fireStore, userSignal } from "../../firebase";
 
-function useFireStoreUserData<T = DocumentData>(fn: (db: Firestore) => DocumentReference<T>, idField?: string, deps?: any[]) {
+function useFireStoreUserData<T = DocumentData>(fn: (db: Firestore) => DocumentReference<T>, deps?: any[]) {
 
     const memoFn = useCallback(fn, []);
 
@@ -21,7 +21,7 @@ function useFireStoreUserData<T = DocumentData>(fn: (db: Firestore) => DocumentR
             // NOTE this is 
             sig.value = next.data();
         });
-    }, [memoRef, idField]);
+    }, [memoRef]);
 
     let error = null;
     let pending = null;
@@ -51,44 +51,26 @@ const metaConverter = {
 
 export default function Page() {
     const flip = useSignal(true);
+    const uid = flip.value ? `24oAu5IAeTa8y7LV508beL6GQJZ2` : `WEerR23nz3ZPaqcy0ze66mVxOCx1`;
 
-    // does not require `useComputed`
-    const GLOBAL_UID = [
-        `24oAu5IAeTa8y7LV508beL6GQJZ2`,
-        `WEerR23nz3ZPaqcy0ze66mVxOCx1`
-    ][Number(flip.value)];
+    return (
+        <div>
+            <UserMetaCard uid={uid} />
+            <button onClick={_ => flip.value = !flip.value}>Click me</button>
+        </div>
+    );
+}
 
+function UserMetaCard({ uid }: { uid: string; }) {
     const [userMeta, error, pending] = useFireStoreUserData(store => {
-        return doc(store, `users/${GLOBAL_UID}`).withConverter(metaConverter);
-    }, "id", [flip.value]);
-
-
+        return doc(store, `users/${uid}`).withConverter(metaConverter);
+    }, [uid]);
 
     return (
         <div>
             {userMeta && <h1>{userMeta.toString()}</h1>}
             {userMeta && <p>{userMeta.name}</p>}
             {userMeta && <p>{userMeta.username}</p>}
-            <button onClick={_ => flip.value = !flip.value}>Click me</button>
         </div>
-
     );
-
-
-    // NOTE pop-in as first render will always be undefined
-    // if (!user) return (
-    //     <div>
-    //         This is the home page
-    //         <Link href="/sign-in">Sign In?</Link>
-    //         <Link href="/sign-up">Sign Up?</Link>
-    //     </div>
-    // );
-
-    // return (
-    //     <div>
-    //         This is the home page
-    //         <Link href="/dashboard">Goto Dashboard</Link>
-    //     </div>
-    // );
 }
-
