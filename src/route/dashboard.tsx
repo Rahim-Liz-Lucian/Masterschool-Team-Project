@@ -13,14 +13,14 @@ import { signOut, User } from "firebase/auth";
 import { useLocation } from "wouter-preact";
 import { useFirebaseAuthData, useFirebaseCollectionData, useFirebaseDocumentData } from "../firebase/hook";
 
-const use = ({ user, formRef }: { user: User | null; formRef: Ref<HTMLFormElement>; }) => {
-    const [metaData, , pendingMetaData] = useFirebaseDocumentData<UserData>(store => {
-        return doc(store, `users/${user?.uid}`);
-    }, [user]);
+const use = ({ current, formRef }: { current: User | null; formRef: Ref<HTMLFormElement>; }) => {
+    const [userData, , pendingMetaData] = useFirebaseDocumentData<UserData>(store => {
+        return doc(store, `users/${current?.uid}`);
+    }, [current]);
 
     const [productData, , pendingProductsData] = useFirebaseCollectionData<ProductData>(store => {
-        return collection(store, `users/${user?.uid}/products`);
-    }, [user]);
+        return collection(store, `users/${current?.uid}/products`);
+    }, [current]);
 
     // NOTE acts as a controller
     const products = {
@@ -46,11 +46,11 @@ const use = ({ user, formRef }: { user: User | null; formRef: Ref<HTMLFormElemen
                 // NOTE: maxWidth and maxHeight could be smaller
                 quality: 0.6, maxWidth: 1500, maxHeight: 1000, error: (error) => console.error(error),
                 async success(file) {
-                    const fileRef = ref(fireStorage, `image/${user?.uid}/products/${product.uid}`);
+                    const fileRef = ref(fireStorage, `image/${current?.uid}/products/${product.uid}`);
                     const result = await uploadBytes(fileRef, file, { contentType: file.type });
                     const thumbnailUrl = await getDownloadURL(result.ref);
 
-                    const docRef = doc(fireStore, `users/${user?.uid}/products/${product.uid}`);
+                    const docRef = doc(fireStore, `users/${current?.uid}/products/${product.uid}`);
                     const _ = await setDoc(docRef, { ...product, thumbnailUrl });
                 },
             });
@@ -61,7 +61,7 @@ const use = ({ user, formRef }: { user: User | null; formRef: Ref<HTMLFormElemen
             };
         },
         delete(product: ProductData) {
-            const pathname = `${user?.uid}/products/${product.uid}`;
+            const pathname = `${current?.uid}/products/${product.uid}`;
 
             const objRef = ref(fireStorage, `image/${pathname}`);
             const docRef = doc(fireStore, `users/${pathname}`);
@@ -73,7 +73,7 @@ const use = ({ user, formRef }: { user: User | null; formRef: Ref<HTMLFormElemen
         }
     };
 
-    return { done: !(pendingMetaData || pendingProductsData), meta: metaData, products };
+    return { done: !(pendingMetaData || pendingProductsData), user: userData, products };
 };
 
 // ProfileData
@@ -81,11 +81,13 @@ const use = ({ user, formRef }: { user: User | null; formRef: Ref<HTMLFormElemen
 export default function Page() {
     const formRef = useRef<HTMLFormElement>(null);
 
+    const [auth,] = useFirebaseAuthData();
+
+    const { done, user, products } = use({ current: auth, formRef });
+
+    // 
+
     const [, setLocation] = useLocation();
-    const [user,] = useFirebaseAuthData();
-
-    const { done, meta, products } = use({ user, formRef });
-
     const handleSignOut = async () => {
         await signOut(fireAuth);
         setLocation("/");
@@ -93,7 +95,7 @@ export default function Page() {
 
     return done ? (
         <div>
-            <h1>Hello {meta?.name ?? "World"}!</h1>
+            <h1>Hello {user?.name ?? "World"}!</h1>
 
             <button onClick={handleSignOut}>Sign out</button>
 
