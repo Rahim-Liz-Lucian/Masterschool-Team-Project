@@ -2,6 +2,7 @@ import { Route, Switch } from "wouter-preact";
 // NOTE these are just for examples
 import TypedPage from "./route/x/typed";
 import StyledPage from "./route/x/styled";
+import RealTimePage from "./route/x/real-time";
 // NOTE app starts here
 import IndexPage from "./route";
 import NotFoundPage from "./route/404";
@@ -33,6 +34,7 @@ export function App() {
 
             <Route path="/x/typed" component={TypedPage} />
             <Route path="/x/styled" component={StyledPage} />
+            <Route path="/x/real-time" component={RealTimePage} />
 
             <Route component={NotFoundPage} />
         </Switch>
