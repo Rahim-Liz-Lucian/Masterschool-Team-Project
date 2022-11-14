@@ -16,9 +16,7 @@ export default function Page() {
     return (
         <div>
             <h1>Sign-up</h1>
-
             <UserSignUpForm form={formRef} onSubmit={handleUserRegistration} />
-
             <Link href="/sign-in">Already have an account?</Link>
         </div>
     );

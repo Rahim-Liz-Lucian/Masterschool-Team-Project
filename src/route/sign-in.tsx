@@ -3,9 +3,14 @@ import UserSignInForm from "../component/UserSignInForm";
 import { useRef } from "preact/hooks";
 import { loginUser, authCtx } from "../firebase";
 import { FormEvent } from "react";
+import { User } from "firebase/auth";
+import { useFirebaseAuthData } from "../firebase/hook";
 
 export default function Page() {
-    const { formRef, handleUserLogin, user } = useSignIn();
+    const [user, pending] = useFirebaseAuthData();
+    const { formRef, handleUserLogin } = useSignIn();
+
+    if (pending) return (<div>Loading...</div>);
 
     if (user) return (
         <Redirect to="/dashboard" />
@@ -27,8 +32,6 @@ const useSignIn = () => {
     const formRef = useRef<HTMLFormElement>(null);
     const [_, setLocation] = useLocation();
 
-    const user = authCtx.peek();
-
     async function handleUserLogin(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
@@ -44,5 +47,5 @@ const useSignIn = () => {
         }
     }
 
-    return { formRef, handleUserLogin, user };
+    return { formRef, handleUserLogin };
 };
