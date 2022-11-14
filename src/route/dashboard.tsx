@@ -1,6 +1,6 @@
 // NOTE these are just for examples
 // NOTE app starts here
-import { PersonalInformation, Product } from "../firebase";
+import { PersonalInformation, ProductData } from "../firebase";
 import { useEffect, useRef } from "preact/hooks";
 import { useSignal } from "@preact/signals";
 import { collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, setDoc, where } from "firebase/firestore";
@@ -54,7 +54,7 @@ export default function Page() {
 }
 
 const useDashboard = () => {
-    const products = useSignal<Product[]>([]);
+    const products = useSignal<ProductData[]>([]);
     const perInfo = useSignal<Partial<PersonalInformation>>({});
 
     const formRef = useRef<HTMLFormElement>(null);
@@ -65,8 +65,8 @@ const useDashboard = () => {
     useEffect(() => {
         (async () => {
             const productCollectionRef = collection(fireStore, `users/${user?.uid}/products`);
-            onSnapshot(productCollectionRef, next => {
-                products.value = next.docs.map(doc => doc.data()) as Product[]; //ok
+            const unsub = onSnapshot(productCollectionRef, next => {
+                products.value = next.docs.map(doc => doc.data()) as ProductData[]; //ok
             });
 
             const docRef = doc(fireStore, `users/${user?.uid}`);
@@ -75,6 +75,7 @@ const useDashboard = () => {
                 const { name, username } = snap.data();
                 perInfo.value = { name, username };
             }
+            return unsub;
         })();
     }, []);
 
@@ -90,7 +91,7 @@ const useDashboard = () => {
         // NOTE this is only guaranteed if a bad actor doesn't mess with the Javascript
         const [title, quantity, thumbnail] = [...new FormData(formRef.current!).values()];
 
-        const product: Product = {
+        const product: ProductData = {
             // randomly generated uid for each product
             uid: crypto.randomUUID(),
             // cannot start with whitespace, but this is safe guarding
@@ -114,7 +115,7 @@ const useDashboard = () => {
         });
     };
 
-    const handleDelete = (product: Product) => {
+    const handleDelete = (product: ProductData) => {
         const thumbnailRef = ref(fireStorage, `image/${user?.uid}/products/${product.uid}`);
         const productRef = doc(fireStore, `users/${user?.uid}/products/${product.uid}`);
         // NOTE using a higher order function to bypass needing to prop drill

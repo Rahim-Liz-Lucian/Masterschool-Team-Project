@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { createUserWithEmailAndPassword, deleteUser, signInWithEmailAndPassword, signOut, User, getAuth } from "firebase/auth";
 // TODO find the location of this function to 
 // minimise the import size
-import { arrayUnion, doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
+import { arrayUnion, doc, DocumentData, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { signal } from "@preact/signals";
 
@@ -124,7 +124,7 @@ export type Profile = Pick<User, "uid"> & {
     rating: number;
 };
 
-export type Product = {
+export type ProductData = DocumentData | {
     uid: string;
     title: string;
     quantity: number;
