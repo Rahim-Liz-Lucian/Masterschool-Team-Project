@@ -37,7 +37,6 @@ const useSignIn = () => {
 
         const [email, password] = [...new FormData(formRef.current!).values()];
 
-
         try {
             await loginUser(email.toString(), password.toString());
             setLocation("/dashboard");

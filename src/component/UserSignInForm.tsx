@@ -1,5 +1,4 @@
 import { Ref, HTMLAttributes } from "react";
-import { MutableRef } from "preact/hooks";
 
 export default function Form({ form, ...props }: HTMLAttributes<HTMLFormElement> & { form: Ref<HTMLFormElement>; }) {
     return (

@@ -1,8 +1,9 @@
 import { useSignal } from "@preact/signals";
 import Compressor from "compressorjs";
-import { collection, doc, DocumentData } from "firebase/firestore";
-import { ref } from "firebase/storage";
+import { collection, doc, DocumentData, setDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useRef, useState } from "preact/hooks";
+import { fireStorage, fireStore } from "../../firebase";
 import { ProductData, UserData } from "../../firebase/data";
 import { useFirebaseDocumentData, useFirebaseCollectionData, useFirebaseStorageUrl } from "../../firebase/hook";
 
@@ -24,22 +25,30 @@ export default function Page() {
 
     const handleUpload: React.FormEventHandler<HTMLFormElement> = async (e) => {
         const formData = new FormData(formRef.current!);
-        const [title, quantity, image] = ([...formData.values()]);
+        const [title, quantity, file] = ([...formData.values()]);
 
         // clean-up setDoc
-        console.log(title, quantity, image);
-        new Compressor(image as File, {
+        console.log(title, quantity, file);
+        new Compressor(file as File, {
             quality: 0.6, maxWidth: 1500, maxHeight: 1000,
             async success(imageCpy) {
                 console.log(imageCpy);
 
-                const entry: ProductData = {
+                const product: ProductData = {
+                    // randomly generated uid for each product
+                    uid: crypto.randomUUID(),
                     title,
                     quantity: +quantity,
-                    thumbnailUrl: `unknown`
                 };
 
-                console.log(entry);
+                console.log(product);
+
+                const fileRef = ref(fireStorage, `image/${uid}/products/${product.uid}`);
+                const result = await uploadBytes(fileRef, imageCpy, { contentType: imageCpy.type });
+                const thumbnailUrl = await getDownloadURL(result.ref);
+
+                const docRef = doc(fireStore, `users/${uid}/products/${product.uid}`);
+                const _ = await setDoc(docRef, { ...product, thumbnailUrl });
             },
         });
     };

@@ -1,63 +1,31 @@
-import { Link, Redirect, Route, RouteProps, Switch, useRoute } from "wouter-preact";
-// NOTE these are just for examples
-import TypedPage from "./route/x/typed";
-import StyledPage from "./route/x/styled";
-import RealTimePage from "./route/x/real-time";
-// NOTE app starts here
-import NotFoundPage from "./route";
-import DashBoardPage from "./route/dashboard";
-import SettingsPage from "./route/settings";
-import SignUpPage from "./route/sign-up";
-import SignInPage from "./route/sign-in";
-import { useFirebaseAuthData } from "./firebase/hook";
-import { User } from "firebase/auth";
-import { h } from "preact";
-import { Suspense, lazy } from "preact/compat";
+import { lazy, Suspense } from "preact/compat";
+import { Route, Switch } from "wouter-preact";
 
+const files = import.meta.glob('/src/route/**/[a-z[]*.(ts|js|tsx|jsx)');
 
+// console.log(files);
 
+const pages = Object.keys(files).map(filePath => {
+    const path = filePath
+        .replace(/\/src\/route|index|\.(ts|js|tsx|jsx)$/g, '')
+        .replace(/\[\.{3}.+\]/, '*')
+        .replace(/\[(.+)\]/, ':$1');
 
-export function App() {
-    const [user, pending] = useFirebaseAuthData();
+    const Page = lazy(files[filePath]);
 
     return (
-        <Switch>
-            <Route path="/">
-                {pending ?
-                    <div>Loading...</div>
-                    :
-                    (<div>
-                        <h1>This is the home page</h1>
-                        {user ?
-                            <nav>
-                                <Link href="/dashboard">Goto Dashboard</Link>
-                            </nav>
-                            :
-                            (<nav>
-                                <Link href="/sign-in">Sign In?</Link>
-                                <Link href="/sign-up">Sign Up?</Link>
-                            </nav>)}
-                    </div>)
-                }
-            </Route>
-
-
-            <Route path="/dashboard" component={DashBoardPage} />
-            <Route path="/settings" component={SettingsPage} />
-            {/* <Route path="/dashboard" component={DashBoardPage} /> */}
-
-            <Route path="/sign-in" component={SignInPage} />
-            <Route path="/sign-up" component={SignUpPage} />
-
-            <Route path="/x/typed" component={TypedPage} />
-            <Route path="/x/styled" component={StyledPage} />
-            <Route path="/x/real-time" component={RealTimePage} />
-
-            <Route component={NotFoundPage} />
-        </Switch>
+        <Route key={path} path={path}>
+            {/* @ts-ignore */}
+            {params => <Page {...params} />}
+        </Route>
     );
-}
+});
 
-function RouteRequired<T>({ required, redirect, ...props }: RouteProps & { redirect?: string; required: T | null; }) {
-    return (required) ? <Route {...props} /> : <Redirect to={redirect ?? "/"} />;
+export function App() {
+    return (
+        // @ts-ignore
+        <Suspense fallback={<div>Loading...</div>}>
+            <Switch>{pages}</Switch>
+        </Suspense>
+    );
 }
