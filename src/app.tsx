@@ -21,8 +21,6 @@ const pages = Object.keys(files).map(filePath => {
     );
 });
 
-console.log(pages);
-
 export function App() {
     return (
         // @ts-ignore
