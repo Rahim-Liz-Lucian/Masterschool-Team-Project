@@ -1,14 +1,7 @@
-import { MutableRefObject, HTMLAttributes } from "react";
+import { HTMLAttributes } from "react";
 import { Ref } from "preact/hooks";
 
 export default function Form({ form, ...props }: HTMLAttributes<HTMLFormElement> & { form: Ref<HTMLFormElement>; }) {
-    // name
-    // username
-    // email
-    // location
-    // password
-    // confirm password
-
     return (
         <form {...props} ref={form} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <label htmlFor="name">
@@ -25,7 +18,6 @@ export default function Form({ form, ...props }: HTMLAttributes<HTMLFormElement>
                 <span>Email</span>
                 <input required type="email" name="email" id="email" placeholder="Enter email" />
             </label>
-
 
             <label htmlFor="password">
                 <span>Password</span>

@@ -1,5 +1,5 @@
 export default function Page() {
     return (
-        <div>404 Not Found</div>
+        <div>This is an index page</div>
     );
 }

@@ -1,27 +1,21 @@
-import { Link, Route, Switch } from "wouter-preact";
+import { Link, Redirect, Route, RouteProps, Switch, useRoute } from "wouter-preact";
 // NOTE these are just for examples
 import TypedPage from "./route/x/typed";
 import StyledPage from "./route/x/styled";
 import RealTimePage from "./route/x/real-time";
 // NOTE app starts here
-import NotFoundPage from "./route/404";
+import NotFoundPage from "./route";
 import DashBoardPage from "./route/dashboard";
+import SettingsPage from "./route/settings";
 import SignUpPage from "./route/sign-up";
 import SignInPage from "./route/sign-in";
-import { onAuthStateChanged } from "firebase/auth";
-import { useEffect } from "preact/hooks";
-import { fireAuth, authCtx, isPending } from "./firebase";
+import { useFirebaseAuthData } from "./firebase/hook";
+import { User } from "firebase/auth";
+import { h } from "preact";
+import { Suspense, lazy } from "preact/compat";
 
-const useFirebaseAuthData = () => {
 
-    useEffect(() => {
-        return onAuthStateChanged(fireAuth, next => {
-            [authCtx.value, isPending.value] = [next, false];
-        });
-    }, []);
 
-    return [authCtx.value, isPending.value] as const;
-};
 
 export function App() {
     const [user, pending] = useFirebaseAuthData();
@@ -33,19 +27,25 @@ export function App() {
                     <div>Loading...</div>
                     :
                     (<div>
-                        This is the home page
+                        <h1>This is the home page</h1>
                         {user ?
-                            <Link href="/dashboard">Goto Dashboard</Link>
+                            <nav>
+                                <Link href="/dashboard">Goto Dashboard</Link>
+                            </nav>
                             :
-                            (<>
+                            (<nav>
                                 <Link href="/sign-in">Sign In?</Link>
                                 <Link href="/sign-up">Sign Up?</Link>
-                            </>)}
+                            </nav>)}
                     </div>)
                 }
             </Route>
 
+
             <Route path="/dashboard" component={DashBoardPage} />
+            <Route path="/settings" component={SettingsPage} />
+            {/* <Route path="/dashboard" component={DashBoardPage} /> */}
+
             <Route path="/sign-in" component={SignInPage} />
             <Route path="/sign-up" component={SignUpPage} />
 
@@ -56,4 +56,8 @@ export function App() {
             <Route component={NotFoundPage} />
         </Switch>
     );
+}
+
+function RouteRequired<T>({ required, redirect, ...props }: RouteProps & { redirect?: string; required: T | null; }) {
+    return (required) ? <Route {...props} /> : <Redirect to={redirect ?? "/"} />;
 }

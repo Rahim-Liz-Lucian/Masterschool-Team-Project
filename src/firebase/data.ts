@@ -1,19 +1,18 @@
-import { User } from "firebase/auth";
 import { DocumentData } from "firebase/firestore";
 
-export type Profile = Pick<User, "uid"> & {
-    dietaryRequirements?: string[];
-    rating: number;
-};
+// This is to avoid using the `withConverter` method as the data is just fields, no methods
+type Data<T> = DocumentData | T;
 
-export type ProductData = DocumentData | {
+export type ProductData = Data<{
     uid: string;
     title: string;
     quantity: number;
     thumbnailUrl?: string;
-};
+}>;
 
-export type UserData = DocumentData | {
+export type UserData = Data<{
     name: string;
     username: string;
-};
+    // dietaryRequirements?: string[];
+    // rating: number;
+}>;

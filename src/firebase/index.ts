@@ -24,20 +24,14 @@ const fireApp = initializeApp({
 export const fireAuth = getAuth(fireApp);
 
 /**
- * The signal holds the state of the currently logged in user.
- * 
- * @remarks
- * NOTE will need to explain the design decision
+ * This signal holds the context of the currently logged in user.
  */
 export const authCtx = signal<User | null>(fireAuth.currentUser);
 
+/**
+ * This signal holds the context the current loading state.
+ */
 export const isPending = signal(true);
-
-
-export type PersonalInformation = {
-    name: string;
-    username: string;
-};
 
 /**
  * Registering a new user

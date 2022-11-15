@@ -12,19 +12,52 @@ import Compressor from 'compressorjs';
 import { signOut, User } from "firebase/auth";
 import { useLocation } from "wouter-preact";
 import { useFirebaseAuthData, useFirebaseCollectionData, useFirebaseDocumentData } from "../firebase/hook";
+import IsLoading from "../component/IsLoading";
 
-const use = ({ current, formRef }: { current: User | null; formRef: Ref<HTMLFormElement>; }) => {
-    const [userData, , pendingMetaData] = useFirebaseDocumentData<UserData>(store => {
-        return doc(store, `users/${current?.uid}`);
-    }, [current]);
+export default function Page() {
+    const formRef = useRef<HTMLFormElement>(null);
 
-    const [productData, , pendingProductsData] = useFirebaseCollectionData<ProductData>(store => {
-        return collection(store, `users/${current?.uid}/products`);
-    }, [current]);
+    const [auth,] = useFirebaseAuthData();
+
+    const { done, user, products } = use({ auth, formRef });
+
+    // NOTE remove to a hook
+    const [, setLocation] = useLocation();
+    const handleSignOut = async () => {
+        await signOut(fireAuth);
+        setLocation("/sign-in");
+    };
+
+    return done ? (
+        <div>
+            <h1>Hello {user?.name ?? "World"}!</h1>
+
+            <button onClick={handleSignOut}>Sign out</button>
+
+            <ProductSubmitForm form={formRef} onSubmit={products.create} />
+
+            <div style={{ display: "flex" }}>
+                {products.data.map(product => (<div key={product.uid}>
+                    <ProductCard product={product} onClick={products.delete(product)} />
+                </div>))}
+            </div>
+        </div>
+    ) : <IsLoading />;
+}
+
+
+const use = ({ auth, formRef }: { auth: User | null; formRef: Ref<HTMLFormElement>; }) => {
+    const [userData, , userPending] = useFirebaseDocumentData<UserData>(store => {
+        return doc(store, `users/${auth?.uid}`);
+    }, [auth]);
+
+    const [productsData, , productsPending] = useFirebaseCollectionData<ProductData>(store => {
+        return collection(store, `users/${auth?.uid}/products`);
+    }, [auth]);
 
     // NOTE acts as a controller
     const products = {
-        data: productData,
+        data: productsData,
         create(e: FormEvent<HTMLFormElement>) {
             // TODO change API to set this by default
             e.preventDefault();
@@ -46,11 +79,11 @@ const use = ({ current, formRef }: { current: User | null; formRef: Ref<HTMLForm
                 // NOTE: maxWidth and maxHeight could be smaller
                 quality: 0.6, maxWidth: 1500, maxHeight: 1000, error: (error) => console.error(error),
                 async success(file) {
-                    const fileRef = ref(fireStorage, `image/${current?.uid}/products/${product.uid}`);
+                    const fileRef = ref(fireStorage, `image/${auth?.uid}/products/${product.uid}`);
                     const result = await uploadBytes(fileRef, file, { contentType: file.type });
                     const thumbnailUrl = await getDownloadURL(result.ref);
 
-                    const docRef = doc(fireStore, `users/${current?.uid}/products/${product.uid}`);
+                    const docRef = doc(fireStore, `users/${auth?.uid}/products/${product.uid}`);
                     const _ = await setDoc(docRef, { ...product, thumbnailUrl });
                 },
             });
@@ -61,7 +94,7 @@ const use = ({ current, formRef }: { current: User | null; formRef: Ref<HTMLForm
             };
         },
         delete(product: ProductData) {
-            const pathname = `${current?.uid}/products/${product.uid}`;
+            const pathname = `${auth?.uid}/products/${product.uid}`;
 
             const objRef = ref(fireStorage, `image/${pathname}`);
             const docRef = doc(fireStore, `users/${pathname}`);
@@ -73,39 +106,5 @@ const use = ({ current, formRef }: { current: User | null; formRef: Ref<HTMLForm
         }
     };
 
-    return { done: !(pendingMetaData || pendingProductsData), user: userData, products };
+    return { done: !(userPending || productsPending), user: userData, products };
 };
-
-// ProfileData
-
-export default function Page() {
-    const formRef = useRef<HTMLFormElement>(null);
-
-    const [auth,] = useFirebaseAuthData();
-
-    const { done, user, products } = use({ current: auth, formRef });
-
-    // 
-
-    const [, setLocation] = useLocation();
-    const handleSignOut = async () => {
-        await signOut(fireAuth);
-        setLocation("/");
-    };
-
-    return done ? (
-        <div>
-            <h1>Hello {user?.name ?? "World"}!</h1>
-
-            <button onClick={handleSignOut}>Sign out</button>
-
-            <ProductSubmitForm form={formRef} onSubmit={products.create} />
-
-            <div style={{ display: "flex" }}>
-                {products.data.map(product => (<div key={product.uid}>
-                    <ProductCard product={product} onClick={products.delete(product)} />
-                </div>))}
-            </div>
-        </div>
-    ) : <div>Loading...</div>;
-}
