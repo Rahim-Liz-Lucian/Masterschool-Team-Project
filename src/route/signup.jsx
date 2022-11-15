@@ -4,7 +4,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { db, auth } from "../firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import Button from "./Button";
+import Button from "../component/Button";
 import { ReactComponent as ReactLogo } from "../branding/Logo_with_text.svg";
 
 const SignUp = () => {
