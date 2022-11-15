@@ -3,19 +3,18 @@ import { onAuthStateChanged } from "firebase/auth";
 import { DocumentData, Firestore, DocumentReference, onSnapshot, CollectionReference } from "firebase/firestore";
 import { FirebaseStorage } from "firebase/storage";
 import { useCallback, useMemo, useEffect } from "preact/hooks";
-import { authCtx, fireAuth, fireStore, isPending } from ".";
+import { authCtx, fireAuth, fireStore } from ".";
 
 export const useFirebaseAuthData = () => {
-    const isPending = useSignal(true);
+    const done = useSignal(false);
 
     useEffect(() => {
         return onAuthStateChanged(fireAuth, next => {
-            [authCtx.value, isPending.value] = [next, false];
-            // [authCtx.value, isPending.value] = [next, false];
+            [authCtx.value, done.value] = [next, true];
         });
     }, []);
 
-    return [authCtx.value, isPending.value] as const;
+    return [authCtx.value, done.value] as const;
 };
 
 export function useFirebaseDocumentData<T = DocumentData>(query: (db: Firestore) => DocumentReference<T>, deps?: any[]) {
