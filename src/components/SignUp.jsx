@@ -49,6 +49,7 @@ const SignUp = () => {
     } catch (e) {
       console.error("Error adding document: ", e);
     }
+    console.log("this worked!");
   };
 
   return (
@@ -58,7 +59,29 @@ const SignUp = () => {
           style={{ height: "160px", width: "100%", margin: "0 auto" }}
         />
         <h2 className="heading">Sign up to wasteless</h2>
-        <form className="mx-1 mx-md-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (
+              /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email) &&
+              email &&
+              name &&
+              password &&
+              password === repeatPassword
+            ) {
+              handleSignUp();
+            } else if (
+              !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)
+            ) {
+              window.alert("your email isnt valid");
+            } else if (password !== repeatPassword) {
+              window.alert("passwords arent the same");
+            } else {
+              window.alert("fill out everything");
+            }
+          }}
+          className="mx-1 mx-md-4"
+        >
           <div className="input-control">
             <label className="form-label">Your Name</label>
             <input
@@ -86,7 +109,7 @@ const SignUp = () => {
           <div className="input-control">
             <label className="form-label">Password</label>
             <input
-              type="password"
+              type="text"
               className="form-control"
               value={password}
               onChange={(e) => {
@@ -100,7 +123,7 @@ const SignUp = () => {
               Repeat your password
             </label>
             <input
-              type="password"
+              type="text"
               id="form3Example4cd"
               className="form-control"
               value={repeatPassword}
@@ -120,10 +143,11 @@ const SignUp = () => {
               value={city}
               onChange={(e) => {
                 setCity(e.target.value);
+                console.log(e.target.value);
               }}
               required
             >
-              <option value="none" disabled>
+              <option value="" disabled>
                 Select City
               </option>
               <option value="amsterdam">Amsterdam</option>
@@ -133,16 +157,15 @@ const SignUp = () => {
               <option value="tlv">Tel-Aviv</option>
             </select>
           </div>
-
           <label htmlFor="terms">
-            <input type="checkbox" name="terms" required />I agree to the{" "}
+            <input type="checkbox" name="terms" required />I agree to the
             <a href="/">Terms and conditions</a>
           </label>
           <label htmlFor="newsletter">
             <input type="checkbox" name="newsletter" />
             Sign me up to the newsletter
           </label>
-          <Button text="Create Account" handleClick={handleSignUp} />
+          <Button>Create Account</Button>
         </form>
       </section>
     </>
