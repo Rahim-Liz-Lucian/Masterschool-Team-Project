@@ -1,11 +1,10 @@
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { useEffect, useErrorBoundary, useState } from "preact/hooks";
 import wastelessLogo from "../assets/brand/logo.svg";
 import SignUpForm from "../component/SignUpForm";
 import { fireAuth, fireStore } from "../firebase";
 import { validateEmailAndPassword } from "../utils";
-import { useError } from "../utils/hook";
+import { useError } from "../utils/hooks";
 
 
 export default function Page() {
@@ -14,7 +13,7 @@ export default function Page() {
     return !error ? (
         <section>
             {/* this ought to be a svg element */}
-            <img src={wastelessLogo} alt="Waste-Less logo" style={{ height: "160px", width: "100%", margin: "0 auto" }} />
+            <img src={wastelessLogo} alt="Waste-Less logo" style={{ height: "160px", width: "100%" }} />
 
             <h2 className="heading">Sign up to wasteless</h2>
 
