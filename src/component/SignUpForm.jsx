@@ -12,16 +12,7 @@ export default function Form({ register }) {
     const handleSubmit = async e => {
         e.preventDefault();
 
-        // NOTE validation of form data
-        if (password !== (repeatPassword)) {
-            alert("passwords do not match");
-            return;
-        }
-
-        console.log(email, password);
-
-        // proceed with registration
-        await register({ name, email, city, password });
+        await register({ name, email, city, password, repeatPassword });
     };
 
     return (
