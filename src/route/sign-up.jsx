@@ -1,6 +1,6 @@
 import { useState } from "preact/hooks";
 import Button from "../component/base/Button";
-import wastelessLogo from "../assets/logo.svg";
+import wastelessLogo from "../assets/brand/logo.svg";
 
 export default function Page() {
     // const navigate = useNavigate();
