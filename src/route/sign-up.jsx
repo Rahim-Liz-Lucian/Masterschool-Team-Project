@@ -6,7 +6,6 @@ import { fireAuth, fireStore } from "../firebase";
 import { validateEmailAndPassword } from "../utils";
 import { useError } from "../utils/hooks";
 
-
 export default function Page() {
     const { register, error, resetError } = use();
 

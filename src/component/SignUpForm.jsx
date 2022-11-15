@@ -1,4 +1,6 @@
 import { useEffect, useState } from "preact/hooks";
+import { Link } from "wouter-preact";
+
 import Button from "./base/Button";
 
 export default function Form({ register }) {
@@ -90,7 +92,7 @@ export default function Form({ register }) {
 
             <label htmlFor="terms">
                 <input required type="checkbox" name="terms" />
-                <span>I agree to the <a href="/">Terms and conditions</a></span>
+                <span>I agree to the <Link href="/">Terms and conditions</Link></span>
             </label>
 
             <label htmlFor="newsletter">
