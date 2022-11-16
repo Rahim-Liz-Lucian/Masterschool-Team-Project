@@ -1,5 +1,5 @@
 import Button from "../../component/base/Button";
-import ProfileUpdateForm from "../../component/ProfileUpdateForm";
+import SettingsProfileForm from "../../component/SettingsProfileForm";
 import { useFirebaseAuthData } from "../../firebase/hook";
 import defaultAvatar from "../../assets/defaults/avatar.jpg";
 import { doc } from "firebase/firestore";
@@ -28,7 +28,7 @@ export default function Page() {
             </div>
 
             {/* TODO update user details form */}
-            <ProfileUpdateForm update={update} />
+            <SettingsProfileForm update={update} />
 
             {/* have this in red */}
             <Button onClick={unregister} type="submit">Delete account</Button>

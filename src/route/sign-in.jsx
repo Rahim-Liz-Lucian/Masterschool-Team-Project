@@ -4,11 +4,11 @@ import wastelessLogo from "../assets/brand/logo.svg";
 import Button from "../component/base/Button";
 import SignInForm from "../component/SignInForm";
 import { fireAuth } from "../firebase";
+import { useFirebaseAuthData } from "../firebase/hook";
 import { useError } from "../utils/hooks";
 
 export default function Page() {
-    // TODO handle redirecting if already logged in
-    // const [auth, done] = useFirebaseAuthData()
+    // const [auth, isLoaded] = useFirebaseAuthData();
     const { authenticate, error, resetError } = use();
 
     return !error ? (
