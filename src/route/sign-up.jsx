@@ -30,7 +30,6 @@ const use = () => {
 
 
             // throw error to be caught by error Boundary
-            // const cred = await createUserWithEmailAndPassword(fireAuth, email, "."); // what was the error
             const cred = await createUserWithEmailAndPassword(fireAuth, email, password); // the solution
 
             await updateProfile(cred.user, { displayName: name });
