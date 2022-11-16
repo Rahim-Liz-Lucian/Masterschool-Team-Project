@@ -42,9 +42,6 @@ const use = ({ currentUser }) => {
     const { error, setError, resetError } = useError();
 
     const update = async ({ name }) => {
-
-
-
         if (name) {
             // do something if name exists
             // TODO error handling
@@ -56,9 +53,7 @@ const use = ({ currentUser }) => {
     const updateAvatar = (e) => {
         // get file, assumption that this exists given this event is only 
         // triggered when there is a change
-        const rawFile = e.target.files[0];
-
-        new Compressor(rawFile, {
+        new Compressor(e.target.files[0], {
             quality: 0.6, maxWidth: 1500, maxHeight: 1000,
             error(error) { setError(error); },
             async success(file) {
@@ -88,9 +83,7 @@ const use = ({ currentUser }) => {
                             await updateProfile(currentUser, { photoURL });
                             alert(`Your profile picture has been updated`);
                         });
-                } catch (error) {
-                    setError(error);
-                }
+                } catch (error) { setError(error); }
             },
         });
     };
@@ -104,9 +97,7 @@ const use = ({ currentUser }) => {
             // delete images associated with user: `images/${USER_ID}`
             const docRef = doc(fireStore, `users/${currentUser.uid}`);
 
-        } catch (error) {
-            setError(error);
-        }
+        } catch (error) { setError(error); }
     };
 
     return { update, updateAvatar, unregister, error, resetError };
