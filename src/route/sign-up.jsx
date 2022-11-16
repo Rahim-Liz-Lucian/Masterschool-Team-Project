@@ -7,42 +7,45 @@ import { validateEmailAndPassword } from "../utils";
 import { useError } from "../utils/hooks";
 
 export default function Page() {
-    const { register, error, resetError } = use();
+  const { register, error, resetError } = use();
 
-    return !error ? (
-        <section>
-            {/* this ought to be a svg element */}
-            <img src={wastelessLogo} alt="Waste-Less logo" style={{ height: "160px", width: "100%" }} />
+  return (
+    <section>
+      {/* this ought to be a svg element */}
+      <img
+        src={wastelessLogo}
+        alt="Waste-Less logo"
+        style={{ height: "160px", width: "100%" }}
+      />
 
-            <h2 className="heading">Sign up to wasteless</h2>
+      <h2 className="heading">Sign up to wasteless</h2>
 
-            <SignUpForm register={register} />
-        </section>
-    ) : <button onClick={resetError}>Reset</button>;
-};
+      <SignUpForm error={error} register={register} />
+    </section>
+  );
+}
 
 const use = () => {
-    const { error, setError, resetError } = useError();
+  const { error, setError, resetError } = useError();
 
-    const register = async ({ name, email, city, password, repeatPassword }) => {
-        try {
-            validateEmailAndPassword(email, password, repeatPassword);
+  const register = async ({ name, email, city, password, repeatPassword }) => {
+    try {
+      validateEmailAndPassword(email, password, repeatPassword);
 
-            // throw error to be caught by error Boundary
-            const cred = await createUserWithEmailAndPassword(fireAuth, email, ".");
+      // throw error to be caught by error Boundary
+      const cred = await createUserWithEmailAndPassword(fireAuth, email, ".");
 
-            await updateProfile(cred.user, { displayName: name });
+      await updateProfile(cred.user, { displayName: name });
 
-            // add a document with location information
-            const docRef = doc(fireStore, `users/${cred.user.uid}`);
-            await setDoc(docRef, { uid: cred.user.uid, location: { city } });
+      // add a document with location information
+      const docRef = doc(fireStore, `users/${cred.user.uid}`);
+      await setDoc(docRef, { uid: cred.user.uid, location: { city } });
 
-            alert(`Welcome, ${name} to Waste-Less 💚!!`);
-        } catch (error) {
-            setError(error);
-        }
-    };
+      alert(`Welcome, ${name} to Waste-Less 💚!!`);
+    } catch (error) {
+      setError(error);
+    }
+  };
 
-    return { register, error, resetError };
+  return { register, error, resetError };
 };
-
