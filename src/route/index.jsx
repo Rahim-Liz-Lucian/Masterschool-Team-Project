@@ -2,9 +2,9 @@ import { Link } from "wouter-preact";
 import { useFirebaseAuthData } from "../firebase/hooks";
 
 export default function Page() {
-  const [user, pending] = useFirebaseAuthData();
+  const [user, done] = useFirebaseAuthData();
 
-  return !pending ? (
+  return !done ? (
     <div>Loading...</div>
   ) : (
     <div>
@@ -12,6 +12,7 @@ export default function Page() {
       {user ? (
         <nav>
           <Link href="/dashboard">Goto Dashboard</Link>
+          <Link href="/settings/profile">Goto Settings</Link>
         </nav>
       ) : (
         <nav>

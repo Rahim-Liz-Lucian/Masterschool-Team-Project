@@ -11,6 +11,8 @@ export default function Page() {
     // const [auth, isLoaded] = useFirebaseAuthData();
     const { authenticate, error, resetError } = use();
 
+    // TODO if currentUser then redirect to browse
+
     return !error ? (
         <div>
             <img src={wastelessLogo} alt="Waste-Less logo" style={{ height: "160px", width: "100%" }} />
