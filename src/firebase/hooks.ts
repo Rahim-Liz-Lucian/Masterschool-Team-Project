@@ -9,6 +9,7 @@ export const useFirebaseAuthData = () => {
     const done = useSignal(false);
 
     useEffect(() => {
+        console.log(`rerender`);
         return onAuthStateChanged(fireAuth, next => {
             [authCtx.value, done.value] = [next, true];
         });

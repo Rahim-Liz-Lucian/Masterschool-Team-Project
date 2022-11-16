@@ -1,6 +1,6 @@
 import Button from "../../component/base/Button";
 import SettingsProfileForm from "../../component/SettingsProfileForm";
-import { useFirebaseAuthData } from "../../firebase/hook";
+import { useFirebaseAuthData } from "../../firebase/hooks";
 import defaultAvatar from "../../assets/defaults/avatar.jpg";
 import { doc } from "firebase/firestore";
 import { fireStore, fireAuth } from "../../firebase";

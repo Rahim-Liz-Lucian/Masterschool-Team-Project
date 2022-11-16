@@ -1,5 +1,5 @@
 import { Link } from "wouter-preact";
-import { useFirebaseAuthData } from "../firebase/hook";
+import { useFirebaseAuthData } from "../firebase/hooks";
 
 export default function Page() {
     const [user, pending] = useFirebaseAuthData();
