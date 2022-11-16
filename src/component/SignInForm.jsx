@@ -15,7 +15,7 @@ export default function Form({ authenticate }) {
     return (
         <form onSubmit={handleSubmit}>
             <div className="input-control">
-                <label className="form-label">Your Email</label>
+                <label className="form-label">Email</label>
                 <input
                     required
                     type="email"
