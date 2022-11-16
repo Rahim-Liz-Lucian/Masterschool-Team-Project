@@ -21,8 +21,10 @@
     },
     "devDependencies": {
         "@preact/preset-vite": "^2.4.0",
+        "@testing-library/jest-dom": "^5.16.5",
         "@testing-library/preact": "^3.2.2",
         "@types/styled-components": "^5.1.26",
+        "jsdom": "^20.0.2",
         "typescript": "^4.9.3",
         "vite": "^3.2.4",
         "vitest": "^0.25.2"
