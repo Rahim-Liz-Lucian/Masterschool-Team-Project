@@ -3,11 +3,13 @@ import SettingsProfileForm from "../../component/SettingsProfileForm";
 import { useFirebaseAuthData } from "../../firebase/hooks";
 import defaultAvatar from "../../assets/defaults/avatar.jpg";
 import { doc } from "firebase/firestore";
-import { fireStore, fireAuth, fireStorage } from "../../firebase";
+import { fireStore, fireStorage } from "../../firebase";
 import { useError } from "../../utils/hooks";
-import { updateCurrentUser, updateProfile } from "firebase/auth";
-import { getDownloadURL, ref, uploadBytes, uploadBytesResumable } from "firebase/storage";
+import { updateProfile } from "firebase/auth";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import Compressor from "compressorjs";
+import { uploadPhoto } from "../../firebase/functions";
+import ErrorMessage from "../../component/base/ErrorMessage";
 
 // NOTE using Github as a reference, it refreshes the page when changes are made
 // Is this behaviour we want or do we want it to update with no refresh. They also
@@ -20,7 +22,9 @@ export default function Page() {
 
     return !error ? (
         <div>
-            <h1>{currentUser.displayName}'s Profile</h1>
+            <h1>Profile</h1>
+            {currentUser.displayName && <h2>{currentUser.displayName}'s Profile</h2>}
+            <p>{currentUser.email}</p>
 
             <div>
                 <label htmlFor="avatar">
@@ -35,54 +39,29 @@ export default function Page() {
             {/* have this in red */}
             <Button onClick={unregister} type="submit">Delete account</Button>
         </div>
-    ) : <button onClick={resetError}>reset</button>;
+    ) : <ErrorMessage error={error} resetError={resetError} />;
 }
 
 const use = ({ currentUser }) => {
     const { error, setError, resetError } = useError();
 
     const update = async ({ name }) => {
-        if (name) {
-            // do something if name exists
-            // TODO error handling
-            await updateProfile(currentUser, { displayName: name });
-            alert(`Profile updated for ${name}`);
-        }
+        // do something if name exists
+        // TODO error handling
+        await updateProfile(currentUser, { displayName: name });
+        alert(`Your profile display name has been updated for ${name}`);
     };
 
     const updateAvatar = (e) => {
-        // get file, assumption that this exists given this event is only 
-        // triggered when there is a change
         new Compressor(e.target.files[0], {
             quality: 0.6, maxWidth: 1500, maxHeight: 1000,
             error(error) { setError(error); },
             async success(file) {
-                // TODO when the file has finished compressing, upload to server
-                const imgRef = ref(fireStorage, `users/${currentUser?.uid}/images`);
-                const task = uploadBytesResumable(imgRef, file, { contentType: file.type, customMetadata: {/* TODO */ } });
-
                 try {
-                    const _ = task.on("state_changed",
-                        snapshot => {
-                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                            console.log(`Upload is ${progress}% done`);
-                            switch (snapshot.state) {
-                                case "paused":
-                                    console.log("Upload is paused");
-                                    break;
-                                case "running":
-                                    console.log("Upload is running");
-                                    break;
-                            }
-                        },
-                        error => setError(error),
-                        async () => {
-                            const photoURL = await getDownloadURL(task.snapshot.ref);
-                            console.log('File available at', photoURL);
-
-                            await updateProfile(currentUser, { photoURL });
-                            alert(`Your profile picture has been updated`);
-                        });
+                    file.name = "avatar";
+                    // TODO return the url of the displayPhoto for this function
+                    uploadPhoto(currentUser, file);
+                    alert(`Your profile picture has been updated 💚`);
                 } catch (error) { setError(error); }
             },
         });
@@ -92,13 +71,12 @@ const use = ({ currentUser }) => {
         console.log(e);
 
         try {
-            // delete top level collection for you: `users/${USER_ID}`
-
-            // delete images associated with user: `images/${USER_ID}`
-            const docRef = doc(fireStore, `users/${currentUser.uid}`);
-
+            //  TODO
         } catch (error) { setError(error); }
     };
 
     return { update, updateAvatar, unregister, error, resetError };
 };
+
+
+
