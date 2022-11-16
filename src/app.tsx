@@ -3,8 +3,6 @@ import { Route, Switch } from "wouter-preact";
 
 const files = import.meta.glob('/src/route/**/[a-z[]*.(ts|js|tsx|jsx)');
 
-// console.log(files);
-
 const pages = Object.keys(files).map(filePath => {
     const path = filePath
         .replace(/\/src\/route|index|\.(ts|js|tsx|jsx)$/g, '')

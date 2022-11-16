@@ -2,14 +2,15 @@ import Button from "../../component/base/Button";
 import SettingsProfileForm from "../../component/SettingsProfileForm";
 import { useFirebaseAuthData } from "../../firebase/hooks";
 import defaultAvatar from "../../assets/defaults/avatar.jpg";
-import { doc } from "firebase/firestore";
+import { collection, deleteDoc, doc } from "firebase/firestore";
 import { fireStore, fireStorage } from "../../firebase";
 import { useError } from "../../utils/hooks";
-import { updateProfile } from "firebase/auth";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { deleteUser, updateProfile } from "firebase/auth";
+import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import Compressor from "compressorjs";
 import { uploadPhoto } from "../../firebase/functions";
 import ErrorMessage from "../../component/base/ErrorMessage";
+import { useLocation } from "wouter-preact";
 
 // NOTE using Github as a reference, it refreshes the page when changes are made
 // Is this behaviour we want or do we want it to update with no refresh. They also
@@ -67,11 +68,16 @@ const use = ({ currentUser }) => {
         });
     };
 
-    const unregister = (e) => {
-        console.log(e);
+    const [, setLocation] = useLocation();
 
+    const unregister = async (e) => {
+        const userRef = ref(fireStorage, `users/${currentUser.uid}`);
+        const colRef = doc(fireStore, `users/${currentUser.uid}`);
         try {
-            //  TODO
+            await Promise.all([deleteDoc(colRef), deleteObject(userRef), deleteUser(currentUser)]);
+
+            alert(`Sad to see you leave ☹️`);
+            setLocation("/");
         } catch (error) { setError(error); }
     };
 
