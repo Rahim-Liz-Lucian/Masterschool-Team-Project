@@ -28,22 +28,24 @@ const use = () => {
         try {
             validateEmailAndPassword(email, password, repeatPassword);
 
-
             // throw error to be caught by error Boundary
             const cred = await createUserWithEmailAndPassword(fireAuth, email, password); // the solution
 
-            await updateProfile(cred.user, { displayName: name });
+            await Promise.all([
+                updateProfile(cred.user, { displayName: name }),
+                // setDoc(doc(fireStore, `users/${cred.user.uid}`), { uid: cred.user.uid, location: { city } }),
+                uploadDocument(`users/${cred.user.uid}`, { uid: cred.user.uid, location: { city } })
+            ]);
 
             // add a document with location information
-            const docRef = doc(fireStore, `users/${cred.user.uid}`);
-            await setDoc(docRef, { uid: cred.user.uid, location: { city } });
+            // const docRef = doc(fireStore, `users/${cred.user.uid}`);
+            // await setDoc(doc(fireStore, `users/${cred.user.uid}`), { uid: cred.user.uid, location: { city } });
 
             alert(`Welcome, ${name} to Waste-Less 💚!!`);
-        } catch (error) {
-            setError(error);
-        }
+        } catch (error) { setError(error); }
     };
 
     return { register, error, resetError };
 };
 
+function uploadDocument(path, data) { return setDoc(doc(fireStore, path), data); }
