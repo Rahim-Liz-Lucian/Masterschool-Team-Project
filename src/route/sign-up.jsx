@@ -28,8 +28,10 @@ const use = () => {
         try {
             validateEmailAndPassword(email, password, repeatPassword);
 
+
             // throw error to be caught by error Boundary
-            const cred = await createUserWithEmailAndPassword(fireAuth, email, ".");
+            // const cred = await createUserWithEmailAndPassword(fireAuth, email, "."); // what was the error
+            const cred = await createUserWithEmailAndPassword(fireAuth, email, password); // the solution
 
             await updateProfile(cred.user, { displayName: name });
 
