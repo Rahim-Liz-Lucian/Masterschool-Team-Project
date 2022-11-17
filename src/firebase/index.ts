@@ -31,7 +31,12 @@ export const authCtx = signal<User | null>(fireAuth.currentUser);
 /**
  * This signal holds the context the current loading state.
  */
-export const isPending = signal(true);
+export const authLoaded = signal(false);
+
+export const useFirebaseAuth = () => {
+    // TODO
+    return [authCtx.value, authLoaded.value] as const;
+};
 
 /**
  * Registering a new user
@@ -78,41 +83,3 @@ export async function logoutUser() {
 export const fireStore = getFirestore(fireApp);
 
 export const fireStorage = getStorage(fireApp);
-
-/**
- * Query the `product` collection for the document that is associated with the User's uuid 
- * 
- * @remarks
- * FIXME error handling
- */
-export async function getUserProducts({ uid }: User) {
-    const docRef = doc(fireStore, `product/${uid}`);
-    const snapShot = await getDoc(docRef);
-    // FIXME if error then return error to user
-    return snapShot.data();
-}
-
-/**
- * Query the `product` collection for the document that is associated with the User's uuid 
- * 
- * @remarks
- * TODO research on sub-collections.
- */
-export async function getUserProduct(user: User, { product }: { product: unknown; }) {
-    throw new Error("not implemented");
-}
-
-/**
- * Upload a new document to the `product` collection for the User. 
- * 
- * @remarks
- * FIXME error handling
- */
-export async function appendProductsDocument({ uid }: User, { product }: { product: any; }) {
-    const docRef = doc(fireStore, `product/${uid}`);
-    const entry = { ...product, id: crypto.randomUUID() };
-    await setDoc(docRef, { product: arrayUnion(entry) }, { merge: true });
-    // FIXME if error then return error to user
-    return entry;
-}
-

@@ -1,29 +1,27 @@
-import { lazy, Suspense } from "preact/compat";
+import { onAuthStateChanged } from "firebase/auth";
+import { Suspense, useEffect } from "preact/compat";
 import { Route, Switch } from "wouter-preact";
-
-const files = import.meta.glob('/src/route/**/[a-z[]*.(ts|js|tsx|jsx)');
-
-const pages = Object.keys(files).map(filePath => {
-    const path = filePath
-        .replace(/\/src\/route|index|\.(ts|js|tsx|jsx)$/g, '')
-        .replace(/\[\.{3}.+\]/, '*')
-        .replace(/\[(.+)\]/, ':$1');
-
-    const Page = lazy(files[filePath]);
-
-    return (
-        <Route key={path} path={path}>
-            {/* @ts-ignore */}
-            {params => <Page {...params} />}
-        </Route>
-    );
-});
+import { fireAuth, authCtx, authLoaded } from "./firebase";
+import { routes } from "./routes";
 
 export function App() {
+    useEffect(() => {
+        return onAuthStateChanged(fireAuth, next => {
+            console.log("render");
+            authCtx.value = next;
+            authLoaded.value = true;
+        });
+    }, []);
+
     return (
         // @ts-ignore
-        <Suspense fallback={<div>Loading...</div>}>
-            <Switch>{pages}</Switch>
+        <Suspense fallback={<div>App Loading...</div>}>
+            <Switch>{routes.map(({ path, Page }) => (
+                <Route path={path}>
+                    {/* @ts-ignore */}
+                    {(params) => <Page {...params} />}
+                </Route>
+            ))}</Switch>
         </Suspense>
     );
 }
