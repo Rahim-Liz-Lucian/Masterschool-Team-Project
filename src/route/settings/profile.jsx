@@ -16,7 +16,7 @@ import { useLocation } from "wouter-preact";
 // Is this behaviour we want or do we want it to update with no refresh. They also
 // keep this optional so can be blank.
 export default function Page() {
-    const [currentUser, done] = useFirebaseAuthData();
+    // const [currentUser, done] = useFirebaseAuthData();
     const { update, updateAvatar, unregister, error, resetError } = use({ currentUser });
 
     if (!done) return (<div>Loading...</div>);
