@@ -1,49 +1,49 @@
+import { signOut } from "firebase/auth";
 import { Link, useLocation } from "wouter-preact";
-import { useFirebaseAuth } from "../firebase";
-import { useError } from "../utils/hooks";
-import wastelessLogo from "../assets/brand/logo.svg";
-import Button from "../component/base/Button";
-import SignInForm from "../component/SignInForm";
 import { fireAuth } from "../firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { useFirebaseAuth } from "../firebase/hooks";
 
 export default function Page() {
-    const [, authLoaded] = useFirebaseAuth();
-    const { authenticate, error, resetError } = use();
+    const [auth, isLoading] = useFirebaseAuth();
+    const { onSignOut } = use({ auth });
 
-    if (!authLoaded) return (
+    if (isLoading) return (
         <div>Loading...</div>
     );
 
-    if (error) return (
-        <button onClick={resetError}>reset</button>
-    );
-
     return (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <img src={wastelessLogo} alt="Waste-Less logo" style={{ height: "160px", width: "100%" }} />
+        <main>
+            <h1>{auth ? `Welcome ${auth.displayName}` : "Welcome"} 💚</h1>
 
-            <SignInForm authenticate={authenticate} />
+            <div>This is where data will go</div>
 
-            <Link href="/sign-up">Don't have an account?</Link>
-
-            <Link href="/browse">Browse as guest?</Link>
-        </div>
+            {auth ? (
+                <div>
+                    <button onClick={onSignOut}>Sign out</button>
+                    <nav>
+                        <Link to="/upload">Upload product</Link>
+                        <Link to="/settings/profile">My profile</Link>
+                    </nav>
+                </div>
+            ) : (
+                <div>
+                    <Link to="/sign-in">Login</Link>
+                    <Link to="/sign-up">Sign up</Link>
+                </div>
+            )}
+        </main>
     );
 }
 
-const use = () => {
-    const { error, setError, resetError } = useError();
+const use = ({ auth }) => {
     const [, setLocation] = useLocation();
 
-    const authenticate = async ({ email, password }) => {
-        try {
-            const cred = await signInWithEmailAndPassword(fireAuth, email, password);
-            // NOTE alert is just a debugging option
-            alert(`Sign-in has been successful ${cred.user.uid} 💚`);
-            setLocation("/browse");
-        } catch (error) { setError(error); }
+    const onSignOut = async () => {
+        await signOut(fireAuth);
+
+        alert(`Goodbye, see you soon 💚`);
+        setLocation("/");
     };
 
-    return { authenticate, error, resetError };
+    return { onSignOut };
 };

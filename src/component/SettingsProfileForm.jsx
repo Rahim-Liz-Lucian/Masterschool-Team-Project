@@ -1,13 +1,13 @@
 import { useState } from "preact/hooks";
 import Button from "./base/Button";
 
-export default function Form({ update }) {
+export default function SettingsProfileForm({ onUpdateProfile }) {
     const [name, setName] = useState("");
 
     const handleSubmit = async e => {
         e.preventDefault();
 
-        await update({ name });
+        await onUpdateProfile({ name });
     };
 
     return (

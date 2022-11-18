@@ -1,52 +1,99 @@
-import { updateProfile } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes, uploadBytesResumable } from "firebase/storage";
-import { fireStorage, fireStore } from ".";
+import { createUserWithEmailAndPassword, deleteUser, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { deleteDoc, doc, setDoc } from "firebase/firestore";
+import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { fireStorage, fireStore, fireAuth } from ".";
 
-export async function uploadFile(user, file, filePath) {
+/**
+ * Register a new user to the firebase Application
+ * 
+ * @param {string} email 
+ * @param {string} password 
+ * @returns 
+ */
+export async function registerUser(email, password) {
+    return createUserWithEmailAndPassword(fireAuth, email, password);
+}
+
+/** 
+ * Delete a user from the database, as well as all their saved data
+ * 
+ * @param {*} user 
+ * @returns 
+ */
+export async function unregisterUser(user) {
+    await deleteUser(user);
+}
+
+/**
+ * User attempts to login to service
+ *
+ * @param {string} email 
+ * @param {string} password 
+ * @returns 
+ */
+export async function signInUser(email, password) {
+    return signInWithEmailAndPassword(fireAuth, email, password);
+}
+
+/**
+ * Logout current user 
+ */
+export async function signOutUser() {
+    return signOut(fireAuth);
+}
+
+/**
+ * Upload a file to firebase. Throws an error if one exists
+ * 
+ * @param {File} file 
+ * @param {string} filePath 
+ * @returns
+ */
+export async function uploadFile(file, filePath) {
     const fileRef = ref(fireStorage, filePath);
 
-    const res = await uploadBytes(fileRef, file);
+    const res = await uploadBytes(fileRef, file, { contentType: file.type, customMetadata: { /* TODO */ } });
     return await getDownloadURL(res.ref);
 }
 
-export function uploadPhoto(user, file) {
-    const imgRef = ref(fireStorage, `users/${user?.uid}/${file.name}`);
-    const task = uploadBytesResumable(imgRef, file, { contentType: file.type, customMetadata: { /* TODO */ } });
-
-    function onRunning() {
-        return snapshot => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            switch (snapshot.state) {
-                case "paused":
-                    console.log("Upload is paused");
-                    break;
-                case "running":
-                    console.log(`Upload is ${progress}% done`);
-                    break;
-            }
-        };
-    }
-
-    function onComplete(task, currentUser) {
-        return async () => {
-            const photoURL = await getDownloadURL(task.snapshot.ref);
-            console.log('File available at', photoURL);
-
-            await updateProfile(currentUser, { photoURL });
-        };
-    }
-
-    // could maybe return the error somewhere here
-    return task.on("state_changed", onRunning(), error => { throw error; }, onComplete(task, user));
+/**
+ * Uploads a product to the path `users/:userId/products/:productsId`
+ * 
+ * Throws an error if any occur
+ * 
+ * @param {*} user 
+ * @param {*} product 
+ * @returns 
+ */
+export function uploadProduct(user, product) {
+    const productRef = doc(fireStore, `users/${user?.uid}/products/${product.uid}`);
+    return setDoc(productRef, product);
 }
 
-export async function uploadProduct(user, product) {
-    const productRef = doc(fireStore, `users/${user?.uid}/products/${product.uid}`);
+/**
+ * Uploads user details to the path `users/:userId`
+ * 
+ * Throws an error if any occur
+ * 
+ * @param {*} user 
+ * @param {*} details 
+ * @returns 
+ */
+export function uploadUserDetails(user, details) {
+    const detailsRef = doc(fireStorage, `users/${user?.uid}`);
+    return setDoc(detailsRef, details);
+}
 
-    // upload product image
-    console.log(product);
+export function deleteUserAccount(user) {
+    // fireStorage
+    const filesRef = ref(fireStorage, `users/${user?.uid}`);
 
-    // upload to the doc
-    setDoc(productRef, product);
+    // fireStore
+    const dataRef = doc(fireStore, `users/${user?.uid}`);
+
+    return Promise.all([
+        deleteDoc(dataRef),
+        deleteObject(filesRef),
+        deleteUser(user)
+    ]);
 }

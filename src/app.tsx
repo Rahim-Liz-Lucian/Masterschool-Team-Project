@@ -1,27 +1,34 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { onAuthStateChanged } from "firebase/auth";
 import { Suspense, useEffect } from "preact/compat";
-import { Route, Switch } from "wouter-preact";
-import { fireAuth, authCtx, authLoaded } from "./firebase";
+import { Redirect, Route, Switch } from "wouter-preact";
+import { fireAuth } from "./firebase";
+import { authCtx, authLoading } from "./firebase/data";
 import { routes } from "./routes";
 
 export function App() {
     useEffect(() => {
         return onAuthStateChanged(fireAuth, next => {
-            console.log("render");
             authCtx.value = next;
-            authLoaded.value = true;
+            authLoading.value = false;
         });
     }, []);
+
 
     return (
         // @ts-ignore
         <Suspense fallback={<div>App Loading...</div>}>
-            <Switch>{routes.map(({ path, Page }) => (
-                <Route path={path}>
-                    {/* @ts-ignore */}
-                    {(params) => <Page {...params} />}
-                </Route>
-            ))}</Switch>
+            <Switch>
+                {routes.map(({ path, Page }) => (
+                    <Route path={path}>
+                        {/* @ts-ignore */}
+                        {(params) => <Page {...params} />}
+                    </Route>
+                )).concat(<Redirect to="/"></Redirect>)}
+            </Switch>
         </Suspense>
     );
 }
+
+// najirab787@invodua.com
+// admin123

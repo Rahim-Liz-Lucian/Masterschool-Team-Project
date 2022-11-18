@@ -1,10 +1,9 @@
 import Compressor from "compressorjs";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection } from "firebase/firestore";
 import { useEffect, useState } from "preact/hooks";
 import ErrorMessage from "../component/base/ErrorMessage";
-import { useFirebaseAuth } from "../firebase";
 import { uploadFile, uploadProduct } from "../firebase/functions";
-import { useFirebaseCollectionData } from "../firebase/hooks";
+import { useFirebaseAuth, useFirebaseCollectionData } from "../firebase/hooks";
 import { useError } from "../utils/hooks";
 
 export default function Page() {
@@ -48,15 +47,17 @@ const use = ({ auth: user }) => {
 
     const onUpload = async ({ title, description, expirationDate, thumbnail }) => {
         const product = {
+            title,
+            expirationDate,
             uid: crypto.randomUUID(),
-            title, description: description ?? ``, expirationDate,
+            description: description ?? ``,
         };
 
         new Compressor(thumbnail, {
             quality: 0.6, maxWidth: 1500, maxHeight: 1000, error(error) { setError(error); },
             async success(file) {
                 try {
-                    const thumbnailURL = await uploadFile(user, file, `users/${user?.uid}/images/products/${product.uid}`);
+                    const thumbnailURL = await uploadFile(file, `users/${user?.uid}/images/products/${product.uid}`);
                     await uploadProduct(user, { ...product, thumbnailURL });
                     alert(`Product has been uploaded 💚`);
                 } catch (error) {
