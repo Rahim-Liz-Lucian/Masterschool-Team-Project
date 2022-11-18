@@ -6,6 +6,7 @@ type Data<T> = DocumentData | T;
 export type ProductData = Data<{
     uid: string;
     title: string;
+    description?: string;
     quantity: number;
     thumbnailUrl?: string;
 }>;
