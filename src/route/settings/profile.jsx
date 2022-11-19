@@ -5,25 +5,27 @@ import { deleteUserAccount, uploadFile } from "../../firebase/functions";
 import { updateProfile } from "firebase/auth";
 import ErrorMessage from "../../component/base/ErrorMessage";
 import SettingsProfileForm from "../../component/SettingsProfileForm";
-import { useLocation } from "wouter-preact";
+import { Redirect, useLocation } from "wouter-preact";
 import Button from "../../component/base/Button";
 import { useFirebaseAuth } from "../../firebase/hooks";
+import { useState } from "preact/hooks";
 
 // NOTE using Github as a reference, it refreshes the page when changes are made
 // Is this behaviour we want or do we want it to update with no refresh. They also
 // keep this optional so can be blank.
 export default function Page() {
-    const [auth, authLoaded] = useFirebaseAuth();
+    const [auth, isLoading] = useFirebaseAuth();
     const { error, resetError, updateAvatar, onUpdateProfile, onDeleteAccount } = use({ auth });
 
     if (error) return (
         <ErrorMessage {...{ error, resetError }} />
     );
 
-    // TODO rename authLoaded to isLoading to save needing to use a boolean
-    if (!authLoaded) return (
+    if (isLoading) return (
         <div>Loading...</div>
     );
+
+    if (!auth) return <Redirect to="/" />;
 
     return (
         <div>
@@ -42,7 +44,8 @@ export default function Page() {
             <SettingsProfileForm onUpdateProfile={onUpdateProfile} />
 
             {/* have this in red */}
-            <Button onClick={onDeleteAccount} type="submit">Delete account</Button>
+
+            <DeleteAccountForm onDeleteAccount={onDeleteAccount} />
         </div>
     );
 }
@@ -75,10 +78,10 @@ const use = ({ auth: user }) => {
     };
 
 
-    const onDeleteAccount = async () => {
+    const onDeleteAccount = async ({ password }) => {
         try {
+            await deleteUserAccount(user, password);
             alert(`Sad to see you leave ☹️`);
-            await deleteUserAccount(user);
             setLocation("/");
         } catch (error) { setError(error); }
     };
@@ -87,4 +90,22 @@ const use = ({ auth: user }) => {
 };
 
 
+function DeleteAccountForm({ onDeleteAccount }) {
+    const [password, setPassword] = useState("");
 
+    const onSubmit = (e) => {
+        e.preventDefault();
+        onDeleteAccount({ password });
+    };
+
+    return (
+        <form onSubmit={onSubmit}>
+            <label htmlFor="password">
+                <span>Password</span>
+                <input type="password" name="password" id="password" required onChange={e => setPassword(e.target.value)} />
+            </label>
+
+            <Button type="submit">Delete account</Button>
+        </form>
+    );
+}

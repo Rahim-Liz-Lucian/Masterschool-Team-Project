@@ -1,22 +1,22 @@
 import { Link, useLocation } from "wouter-preact";
-import { useFirebaseAuth } from "../firebase";
+import { useFirebaseAuth } from "../firebase/hooks";
 import { useError } from "../utils/hooks";
 import wastelessLogo from "../assets/brand/logo.svg";
-import Button from "../component/base/Button";
 import SignInForm from "../component/SignInForm";
 import { fireAuth } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import ErrorMessage from "../component/base/ErrorMessage";
 
 export default function Page() {
-    const [, authLoaded] = useFirebaseAuth();
+    const [, isLoading] = useFirebaseAuth();
     const { authenticate, error, resetError } = use();
 
-    if (!authLoaded) return (
-        <div>Loading...</div>
+    if (error) return (
+        <ErrorMessage {...{ error, resetError }} />
     );
 
-    if (error) return (
-        <button onClick={resetError}>reset</button>
+    if (isLoading) return (
+        <div>Loading...</div>
     );
 
     return (

@@ -9,7 +9,7 @@ import { validateEmailAndPassword } from "../utils";
 import { useError } from "../utils/hooks";
 
 export default function Page() {
-    const { register, error, resetError } = use();
+    const { onRegister, error, resetError } = use();
 
     if (error) return (
         <ErrorMessage {...{ error, resetError }} />
@@ -22,7 +22,7 @@ export default function Page() {
 
             <h2 className="heading">Sign up to wasteless</h2>
 
-            <SignUpForm register={register} />
+            <SignUpForm onRegister={onRegister} />
         </div>
     );
 }
@@ -31,7 +31,7 @@ const use = () => {
     const { error, setError, resetError } = useError();
     const [, setLocation] = useLocation();
 
-    const register = async ({ name, email, city, password, repeatPassword }) => {
+    const onRegister = async ({ name, email, city, password, repeatPassword }) => {
         try {
             validateEmailAndPassword(email, password, repeatPassword);
 
@@ -48,7 +48,7 @@ const use = () => {
         } catch (error) { setError(error); }
     };
 
-    return { register, error, resetError };
+    return { onRegister, error, resetError };
 };
 
 // function _uploadUserDetails(path, data) { return setDoc(doc(fireStore, path), data); }

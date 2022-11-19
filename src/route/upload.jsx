@@ -7,15 +7,15 @@ import { useFirebaseAuth, useFirebaseCollectionData } from "../firebase/hooks";
 import { useError } from "../utils/hooks";
 
 export default function Page() {
-    const [auth, authLoaded] = useFirebaseAuth();
-    const { onUpload, products, error, resetError } = use({ auth });
+    const [auth, authLoading] = useFirebaseAuth();
+    const { onUpload, products, dataLoading, error, resetError } = use({ auth });
+
+    if (authLoading || dataLoading) return (
+        <div>Loading...</div>
+    );
 
     if (error) return (
         <ErrorMessage {...{ error, resetError }} />
-    );
-
-    if (!authLoaded) return (
-        <div>Loading...</div>
     );
 
     if (!auth) return (
@@ -37,9 +37,10 @@ const use = ({ auth: user }) => {
     const { error, setError, resetError } = useError();
 
     // products
-    const [products, productsError, productsPending] = useFirebaseCollectionData(store => {
+    const [products, productsError, productsLoading] = useFirebaseCollectionData(store => {
         return collection(store, `users/${user?.uid}/products`);
-    }, []);
+    }, [user]);
+
 
     useEffect(() => {
         productsError && setError(productsError);
@@ -67,7 +68,7 @@ const use = ({ auth: user }) => {
         });
     };
 
-    return { error, resetError, onUpload, products, productsPending };
+    return { error, resetError, onUpload, products, dataLoading: productsLoading };
 };
 
 function ProductUploadForm({ onUpload }) {
