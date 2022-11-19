@@ -1,20 +1,17 @@
-import { useEffect, useState } from "preact/hooks";
+import { useState } from "preact/hooks";
 import { Link } from "wouter-preact";
 
 import Button from "./base/Button";
 
-export default function Form({ register }) {
-    // TODO REFACTOR
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [city, setCity] = useState("");
-    const [password, setPassword] = useState("");
-    const [repeatPassword, setRepeatPassword] = useState("");
+export default function SignUpForm({ onRegister }) {
+    const [formData, setFormData] = useState({ city: "none" });
 
     const handleSubmit = async e => {
         e.preventDefault();
 
-        await register({ name, email, city, password, repeatPassword });
+        console.log(formData);
+
+        await onRegister(formData);
     };
 
     return (
@@ -26,8 +23,8 @@ export default function Form({ register }) {
                     type="text"
                     className="form-control"
                     name="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 />
             </div>
 
@@ -38,8 +35,9 @@ export default function Form({ register }) {
                     type="email"
                     className="form-control"
                     name="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+
                 />
             </div>
 
@@ -50,8 +48,9 @@ export default function Form({ register }) {
                     type="password"
                     className="form-control"
                     name="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+
                 />
             </div>
 
@@ -63,8 +62,9 @@ export default function Form({ register }) {
                     type="password"
                     className="form-control"
                     name="repeatPassword"
-                    value={repeatPassword}
-                    onChange={(e) => setRepeatPassword(e.target.value)}
+                    value={formData.repeatPassword}
+                    onChange={(e) => setFormData({ ...formData, repeatPassword: e.target.value })}
+
                 />
             </div>
 
@@ -76,8 +76,9 @@ export default function Form({ register }) {
                     required
                     id="city"
                     name="city"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
+                    value={formData.city}
+                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+
                 >
                     <option value="none" disabled>
                         Select City
