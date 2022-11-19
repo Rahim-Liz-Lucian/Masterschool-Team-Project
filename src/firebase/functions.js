@@ -1,5 +1,5 @@
-import { createUserWithEmailAndPassword, deleteUser, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { deleteDoc, doc, setDoc } from "firebase/firestore";
+import { createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
+import { collection, deleteDoc, doc, getDoc, getDocs, setDoc, writeBatch } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { fireStorage, fireStore, fireAuth } from ".";
 
@@ -80,20 +80,40 @@ export function uploadProduct(user, product) {
  * @returns 
  */
 export function uploadUserDetails(user, details) {
-    const detailsRef = doc(fireStorage, `users/${user?.uid}`);
-    return setDoc(detailsRef, details);
+    const detailsRef = doc(fireStore, `users/${user?.uid}`);
+    return setDoc(detailsRef, details, { merge: true });
 }
 
-export function deleteUserAccount(user) {
+/**
+ * This function deletes all user data from the system
+ * 
+ * @remarks This is not production ready as the API is too complicated to understand ☹️
+ */
+export async function deleteUserAccount(user, password) {
+    // TOOD re-auth and if that passes then delete account
+    const credential = EmailAuthProvider.credential(user.email, password);
+    await reauthenticateWithCredential(user, credential);
+
     // fireStorage
     const filesRef = ref(fireStorage, `users/${user?.uid}`);
+    // (storage/object-not-found) Not Found
 
     // fireStore
-    const dataRef = doc(fireStore, `users/${user?.uid}`);
+    const userRef = doc(fireStore, `users/${user?.uid}`);
+
+    const productsRef = collection(fireStore, `users/${user?.uid}/products`);
+
+    const batch = writeBatch(fireStore);
+    const snap = await getDocs(productsRef);
+    snap.forEach(document => document.exists && batch.delete(document.ref));
+
 
     return Promise.all([
-        deleteDoc(dataRef),
-        deleteObject(filesRef),
+        // collection on top level
+        deleteDoc(userRef),
+        // collection on products level
+        batch.commit(),
+        // deleteObject(filesRef),
         deleteUser(user)
     ]);
 }

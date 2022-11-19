@@ -19,8 +19,9 @@ type Data<T> = DocumentData | T;
 export type ProductData = Data<{
     uid: string;
     title: string;
+    quantity: number; // TODO this hasn't been implemented
     description?: string;
-    quantity: number;
+    expirationDate?: string;
     thumbnailUrl?: string;
 }>;
 
