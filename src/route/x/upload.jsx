@@ -1,9 +1,11 @@
 import Compressor from "compressorjs";
+import { doc } from "firebase/firestore";
 import { useState } from "preact/hooks";
 import styled from "styled-components";
 import { Redirect } from "wouter-preact";
 import { Nav, } from "~/component/base/base";
 import ErrorMessage from "~/component/base/ErrorMessage";
+import { fireStore } from "~/firebase";
 import { useFireBaseAuth } from "~/firebase/data";
 import { uploadFile, uploadProduct } from "~/firebase/functions";
 import { useError } from "~/utils/hooks";
@@ -70,7 +72,10 @@ const useHook = ({ user, formData }) => {
             try {
                 const thumbnailURL = await uploadFile(file, `users/${user.uid}/products/${product.uid}`);
 
-                await uploadProduct(user, { ...product, thumbnailURL });
+                const userRef = doc(fireStore, `users/${user.uid}`);
+
+                // NOTE hopefully this gives a reference to the user it belongs to
+                await uploadProduct(user, { ...product, thumbnailURL, userRef });
 
                 alert(`product has been uploaded 💚`);
             } catch (error) {
