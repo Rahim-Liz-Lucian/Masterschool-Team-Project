@@ -5,20 +5,45 @@ import { useFirebaseAuth } from "../firebase/hooks";
 import { WasteLess } from "../component/icons/icons";
 import Button from "../component/base/Button";
 import "../index.css";
-// import { collectionGroup } from "../firebase/hooks";
+import Product from "../component/base/Product";
+import { useFirebaseCollectionData } from "../firebase/hooks";
+import { collectionGroup } from "firebase/firestore";
 
 export default function Page() {
   const [auth, isLoading] = useFirebaseAuth();
   const { onSignOut } = use({ auth });
+  const [products, productsError, productsLoading] = useFirebaseCollectionData(
+    (store) => {
+      // TODO setup for where clause
+
+      return collectionGroup(store, `products`);
+    },
+    [auth]
+  );
 
   if (isLoading) return <div>Loading...</div>;
 
   return (
     <main className="page">
       {/* <h1>{auth ? `Welcome ${auth.displayName}` : "Welcome"} 💚</h1> */}
-      <WasteLess width="167px" />
 
-      <div className="data-container">This is where data will go</div>
+      <WasteLess width="220px" />
+
+      <div className="data-container">
+        {products.map((product) => {
+          return (
+            <Product
+              image={product.thumbnailUrl}
+              title={product.title}
+              // TODO: fix format on exp. date
+              date={product.expirationDate}
+              // TODO: get location from user
+              location="London"
+              daysAgo="2"
+            />
+          );
+        })}
+      </div>
 
       {auth ? (
         <div>
@@ -54,8 +79,3 @@ const use = ({ auth }) => {
 
   return { onSignOut };
 };
-// const [products, productsError, productsLoading] = useFirebaseCollectionData(store => {
-//   // TODO setup for where clause
-
-//   return collectionGroup(store, `products`);
-// }, [user]);

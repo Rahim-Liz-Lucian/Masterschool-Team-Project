@@ -68,6 +68,20 @@ export default function SignUpForm({ onRegister }) {
           }
         />
       </div>
+      <div className="input-control">
+        <label className="form-label" htmlFor="verify">
+          Phone Number
+        </label>
+        <input
+          type="password"
+          className="form-control"
+          name="phoneNumber"
+          value={formData.phoneNumber}
+          onChange={(e) =>
+            setFormData({ ...formData, phoneNumber: e.target.value })
+          }
+        />
+      </div>
 
       <div className="input-control">
         <label htmlFor="city" className="form-label">

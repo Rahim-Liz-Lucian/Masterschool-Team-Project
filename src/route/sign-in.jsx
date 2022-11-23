@@ -10,6 +10,7 @@ import Button from "../component/base/Button";
 import "../index.css";
 import { AiFillGoogleCircle } from "react-icons/ai";
 import { BsFacebook } from "react-icons/bs";
+import Back from "../component/base/Back";
 
 export default function Page() {
   // const [auth, isLoaded] = useFirebaseAuthData();
@@ -19,6 +20,7 @@ export default function Page() {
 
   return !error ? (
     <div className="page">
+      <Back />
       <WasteLess width="220px" />
 
       <SignInForm authenticate={authenticate} />

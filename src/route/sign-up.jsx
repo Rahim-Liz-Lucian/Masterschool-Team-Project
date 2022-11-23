@@ -7,6 +7,7 @@ import { fireAuth } from "../firebase";
 import { uploadUserDetails } from "../firebase/functions";
 import { validateEmailAndPassword } from "../utils";
 import { useError } from "../utils/hooks";
+import Back from "../component/base/Back";
 
 export default function Page() {
   const { onRegister, error, resetError } = use();
@@ -14,7 +15,8 @@ export default function Page() {
   if (error) return <ErrorMessage {...{ error, resetError }} />;
 
   return (
-    <div>
+    <div className="page">
+      <Back />
       {/* this ought to be a svg element */}
       <img
         src={wastelessLogo}
