@@ -39,26 +39,22 @@ export default function Page() {
 }
 
 /** HOOK */
-const useHook = ({ formData }) => {
+const useHook = ({ formData: { email, password, repeatPassword, city, name } }) => {
     const [, setLocation] = useLocation();
     const { error, setError, resetError } = useError();
 
     const onSignUp = async (e) => {
         e.preventDefault();
 
-        const { email, password, repeatPassword, ...rest } = formData;
-
         try {
-            // validateEmailAndPassword(email, password, repeatPassword);
+            validateEmailAndPassword(email, password, repeatPassword);
 
-            // const { user } = await registerUser(email, password);
+            const { user } = await registerUser(email, password);
 
-            // create a doc in fireStoreage;
-            // uploadUserDetails(user, { location: {} });
-            console.log(formData);
+            await uploadUserDetails(user, { name, email, password, location: { city } });
 
             alert(`successfully created an account`);
-            // setLocation("/x/");
+            setLocation("/x/upload");
         } catch (error) { setError(error); }
     };
 
