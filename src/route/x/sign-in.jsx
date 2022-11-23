@@ -1,7 +1,9 @@
 import { Facebook, Google, WasteLess } from "~/component/icons/icons";
 import styled from "styled-components";
-import { Link as WouterLink } from "wouter-preact";
+import { Link as WouterLink, useLocation } from "wouter-preact";
 import { useState } from "preact/hooks";
+import { signInUser } from "~/firebase/functions";
+import { useError } from "~/utils/hooks";
 
 export default function Page() {
     const [formData, setFormData] = useState({});
@@ -18,7 +20,7 @@ export default function Page() {
 
             <Link href="/">Forgot Password</Link>
             <Button type="submit" form="sign-in">Login</Button>
-            <p>Don't have an account?&nbsp;<Link href="/">Sign Up</Link></p>
+            <p>Don't have an account?&nbsp;<Link href="/x/sign-up">Sign Up</Link></p>
 
             <SocialMedia>
                 <span>Or Sign Up Using</span>
@@ -33,14 +35,25 @@ export default function Page() {
 }
 
 /** HOOK */
-const useHook = ({ formData }) => {
-    const onSignIn = (e) => {
+const useHook = ({ formData: { email, password } }) => {
+    const { error, setError, resetError } = useError();
+
+    const [, setLocation] = useLocation();
+
+    const onSignIn = async (e) => {
         e.preventDefault();
 
-        console.log(formData);
+        try {
+            const { user } = await signInUser(email, password);
+            alert(`Welcome back ${user.displayName} 💚`);
+            // TODO should redirect to browse screen
+            setLocation("/upload");
+        } catch (error) {
+            setError(error);
+        }
     };
 
-    return { onSignIn };
+    return { error, resetError, onSignIn };
 };
 
 /** STYLING */
