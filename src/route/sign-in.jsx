@@ -1,11 +1,11 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { Link } from "wouter-preact";
+import { Link, useLocation } from "wouter-preact";
+import { useFirebaseAuth } from "../firebase/hooks";
+import { useError } from "../utils/hooks";
 import wastelessLogo from "../assets/brand/logo.svg";
-import Button from "../component/base/Button";
 import SignInForm from "../component/SignInForm";
 import { fireAuth } from "../firebase";
-import { useFirebaseAuthData } from "../firebase/hooks";
-import { useError } from "../utils/hooks";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import ErrorMessage from "../component/base/ErrorMessage";
 
 export default function Page() {
   // const [auth, isLoaded] = useFirebaseAuthData();
@@ -36,7 +36,6 @@ export default function Page() {
   );
 }
 
-// 4wsWwACBWAhZvfFg5e64zfEtugA2
 const use = () => {
   const { error, setError, resetError } = useError();
 

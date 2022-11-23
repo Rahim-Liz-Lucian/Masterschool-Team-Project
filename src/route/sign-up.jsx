@@ -1,16 +1,20 @@
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { useLocation } from "wouter-preact";
 import wastelessLogo from "../assets/brand/logo.svg";
+import ErrorMessage from "../component/base/ErrorMessage";
 import SignUpForm from "../component/SignUpForm";
-import { fireAuth, fireStore } from "../firebase";
+import { fireAuth } from "../firebase";
+import { uploadUserDetails } from "../firebase/functions";
 import { validateEmailAndPassword } from "../utils";
 import { useError } from "../utils/hooks";
 
 export default function Page() {
-  const { register, error, resetError } = use();
+  const { onRegister, error, resetError } = use();
+
+  if (error) return <ErrorMessage {...{ error, resetError }} />;
 
   return (
-    <section>
+    <div>
       {/* this ought to be a svg element */}
       <img
         src={wastelessLogo}
@@ -20,36 +24,47 @@ export default function Page() {
 
       <h2 className="heading">Sign up to wasteless</h2>
 
-      <SignUpForm error={error} register={register} />
-    </section>
+      <SignUpForm onRegister={onRegister} />
+    </div>
   );
 }
 
 const use = () => {
   const { error, setError, resetError } = useError();
+  const [, setLocation] = useLocation();
 
-  const register = async ({ name, email, city, password, repeatPassword }) => {
+  const onRegister = async ({
+    name,
+    email,
+    city,
+    password,
+    repeatPassword,
+  }) => {
     try {
       validateEmailAndPassword(email, password, repeatPassword);
 
-      // throw error to be caught by error Boundary
       const cred = await createUserWithEmailAndPassword(
         fireAuth,
         email,
         password
       ); // the solution
 
-      await updateProfile(cred.user, { displayName: name });
-
-      // add a document with location information
-      const docRef = doc(fireStore, `users/${cred.user.uid}`);
-      await setDoc(docRef, { uid: cred.user.uid, location: { city } });
+      await Promise.all([
+        updateProfile(cred.user, { displayName: name }),
+        uploadUserDetails(cred.user, {
+          uid: cred.user.uid,
+          location: { city },
+        }),
+      ]);
 
       alert(`Welcome, ${name} to Waste-Less 💚!!`);
+      setLocation("/");
     } catch (error) {
       setError(error);
     }
   };
 
-  return { register, error, resetError };
+  return { onRegister, error, resetError };
 };
+
+// function _uploadUserDetails(path, data) { return setDoc(doc(fireStore, path), data); }

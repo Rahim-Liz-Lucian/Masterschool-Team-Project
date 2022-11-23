@@ -1,25 +1,47 @@
-import { Link } from "wouter-preact";
-import { useFirebaseAuthData } from "../firebase/hooks";
+import { signOut } from "firebase/auth";
+import { Link, useLocation } from "wouter-preact";
+import { fireAuth } from "../firebase";
+import { useFirebaseAuth } from "../firebase/hooks";
 
 export default function Page() {
-  const [user, done] = useFirebaseAuthData();
+  const [auth, isLoading] = useFirebaseAuth();
+  const { onSignOut } = use({ auth });
 
-  return !done ? (
-    <div>Loading...</div>
-  ) : (
-    <div>
-      <h1>This is the home page</h1>
-      {user ? (
-        <nav>
-          <Link href="/dashboard">Goto Dashboard</Link>
-          <Link href="/settings/profile">Goto Settings</Link>
-        </nav>
+  if (isLoading) return <div>Loading...</div>;
+
+  return (
+    <main>
+      <h1>{auth ? `Welcome ${auth.displayName}` : "Welcome"} 💚</h1>
+
+      <div>This is where data will go</div>
+
+      {auth ? (
+        <div>
+          <button onClick={onSignOut}>Sign out</button>
+          <nav>
+            <Link to="/upload">Upload product</Link>
+            <Link to="/settings/profile">My profile</Link>
+          </nav>
+        </div>
       ) : (
-        <nav>
-          <Link href="/sign-in">Sign In?</Link>
-          <Link href="/sign-up">Sign Up?</Link>
-        </nav>
+        <div>
+          <Link to="/sign-in">Login</Link>
+          <Link to="/sign-up">Sign up</Link>
+        </div>
       )}
-    </div>
+    </main>
   );
 }
+
+const use = ({ auth }) => {
+  const [, setLocation] = useLocation();
+
+  const onSignOut = async () => {
+    await signOut(fireAuth);
+
+    alert(`Goodbye, see you soon 💚`);
+    setLocation("/");
+  };
+
+  return { onSignOut };
+};

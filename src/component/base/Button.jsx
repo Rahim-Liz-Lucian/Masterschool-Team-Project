@@ -2,7 +2,7 @@ import "./button.css";
 
 export default function Button({ ...props }) {
   return (
-    <button {...props} className={props.classes} type="submit">
+    <button {...props} type="submit" className="btn btn-primary">
       {props.children}
     </button>
   );
