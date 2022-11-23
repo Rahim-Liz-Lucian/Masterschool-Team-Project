@@ -36,6 +36,7 @@ export default function Form({ authenticate }) {
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
+      <a href="/">Forgot Password?</a>
 
       <Button classes="btn btn-primary" type="submit">
         Login

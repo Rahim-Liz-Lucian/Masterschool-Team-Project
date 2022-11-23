@@ -8,37 +8,48 @@ import { useFirebaseAuthData } from "../firebase/hooks";
 import { useError } from "../utils/hooks";
 
 export default function Page() {
-    // const [auth, isLoaded] = useFirebaseAuthData();
-    const { authenticate, error, resetError } = use();
+  // const [auth, isLoaded] = useFirebaseAuthData();
+  const { authenticate, error, resetError } = use();
 
-    // TODO if currentUser then redirect to browse
+  // TODO if currentUser then redirect to browse
 
-    return !error ? (
-        <div>
-            <img src={wastelessLogo} alt="Waste-Less logo" style={{ height: "160px", width: "100%" }} />
+  return !error ? (
+    <div className="page">
+      <img
+        src={wastelessLogo}
+        alt="Waste-Less logo"
+        style={{ height: "160px", width: "100%" }}
+      />
 
-            <SignInForm authenticate={authenticate} />
+      <SignInForm authenticate={authenticate} />
 
-            {/* FIXME Just needs center-ing */}
-            <Link href="/sign-up">Already have an account?</Link>
+      {/* FIXME Just needs center-ing */}
+      <Link href="/sign-up">Don't have an account yet? Sign up!</Link>
 
-            {/* TODO continue as guest */}
-        </div>
-    ) : <button onClick={resetError}>reset</button>;
+      {/* TODO sign in with google/facebook */}
+
+      {/* TODO continue as guest */}
+      <Button classes="btn btn-secondary">Browse</Button>
+    </div>
+  ) : (
+    <button onClick={resetError}>reset</button>
+  );
 }
 
 // 4wsWwACBWAhZvfFg5e64zfEtugA2
 const use = () => {
-    const { error, setError, resetError } = useError();
+  const { error, setError, resetError } = useError();
 
-    const authenticate = async ({ email, password }) => {
-        console.log(email, password);
-        try {
-            const cred = await signInWithEmailAndPassword(fireAuth, email, password);
-            // should redirect but for now will just alert the user
-            alert(`Sign-in has been successful ${cred.user.uid} 💚`);
-        } catch (error) { setError(error); }
-    };
+  const authenticate = async ({ email, password }) => {
+    console.log(email, password);
+    try {
+      const cred = await signInWithEmailAndPassword(fireAuth, email, password);
+      // should redirect but for now will just alert the user
+      alert(`Sign-in has been successful ${cred.user.uid} 💚`);
+    } catch (error) {
+      setError(error);
+    }
+  };
 
-    return { authenticate, error, resetError };
+  return { authenticate, error, resetError };
 };

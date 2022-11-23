@@ -20,6 +20,10 @@ code {
     monospace;
 }
 
+.page {
+  padding: 1rem;
+}
+
 .input-control {
   display: flex;
   flex-direction: column;
@@ -29,8 +33,9 @@ code {
 form {
   display: flex;
   flex-direction: column;
-  margin: 0 50px;
+  width: 80%;
   gap: 12px;
+  margin: 0 auto;
 }
 
 input,
@@ -53,6 +58,7 @@ input:focus {
 
 a {
   color: #76c893;
+  text-align: center;
 }
 
 input[type="checkbox"] {
