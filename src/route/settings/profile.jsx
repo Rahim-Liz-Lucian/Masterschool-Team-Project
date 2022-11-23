@@ -1,56 +1,50 @@
-import defaultAvatar from "../../assets/defaults/avatar.jpg";
-import { useError } from "../../utils/hooks";
+import defaultAvatar from "~/assets/defaults/avatar.jpg";
+import { useError } from "~/utils/hooks";
 import Compressor from "compressorjs";
-import { deleteUserAccount, uploadFile } from "../../firebase/functions";
+import { uploadFile } from "~/firebase/functions";
 import { updateProfile } from "firebase/auth";
-import ErrorMessage from "../../component/base/ErrorMessage";
-import SettingsProfileForm from "../../component/SettingsProfileForm";
+import ErrorMessage from "~/component/base/ErrorMessage";
+import SettingsProfileForm from "~/component/SettingsProfileForm";
 import { Redirect, useLocation } from "wouter-preact";
-import Button from "../../component/base/Button";
-import { useFirebaseAuth } from "../../firebase/hooks";
-import { useState } from "preact/hooks";
+import { useFirebaseAuth } from "~/firebase/hooks";
 
 // NOTE using Github as a reference, it refreshes the page when changes are made
 // Is this behaviour we want or do we want it to update with no refresh. They also
 // keep this optional so can be blank.
 export default function Page() {
-    const [auth, isLoading] = useFirebaseAuth();
-    const { error, resetError, updateAvatar, onUpdateProfile, onDeleteAccount } = use({ auth });
+    const [user, authLoading] = useFirebaseAuth();
+    const { error, resetError, updateAvatar, onUpdateProfile } = use({ user });
 
     if (error) return (
         <ErrorMessage {...{ error, resetError }} />
     );
 
-    if (isLoading) return (
+    if (authLoading) return (
         <div>Loading...</div>
     );
 
-    if (!auth) return <Redirect to="/" />;
+    if (!user) return <Redirect to="/" />;
 
     return (
         <div>
             <h1>Profile</h1>
-            {auth.displayName && <h2>{auth.displayName}'s Profile</h2>}
-            <p>{auth.email}</p>
+            {user.displayName && <h2>{user.displayName}'s Profile</h2>}
+            <p>{user.email}</p>
 
             <div>
                 <label htmlFor="avatar">
-                    <img src={auth?.photoURL ?? defaultAvatar} alt="avatar" onError={e => e.target.src = defaultAvatar} style={{ width: 75, borderRadius: 50, cursor: "pointer" }} />
+                    <img src={user?.photoURL ?? defaultAvatar} alt="avatar" onError={e => e.target.src = defaultAvatar} style={{ width: 75, borderRadius: 50, cursor: "pointer" }} />
                 </label>
                 <input type="file" id="avatar" accept="image/jpeg" onChange={updateAvatar} style={{ display: "none" }} />
             </div>
 
             {/* TODO update user details form */}
             <SettingsProfileForm onUpdateProfile={onUpdateProfile} />
-
-            {/* have this in red */}
-
-            <DeleteAccountForm onDeleteAccount={onDeleteAccount} />
         </div>
     );
 }
 
-const use = ({ auth: user }) => {
+const use = ({ user }) => {
     const { error, setError, resetError } = useError();
     const [, setLocation] = useLocation();
 
@@ -77,35 +71,7 @@ const use = ({ auth: user }) => {
         });
     };
 
-
-    const onDeleteAccount = async ({ password }) => {
-        try {
-            await deleteUserAccount(user, password);
-            alert(`Sad to see you leave ☹️`);
-            setLocation("/");
-        } catch (error) { setError(error); }
-    };
-
-    return { error, resetError, updateAvatar, onUpdateProfile, onDeleteAccount };
+    return { error, resetError, updateAvatar, onUpdateProfile };
 };
 
 
-function DeleteAccountForm({ onDeleteAccount }) {
-    const [password, setPassword] = useState("");
-
-    const onSubmit = (e) => {
-        e.preventDefault();
-        onDeleteAccount({ password });
-    };
-
-    return (
-        <form onSubmit={onSubmit}>
-            <label htmlFor="password">
-                <span>Password</span>
-                <input type="password" name="password" id="password" required onChange={e => setPassword(e.target.value)} />
-            </label>
-
-            <Button type="submit">Delete account</Button>
-        </form>
-    );
-}
