@@ -70,12 +70,12 @@ const useHook = ({ user, formData }) => {
         compressFile(formData.thumbnail, async (file) => {
             // NOTE error must be inside the async function
             try {
-                const thumbnailURL = await uploadFile(file, `users/${user.uid}/products/${product.uid}`);
+                const thumbnailUrl = await uploadFile(file, `users/${user.uid}/products/${product.uid}`);
 
                 const userRef = doc(fireStore, `users/${user.uid}`);
 
                 // NOTE hopefully this gives a reference to the user it belongs to
-                await uploadProduct(user, { ...product, thumbnailURL, userRef });
+                await uploadProduct(user, { ...product, thumbnailUrl, userRef });
 
                 alert(`product has been uploaded 💚`);
             } catch (error) {
