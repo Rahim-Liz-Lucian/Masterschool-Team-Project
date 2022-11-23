@@ -65,38 +65,34 @@ const useHook = ({ user, formData }) => {
         };
 
         // NOTE error must be inside the async function
-        try {
-            compressFile(formData.thumbnail, async (file) => {
-                // NOTE error must be inside the async function
-                try {
-                    const thumbnailURL = await uploadFile(file, `users/${user.uid}/products/${product.uid}`);
+        compressFile(formData.thumbnail, async (file) => {
+            // NOTE error must be inside the async function
+            try {
+                const thumbnailURL = await uploadFile(file, `users/${user.uid}/products/${product.uid}`);
 
-                    await uploadProduct(user, { ...product, thumbnailURL });
+                await uploadProduct(user, { ...product, thumbnailURL });
 
-                    alert(`product has been uploaded 💚`);
-                } catch (error) {
-                    setError(error);
-                }
-            });
-        } catch (error) {
-            setError(error);
-        }
+                alert(`product has been uploaded 💚`);
+            } catch (error) {
+                setError(error);
+            }
+        }, error => setError(error));
     };
 
     return { error, resetError, onUpload };
 };
 
 /**
- * Throws an error if 
+ * Throws an error if one occurs
  * 
- * @param {*} inputFile 
+ * @param {*} file 
  * @param {*} success 
  * @returns 
  */
-const compressFile = (inputFile, success) => {
-    return new Compressor(inputFile, {
+const compressFile = (file, success, error) => {
+    return new Compressor(file, {
         quality: 0.6, maxWidth: 1500, maxHeight: 1000,
-        success, error: (error) => { throw error; },
+        success, error,
     });
 };
 
