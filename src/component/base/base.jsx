@@ -6,14 +6,20 @@ export const Nav = () => {
     return (
         <StyledNav>
             <More />
-            <Avatar src={avatarPlaceholder} />
-            <Chat />
             <Upload />
+            <Chat />
             <Search />
+            <Avatar src={avatarPlaceholder} />
         </StyledNav>
     );
 };
 
 const StyledNav = styled.nav`
+    border: 1px solid grey;
     display: flex;
+    justify-content: space-evenly;
+    padding: 12px;
+    position: fixed;
+    bottom: 0;
+    width: inherit;
 `;

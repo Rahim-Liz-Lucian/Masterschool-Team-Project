@@ -1,19 +1,15 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { onAuthStateChanged } from "firebase/auth";
-import { Suspense, useEffect } from "preact/compat";
+import { Suspense } from "preact/compat";
 import { Redirect, Route, Switch } from "wouter-preact";
-import { fireAuth } from "./firebase";
-import { authCtx, authLoading } from "./firebase/data";
+import { initApp } from "./firebase/data";
 import { routes } from "./routes";
 
 export function App() {
-    useEffect(() => {
-        return onAuthStateChanged(fireAuth, next => {
-            authCtx.value = next;
-            authLoading.value = false;
-        });
-    }, []);
+    const { isLoading } = initApp();
 
+    if (isLoading) return (
+        <div>Custom hook is loading...</div>
+    );
 
     return (
         // @ts-ignore
@@ -29,6 +25,3 @@ export function App() {
         </Suspense>
     );
 }
-
-// najirab787@invodua.com
-// admin123

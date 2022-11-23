@@ -3,11 +3,6 @@ import { DocumentData, Firestore, DocumentReference, onSnapshot, CollectionRefer
 import { FirebaseStorage } from "firebase/storage";
 import { useCallback, useMemo, useEffect } from "preact/hooks";
 import { fireStore } from ".";
-import { authCtx, authLoading } from "./data";
-
-export const useFirebaseAuth = () => {
-    return [authCtx.value, authLoading.value] as const;
-};
 
 export function useFirebaseDocumentData<T = DocumentData>(query: (db: Firestore) => DocumentReference<T>, deps?: any[]) {
     const memoFn = useCallback(query, []);
