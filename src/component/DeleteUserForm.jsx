@@ -1,5 +1,5 @@
 import { useState } from "preact/hooks";
-import Button from "./base/Button";
+import Button from "./base/button";
 
 export default function DeleteAccountForm({ onDeleteAccount }) {
     const [password, setPassword] = useState("");

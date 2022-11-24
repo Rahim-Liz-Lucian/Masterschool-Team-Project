@@ -1,6 +1,6 @@
 import { useState } from "preact/hooks";
 import Back from "./base/Back";
-import Button from "./base/Button";
+import Button from "./base/button";
 import "../index.css";
 
 export default function SettingsProfileForm({ onUpdateProfile }) {

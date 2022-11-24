@@ -1,72 +1,91 @@
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { useLocation } from "wouter-preact";
-import wastelessLogo from "../assets/brand/logo.svg";
-import ErrorMessage from "../component/base/ErrorMessage";
-import SignUpForm from "../component/SignUpForm";
-import { fireAuth } from "../firebase";
-import { uploadUserDetails } from "../firebase/functions";
-import { validateEmailAndPassword } from "../utils";
-import { useError } from "../utils/hooks";
-import Back from "../component/base/Back";
+import { Link, Redirect, useLocation } from "wouter-preact";
+import ErrorMessage from "~/component/base/ErrorMessage";
+import { registerUser, updateUserProfile } from "~/firebase/functions";
+import { validateEmailAndPassword } from "~/utils";
+import { useError } from "~/utils/hooks";
+import { useFireBaseAuth } from "~/firebase/data";
+import { useState } from "preact/hooks";
+import { WasteLess } from "~/component/icons/icons";
+import { Checkbox, Input, Select } from "~/component/base/input";
+import Button, { BackButton } from "~/component/base/button";
+
+import "./sign-up.css";
 
 export default function Page() {
-  const { onRegister, error, resetError } = use();
+    const user = useFireBaseAuth();
 
-  if (error) return <ErrorMessage {...{ error, resetError }} />;
+    const [formData, setFormData] = useState({ city: "none" });
+    const { onRegister, error, resetError } = useHook({ formData });
 
-  return (
-    <div className="page">
-      <Back />
-      {/* this ought to be a svg element */}
-      <img
-        src={wastelessLogo}
-        alt="Waste-Less logo"
-        style={{ height: "160px", width: "100%" }}
-      />
+    const onChange = (key) => (e) => {
+        setFormData({ ...formData, [key]: e.target.value });
+    };
 
-      <h2 className="heading">Sign up to wasteless</h2>
+    if (user) return <Redirect to="/" />;
 
-      <SignUpForm onRegister={onRegister} />
-    </div>
-  );
+    if (error) return <ErrorMessage {...{ error, resetError }} />;
+
+    return (
+        <div className="page">
+            <BackButton />
+
+            <WasteLess width={220} />
+
+            <form id="sign-up" onSubmit={onRegister}>
+                <Input required name="displayName" value={formData.displayName} onChange={onChange("displayName")}>
+                    Name
+                </Input>
+                <Input required type="email" name="email" value={formData.email} onChange={onChange("email")}>
+                    Email
+                </Input>
+                <Input required type="password" name="password" value={formData.password} onChange={onChange("password")} >
+                    Password
+                </Input>
+                <Input type="password" name="repeatPassword" value={formData.repeatPassword} onChange={onChange("repeatPassword")}>
+                    Repeat Password
+                </Input>
+
+                <Select required name="location" placeholder="Select Your City" value={formData.city} onChange={onChange("city")}>
+                    <option value="amsterdam">Amsterdam</option>
+                    <option value="berlin">Berlin</option>
+                    <option value="london">London</option>
+                    <option value="paris">Paris</option>
+                    <option value="tlv">Tel-Aviv</option>
+                </Select>
+
+                <Checkbox required type="checkbox" name="terms">
+                    I agree to the <Link href="/">Terms and conditions</Link>
+                </Checkbox>
+
+                <Checkbox type="checkbox" name="newsletter">
+                    Sign me up to the newsletter
+                </Checkbox>
+
+                <Button className="btn btn-primary" type="submit" form="sign-up">Login</Button>
+            </form>
+        </div>
+    );
 }
 
-const use = () => {
-  const { error, setError, resetError } = useError();
-  const [, setLocation] = useLocation();
+const useHook = ({ formData: { email, password, repeatPassword, city, displayName } }) => {
+    const { error, setError, resetError } = useError();
+    const [, setLocation] = useLocation();
 
-  const onRegister = async ({
-    name,
-    email,
-    city,
-    password,
-    repeatPassword,
-  }) => {
-    try {
-      validateEmailAndPassword(email, password, repeatPassword);
+    const onRegister = async (e) => {
+        e.preventDefault();
 
-      const cred = await createUserWithEmailAndPassword(
-        fireAuth,
-        email,
-        password
-      ); // the solution
+        try {
+            validateEmailAndPassword(email, password, repeatPassword);
 
-      await Promise.all([
-        updateProfile(cred.user, { displayName: name }),
-        uploadUserDetails(cred.user, {
-          uid: cred.user.uid,
-          location: { city },
-        }),
-      ]);
+            const { user } = await registerUser(email, password);
 
-      alert(`Welcome, ${name} to Waste-Less 💚!!`);
-      setLocation("/");
-    } catch (error) {
-      setError(error);
-    }
-  };
+            await updateUserProfile(user, { displayName, email, password, location: { city } });
 
-  return { onRegister, error, resetError };
+            alert(`successfully created an account`);
+            setLocation("/x/upload");
+        } catch (error) { setError(error); }
+    };
+
+    return { onRegister, error, resetError };
 };
 
-// function _uploadUserDetails(path, data) { return setDoc(doc(fireStore, path), data); }
