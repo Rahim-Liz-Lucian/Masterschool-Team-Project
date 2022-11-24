@@ -1,81 +1,72 @@
 import { signOut } from "firebase/auth";
 import { Link, useLocation } from "wouter-preact";
-import { fireAuth } from "../firebase";
-import { useFirebaseAuth } from "../firebase/hooks";
-import { WasteLess } from "../component/icons/icons";
-import Button from "../component/base/Button";
-import "../index.css";
-import Product from "../component/base/Product";
-import { useFirebaseCollectionData } from "../firebase/hooks";
+import { fireAuth } from "~/firebase";
+// import { useFirebaseAuth } from "~/firebase/data";
+import { WasteLess } from "~/component/icons/icons";
+import Button from "~/component/base/button";
+import ProductCard from "~/component/base/ProductCard";
+import { useFirebaseCollectionData } from "~/firebase/hooks";
 import { collectionGroup } from "firebase/firestore";
 
+import "./index.css";
+import { useFireBaseAuth } from "~/firebase/data";
+
 export default function Page() {
-  const [auth, isLoading] = useFirebaseAuth();
-  const { onSignOut } = use({ auth });
-  const [products, productsError, productsLoading] = useFirebaseCollectionData(
-    (store) => {
-      // TODO setup for where clause
+    const user = useFireBaseAuth();
+    const { onSignOut, dataLoading, products } = useHook({ user });
 
-      return collectionGroup(store, `products`);
-    },
-    [auth]
-  );
 
-  if (isLoading) return <div>Loading...</div>;
+    if (dataLoading) return <div>Data Loading...</div>;
 
-  return (
-    <main className="page">
-      {/* <h1>{auth ? `Welcome ${auth.displayName}` : "Welcome"} 💚</h1> */}
+    return (
+        <main className="page">
+            {/* <h1>{auth ? `Welcome ${auth.displayName}` : "Welcome"} 💚</h1> */}
 
-      <WasteLess width="220px" />
+            <WasteLess width="220px" />
 
-      <div className="data-container">
-        {products.map((product) => {
-          return (
-            <Product
-              image={product.thumbnailURL}
-              title={product.title}
-              // TODO: fix format on exp. date
-              date={product.expirationDate}
-              // TODO: get location from user
-              location="London"
-              daysAgo="2"
-            />
-          );
-        })}
-      </div>
+            <div className="product__container">
+                {products.map((product) => {
+                    return (
+                        <ProductCard product={product} />
+                    );
+                })}
+            </div>
 
-      {auth ? (
-        <div>
-          <button onClick={onSignOut}>Sign out</button>
-          <nav>
-            <Link to="/upload">Upload product</Link>
-            <Link to="/settings/profile">My profile</Link>
-          </nav>
-        </div>
-      ) : (
-        <div className="buttons">
-          <Link to="/sign-up">
-            <Button classes="btn btn-primary">Sign Up</Button>
-          </Link>
-          <Link to="/sign-in">
-            <Button classes="btn btn-primary btn--border">Sign In</Button>
-          </Link>
-        </div>
-      )}
-    </main>
-  );
+            {user ? (
+                <div>
+                    <button onClick={onSignOut}>Sign out</button>
+                    <nav>
+                        <Link to="/upload">Upload product</Link>
+                        <Link to="/settings/profile">My profile</Link>
+                    </nav>
+                </div>
+            ) : (
+                <div className="buttons">
+                    <Link to="/sign-up">
+                        <Button className="btn btn-primary">Sign Up</Button>
+                    </Link>
+                    <Link to="/sign-in">
+                        <Button className="btn btn-primary btn--border">Sign In</Button>
+                    </Link>
+                </div>
+            )}
+        </main>
+    );
 }
 
-const use = ({ auth }) => {
-  const [, setLocation] = useLocation();
+const useHook = ({ user }) => {
+    const [, setLocation] = useLocation();
+    const [products, productsError, productsLoading] = useFirebaseCollectionData((store) => {
+        // TODO setup for where clause
+        return collectionGroup(store, `products`);
+    }, [user]);
 
-  const onSignOut = async () => {
-    await signOut(fireAuth);
+    const onSignOut = async () => {
+        await signOut(fireAuth);
 
-    alert(`Goodbye, see you soon 💚`);
-    setLocation("/");
-  };
+        alert(`Goodbye, see you soon 💚`);
+        setLocation("/");
+    };
 
-  return { onSignOut };
+    return { onSignOut, products, dataLoading: productsLoading };
 };
