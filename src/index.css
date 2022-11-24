@@ -107,6 +107,14 @@ input[type="checkbox"] {
   display: flex;
   gap: 1rem;
 }
+
+.profile-page {
+  align-items: stretch;
+}
+.profile-page h1,
+.profile-page h2 {
+  text-align: center;
+}
 /* 
 
 .password-error {

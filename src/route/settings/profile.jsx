@@ -25,10 +25,9 @@ export default function Page() {
   if (!auth) return <Redirect to="/" />;
 
   return (
-    <div>
+    <div className="page profile-page">
       <h1>Profile</h1>
       {auth.displayName && <h2>{auth.displayName}'s Profile</h2>}
-      <p>{auth.email}</p>
 
       <div>
         <label htmlFor="avatar">
@@ -45,6 +44,7 @@ export default function Page() {
             }}
           />
         </label>
+        <p>{auth.email}</p>
         <input
           type="file"
           id="avatar"
@@ -70,7 +70,7 @@ const use = ({ auth: user }) => {
 
   const onUpdateProfile = async ({ name }) => {
     // do something if name exists
-    // TODO error handling
+    // TODO: error handling
     await updateProfile(user, { displayName: name });
     alert(`Your profile display name has been updated for ${name}`);
   };
@@ -131,7 +131,9 @@ function DeleteAccountForm({ onDeleteAccount }) {
         />
       </label>
 
-      <Button type="submit">Delete account</Button>
+      <Button type="submit" classes="btn btn-secondary btn-delete">
+        Delete account
+      </Button>
     </form>
   );
 }

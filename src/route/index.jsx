@@ -33,7 +33,7 @@ export default function Page() {
         {products.map((product) => {
           return (
             <Product
-              image={product.thumbnailUrl}
+              image={product.thumbnailURL}
               title={product.title}
               // TODO: fix format on exp. date
               date={product.expirationDate}
