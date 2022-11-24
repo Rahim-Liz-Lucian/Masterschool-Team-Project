@@ -5,11 +5,12 @@ import "../index.css";
 
 export default function SettingsProfileForm({ onUpdateProfile }) {
   const [name, setName] = useState("");
+  const [location, setLocation] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await onUpdateProfile({ name });
+    await onUpdateProfile({ name, location });
   };
 
   return (
@@ -27,6 +28,27 @@ export default function SettingsProfileForm({ onUpdateProfile }) {
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
+        </div>
+        <div className="input-control">
+          <label htmlFor="city" className="form-label">
+            Your City
+          </label>
+          <select
+            required
+            id="city"
+            name="city"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+          >
+            <option value="none" disabled>
+              Select City
+            </option>
+            <option value="amsterdam">Amsterdam</option>
+            <option value="london">London</option>
+            <option value="berlin">Berlin</option>
+            <option value="paris">Paris</option>
+            <option value="tlv">Tel-Aviv</option>
+          </select>
         </div>
 
         <Button type="submit" classes="btn btn-primary">
