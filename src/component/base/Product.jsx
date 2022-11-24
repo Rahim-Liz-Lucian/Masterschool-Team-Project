@@ -1,17 +1,20 @@
+import { Link } from "wouter-preact";
 import fallback from "../../assets/brand/fallback.png";
 import Button from "./Button";
-const Product = ({ image, title, location, date, daysAgo }) => {
+const Product = (props) => {
   return (
     <div className="product">
-      <img src={image} alt="empty " />
+      <img src={props.image ? props.image : fallback} alt="empty " />
       <div className="product-info">
-        <h3>{title}</h3>
+        <h3>{props.title}</h3>
         <div>
-          <p>{location}</p>
-          <p>{date}</p>
-          <p>{daysAgo} days ago</p>
+          <p>{props.location}</p>
+          <p>{props.date}</p>
+          <p>{props.daysAgo} days ago</p>
         </div>
-        {/* <Button classes={"btn btn-secondary"}>More</Button> */}
+        <Link href={`/products/${props.id}`} title={props.uid}>
+          <Button classes={"btn btn-secondary"}>More</Button>
+        </Link>
       </div>
     </div>
   );

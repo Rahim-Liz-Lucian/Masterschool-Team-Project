@@ -27,10 +27,19 @@ code {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+}
+
+.page nav {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  gap: 1rem;
 }
 .data-container {
   flex-grow: 1;
   overflow: scroll;
+  width: 100%;
 }
 .input-control {
   display: flex;
@@ -54,6 +63,15 @@ form {
   margin: 0 auto;
   flex-grow: 1;
   justify-content: space-between;
+}
+form .file-upload {
+  flex-grow: 1;
+}
+input[type="file"] {
+  height: 100%;
+}
+.delete-account {
+  justify-content: flex-end;
 }
 .signin-form {
   justify-content: flex-start;
@@ -101,6 +119,7 @@ input[type="checkbox"] {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  flex-grow: 1;
   padding: 0.5rem;
 }
 .product-info div {
@@ -108,13 +127,29 @@ input[type="checkbox"] {
   gap: 1rem;
 }
 
+.product-page div {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.product-page img {
+  width: 100%;
+}
+
+.product-page p {
+  flex-grow: 1;
+}
+
 .profile-page {
   align-items: stretch;
 }
+
+.product-page h1,
 .profile-page h1,
 .profile-page h2 {
   text-align: center;
 }
+
 /* 
 
 .password-error {

@@ -32,6 +32,7 @@ export default function Page() {
 
   return (
     <div className="page">
+      <h1>Upload Product</h1>
       <Back />
       <p>I have {products.length} Products in my basket</p>
 
@@ -109,56 +110,59 @@ function ProductUploadForm({ onUpload }) {
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <label htmlFor="title">
-        <span>Title</span>
-        <input
-          required
-          type="text"
-          name="title"
-          id="title"
-          onChange={(e) => setProduct({ ...product, title: e.target.value })}
-        />
-      </label>
+    <>
+      <form onSubmit={onSubmit}>
+        <div className="input-control">
+          <label htmlFor="title">Title</label>
+          <input
+            required
+            type="text"
+            name="title"
+            id="title"
+            onChange={(e) => setProduct({ ...product, title: e.target.value })}
+          />
+        </div>
+        <div className="input-control">
+          <label htmlFor="description">Description</label>
+          <input
+            type="text"
+            name="description"
+            id="description"
+            onChange={(e) =>
+              setProduct({ ...product, description: e.target.value })
+            }
+          />
+        </div>
 
-      <label htmlFor="description">
-        <span>Description</span>
-        <input
-          type="text"
-          name="description"
-          id="description"
-          onChange={(e) =>
-            setProduct({ ...product, description: e.target.value })
-          }
-        />
-      </label>
+        <div className="input-control">
+          <label htmlFor="expirationDate">Expiration Date</label>
+          <input
+            required
+            type="date"
+            name="expirationDate"
+            id="expirationDate"
+            onChange={(e) =>
+              setProduct({ ...product, expirationDate: e.target.value })
+            }
+          />
+        </div>
 
-      <label htmlFor="expirationDate">
-        <span>Expiration Date</span>
-        <input
-          required
-          type="date"
-          name="expirationDate"
-          id="expirationDate"
-          onChange={(e) =>
-            setProduct({ ...product, expirationDate: e.target.value })
-          }
-        />
-      </label>
-
-      <label htmlFor="thumbnail">
-        <input
-          required
-          type="file"
-          name="thumbnail"
-          id="thumbnail"
-          onChange={(e) =>
-            setProduct({ ...product, thumbnail: e.target.files[0] })
-          }
-        />
-      </label>
-      <Button classes="btn btn-primary">Upload Product</Button>
-      {/* <button type="submit">Upload product</button> */}
-    </form>
+        <div className="input-control file-upload">
+          <label htmlFor="thumbnail"> Upload Image</label>
+          <input
+            required
+            type="file"
+            name="thumbnail"
+            id="thumbnail"
+            onChange={(e) =>
+              setProduct({ ...product, thumbnail: e.target.files[0] })
+            }
+          />
+        </div>
+        <Button type="submit" classes="btn btn-primary">
+          Upload Product
+        </Button>
+      </form>
+    </>
   );
 }

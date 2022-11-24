@@ -14,7 +14,7 @@ export default function SettingsProfileForm({ onUpdateProfile }) {
   };
 
   return (
-    <div className="page">
+    <div>
       <Back />
       <form onSubmit={handleSubmit}>
         <div className="input-control">

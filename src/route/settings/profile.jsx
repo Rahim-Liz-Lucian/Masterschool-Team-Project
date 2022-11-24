@@ -119,17 +119,15 @@ function DeleteAccountForm({ onDeleteAccount }) {
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <label htmlFor="password">
-        <span>Password</span>
-        <input
-          type="password"
-          name="password"
-          id="password"
-          required
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </label>
+    <form className="delete-account" onSubmit={onSubmit}>
+      <label htmlFor="password">Password</label>
+      <input
+        type="password"
+        name="password"
+        id="password"
+        required
+        onChange={(e) => setPassword(e.target.value)}
+      />
 
       <Button type="submit" classes="btn btn-secondary btn-delete">
         Delete account
