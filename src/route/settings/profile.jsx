@@ -27,6 +27,7 @@ export default function Page() {
       {user.displayName && <h2>{user.displayName}'s Profile</h2>}
       <p>{user.email}</p>
 
+
       <div>
         <label htmlFor="avatar">
           <img
@@ -36,6 +37,7 @@ export default function Page() {
             style={{ width: 75, borderRadius: 50, cursor: "pointer" }}
           />
         </label>
+
         <input
           type="file"
           id="avatar"
@@ -47,6 +49,10 @@ export default function Page() {
 
       {/* TODO update user details form */}
       <SettingsProfileForm onUpdateProfile={onUpdateProfile} />
+
+      {/* have this in red */}
+
+      <DeleteAccountForm onDeleteAccount={onDeleteAccount} />
     </div>
   );
 }

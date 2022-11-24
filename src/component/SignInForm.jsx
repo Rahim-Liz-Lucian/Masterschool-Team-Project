@@ -12,7 +12,7 @@ export default function Form({ authenticate }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="signin-form">
       <div className="input-control">
         <label className="form-label">Email</label>
         <input

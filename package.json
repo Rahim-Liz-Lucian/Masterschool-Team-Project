@@ -15,6 +15,10 @@
         "compressorjs": "^1.1.1",
         "firebase": "^9.14.0",
         "preact": "^10.11.3",
+<<<<<<< HEAD
+=======
+        "react-icons": "^4.6.0",
+>>>>>>> Liz_component_implementing
         "styled-components": "^5.3.6",
         "wouter-preact": "^2.8.1"
     },

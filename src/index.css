@@ -22,25 +22,46 @@ code {
 
 .page {
   padding: 1rem;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
-
+.data-container {
+  flex-grow: 1;
+  overflow: scroll;
+}
 .input-control {
   display: flex;
   flex-direction: column;
   gap: 3px;
 }
 
+.buttons {
+  display: flex;
+  width: 100%;
+  gap: 1rem;
+  background-color: #ffffff;
+  padding: 0.5rem 0 0 0;
+}
+
 form {
   display: flex;
   flex-direction: column;
-  width: 80%;
+  width: 100%;
   gap: 12px;
   margin: 0 auto;
+  flex-grow: 1;
+  justify-content: space-between;
 }
-
+.signin-form {
+  justify-content: flex-start;
+  flex-grow: 0;
+}
 input,
 select {
-  padding: 1rem;
+  padding: 12px;
   border-radius: 10px;
   outline: none;
   border: 1px solid white;
@@ -55,7 +76,6 @@ input:focus {
   color: #76c893;
   margin: 8px 0;
 }
-
 a {
   color: #76c893;
   text-align: center;
@@ -65,20 +85,17 @@ input[type="checkbox"] {
   margin: 0 3px;
   width: 1.2rem;
 }
-
-.password-error {
-  color: red;
-  border: 1px solid red;
-  padding: 1rem;
-}
-
 .product {
+  width: 100%;
   display: flex;
   background: #ffffff;
-  box-shadow: 0px 2px 7px rgba(0, 0, 0, 0.25);
+  border: 1px solid gray;
+  margin: 10px 0;
 }
 .product img {
   width: 100px;
+  max-height: 100px;
+  object-fit: cover;
 }
 .product-info {
   display: flex;
@@ -91,6 +108,22 @@ input[type="checkbox"] {
   gap: 1rem;
 }
 
+.profile-page {
+  align-items: stretch;
+}
+.profile-page h1,
+.profile-page h2 {
+  text-align: center;
+}
+/* 
+
+.password-error {
+  color: red;
+  border: 1px solid red;
+  padding: 1rem;
+}
+
+
 .product-card {
   margin-top: 1rem;
   display: flex;
@@ -101,4 +134,4 @@ input[type="checkbox"] {
 .product-card img {
   overflow: hidden;
   border-radius: 15px 15px 0 0;
-}
+} */

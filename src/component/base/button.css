@@ -8,12 +8,18 @@
 
 .btn-primary {
   padding: 12px;
-  margin: 21px 0;
+  /* margin: 21px 0; */
   font-size: 30px;
   background: linear-gradient(90deg, #76c893 0%, #52b69a 100%),
     rgba(0, 0, 0, 0.2);
-  box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.1);
   color: white;
+}
+
+.btn--border {
+  background: none;
+  color: #76c893;
+  border: 3px solid #76c893;
 }
 
 .btn-secondary {
@@ -21,9 +27,18 @@
   padding: 4px;
   color: #76c893;
   background-color: white;
-  /* width: 30%; */
 }
-
-.btn-product{
-  
+.back-btn {
+  color: #76c893;
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 5px;
+  margin: 1rem;
+  border-radius: 100%;
+  border: 3px solid #76c893;
+}
+.btn-delete {
+  color: red;
+  border-color: inherit;
 }
