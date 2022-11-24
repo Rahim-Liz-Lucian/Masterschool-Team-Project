@@ -1,33 +1,22 @@
-import { signal } from "@preact/signals";
-import { User } from "firebase/auth";
-import { DocumentData } from "firebase/firestore";
+import { signal, useSignal } from "@preact/signals";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { useEffect } from "preact/hooks";
 import { fireAuth } from ".";
 
-/**
- * This signal holds the context of the currently logged in user.
- */
-export const authCtx = signal<User | null>(fireAuth.currentUser);
+const user = signal<User | null>(fireAuth.currentUser);
 
-/**
- * This signal holds the context the current loading state.
- */
-export const authLoading = signal(true);
+export const initApp = () => {
+    const isLoading = useSignal(true);
 
-// This is to avoid using the `withConverter` method as the data is just fields, no methods
-type Data<T> = DocumentData | T;
+    useEffect(() => {
+        return onAuthStateChanged(fireAuth, next => {
+            [user.value, isLoading.value] = [next, false];
+        });
+    }, []);
 
-export type ProductData = Data<{
-    uid: string;
-    title: string;
-    quantity: number; // TODO this hasn't been implemented
-    description?: string;
-    expirationDate?: string;
-    thumbnailUrl?: string;
-}>;
+    return { isLoading: isLoading.value };
+};
 
-export type UserData = Data<{
-    name: string;
-    username: string;
-    // dietaryRequirements?: string[];
-    // rating: number;
-}>;
+export const useFireBaseAuth = () => {
+    return user.value;
+};

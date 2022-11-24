@@ -1,0 +1,18 @@
+@import url("./base.css");
+@import url("./component.css");
+
+.page {
+    /* justify-content: initial; */
+}
+
+.product__card {
+    outline: 1px solid green;
+
+}
+
+.product__card>img {
+    width: 200px;
+
+    aspect-ratio: 1/1;
+    /* doesn't exist in styled-components */
+}

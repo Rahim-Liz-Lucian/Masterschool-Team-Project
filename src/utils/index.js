@@ -3,7 +3,7 @@
 export const addOne = (a) => a + 1;
 
 /**
- * Throws an error is passwords are not equal
+ * Throws an error if `password` and `repeatPassword` are not equal
  */
 export function validateEmailAndPassword(email, password, repeatPassword) {
     if (password !== (repeatPassword))

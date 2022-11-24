@@ -1,6 +1,9 @@
-import { render } from 'preact';
- import { App } from './app';
+import { render } from "preact";
+import { StrictMode } from "preact/compat";
+import { App } from "./app";
 // FIXME remove this
-import './index.css';
+// import './index.css';
 
-render(<App />, document.getElementById('app') as HTMLElement);
+render(<StrictMode>
+    <App />
+</StrictMode>, document.getElementById("app") as HTMLElement);
