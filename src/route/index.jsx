@@ -1,13 +1,11 @@
 import { signOut } from "firebase/auth";
 import { Link, useLocation } from "wouter-preact";
+import { useFireBaseAuth } from "~/firebase/data";
 import { fireAuth } from "../firebase";
-import { useFirebaseAuth } from "../firebase/hooks";
 
 export default function Page() {
-  const [auth, isLoading] = useFirebaseAuth();
+  const auth = useFireBaseAuth()
   const { onSignOut } = use({ auth });
-
-  if (isLoading) return <div>Loading...</div>;
 
   return (
     <main>

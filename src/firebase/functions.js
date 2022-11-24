@@ -1,8 +1,7 @@
-import { createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
+import { createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, signInWithEmailAndPassword, signInWithPopup, signOut, updatePassword, updateEmail} from "firebase/auth";
 import { collection, deleteDoc, doc, getDoc, getDocs, setDoc, writeBatch } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { fireStorage, fireStore, fireAuth } from ".";
-
 /**
  * Register a new user to the firebase Application
  * 
@@ -116,4 +115,24 @@ export async function deleteUserAccount(user, password) {
         // deleteObject(filesRef),
         deleteUser(user)
     ]);
+}
+
+export async function changePassword(newPassword) {
+    const user = fireAuth.currentUser
+    updatePassword(user, newPassword).then(() => {
+        console.log("password updated")
+      }).catch((error) => {
+        console.log(error)
+      });
+    
+}
+
+export async function changeEmail(newEmail) {
+    const user = fireAuth.currentUser
+    updateEmail(user, newEmail).then(() => {
+        console.log("email updated")
+      }).catch((error) => {
+        console.log(error)
+      });
+    
 }

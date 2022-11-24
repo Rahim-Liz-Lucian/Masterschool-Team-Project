@@ -5,32 +5,36 @@ import { uploadFile } from "~/firebase/functions";
 import { updateProfile } from "firebase/auth";
 import ErrorMessage from "~/component/base/ErrorMessage";
 import SettingsProfileForm from "~/component/SettingsProfileForm";
+import ChangePassword from "../../component/changeAuthentication"
 import { Redirect, useLocation } from "wouter-preact";
-import { useFirebaseAuth } from "~/firebase/hooks";
+import { useFireBaseAuth } from "~/firebase/data";
+
 
 // NOTE using Github as a reference, it refreshes the page when changes are made
 // Is this behaviour we want or do we want it to update with no refresh. They also
 // keep this optional so can be blank.
 export default function Page() {
-  const [user, authLoading] = useFirebaseAuth();
-  const { error, resetError, updateAvatar, onUpdateProfile } = use({ user });
+  const auth = useFireBaseAuth()
+  //const [user, authLoading] = useFirebaseAuth();
+  const { error, resetError, updateAvatar, onUpdateProfile } = use({ auth });
+
 
   if (error) return <ErrorMessage {...{ error, resetError }} />;
 
-  if (authLoading) return <div>Loading...</div>;
+  /*if (authLoading) return <div>Loading...</div>;*/
 
-  if (!user) return <Redirect to="/" />;
+  if (!auth) return <Redirect to="/" />;
 
   return (
     <div>
       <h1>Profile</h1>
-      {user.displayName && <h2>{user.displayName}'s Profile</h2>}
-      <p>{user.email}</p>
+      {auth.displayName && <h2>{auth.displayName}'s Profile</h2>}
+      <p>{auth.email}</p>
 
       <div>
         <label htmlFor="avatar">
           <img
-            src={user?.photoURL ?? defaultAvatar}
+            src={auth?.photoURL ?? defaultAvatar}
             alt="avatar"
             onError={(e) => (e.target.src = defaultAvatar)}
             style={{ width: 75, borderRadius: 50, cursor: "pointer" }}
@@ -47,6 +51,7 @@ export default function Page() {
 
       {/* TODO update user details form */}
       <SettingsProfileForm onUpdateProfile={onUpdateProfile} />
+      <ChangePassword/>
     </div>
   );
 }

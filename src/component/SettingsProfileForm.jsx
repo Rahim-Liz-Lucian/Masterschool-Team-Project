@@ -13,7 +13,7 @@ export default function SettingsProfileForm({ onUpdateProfile }) {
     return (
         <form onSubmit={handleSubmit}>
             <div className="input-control">
-                <label className="form-label">Name</label>
+                <label className="form-label">Change Name</label>
                 <input
                     type="text"
                     className="form-control"

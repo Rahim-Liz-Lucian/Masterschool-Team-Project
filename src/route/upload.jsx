@@ -3,16 +3,18 @@ import { collection } from "firebase/firestore";
 import { useEffect, useState } from "preact/hooks";
 import ErrorMessage from "../component/base/ErrorMessage";
 import { uploadFile, uploadProduct } from "../firebase/functions";
-import { useFirebaseAuth, useFirebaseCollectionData } from "../firebase/hooks";
+import { useFirebaseCollectionData } from "../firebase/hooks";
 import { useError } from "../utils/hooks";
+import { useFireBaseAuth } from "~/firebase/data";
 
 export default function Page() {
-    const [auth, authLoading] = useFirebaseAuth();
+    const auth = useFireBaseAuth()
+    //const [auth, authLoading] = useFirebaseAuth();
     const { onUpload, products, dataLoading, error, resetError } = use({ auth });
 
-    if (authLoading || dataLoading) return (
+    /*if (authLoading || dataLoading) return (
         <div>Loading...</div>
-    );
+    );*/
 
     if (error) return (
         <ErrorMessage {...{ error, resetError }} />
