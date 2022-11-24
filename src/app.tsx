@@ -20,7 +20,7 @@ export function App() {
                         {/* @ts-ignore */}
                         {(params) => <Page {...params} />}
                     </Route>
-                )).concat(<Redirect to="/"></Redirect>)}
+                )).concat(<Redirect to="/" />)}
             </Switch>
         </Suspense>
     );
