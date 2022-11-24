@@ -1,5 +1,5 @@
-import { createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
-import { collection, deleteDoc, doc, getDoc, getDocs, setDoc, writeBatch } from "firebase/firestore";
+import { createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
+import { collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc, writeBatch } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { fireStorage, fireStore, fireAuth } from ".";
 
@@ -74,14 +74,25 @@ export function uploadProduct(user, product) {
  * Uploads user details to the path `users/:userId`
  * 
  * Throws an error if any occur
+ */
+export function updateUserProfile(user, details) {
+    const detailsRef = doc(fireStore, `users/${user?.uid}`);
+
+    return Promise.all([
+        updateProfile(user, { displayName: details.displayName }),
+        setDoc(detailsRef, details, { merge: true }),
+    ]);
+}
+
+/**
+ * Update document data with this helper function.
  * 
- * @param {*} user 
- * @param {*} details 
+ * @param {string} path 
+ * @param {*} data 
  * @returns 
  */
-export function uploadUserDetails(user, details) {
-    const detailsRef = doc(fireStore, `users/${user?.uid}`);
-    return setDoc(detailsRef, details, { merge: true });
+export async function updateData(path, data) {
+    return updateDoc(doc(fireStore, path), data);
 }
 
 /**

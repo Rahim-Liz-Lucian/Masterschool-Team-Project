@@ -16,7 +16,7 @@ export function useFirebaseDocumentData<T = DocumentData>(query: (db: Firestore)
     useEffect(() => {
         pending.value = true;
         return onSnapshot(memoRef, next => {
-            // NOTE may not be required anymore
+            // NOTE may not be required any more
             // const tmp = next.data();
             // //@ts-ignore
             // tmp[idField] = next.id;
