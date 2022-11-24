@@ -1,41 +1,50 @@
-import defaultAvatar from "~/assets/defaults/avatar.jpg";
-import { useError } from "~/utils/hooks";
+import defaultAvatar from "../../assets/defaults/avatar.jpg";
+import { useError } from "../../utils/hooks";
 import Compressor from "compressorjs";
-import { uploadFile } from "~/firebase/functions";
+import { deleteUserAccount, uploadFile } from "../../firebase/functions";
 import { updateProfile } from "firebase/auth";
-import ErrorMessage from "~/component/base/ErrorMessage";
-import SettingsProfileForm from "~/component/SettingsProfileForm";
+import ErrorMessage from "../../component/base/ErrorMessage";
+import SettingsProfileForm from "../../component/SettingsProfileForm";
 import { Redirect, useLocation } from "wouter-preact";
-import { useFirebaseAuth } from "~/firebase/hooks";
+import Button from "../../component/base/Button";
+import { useFirebaseAuth } from "../../firebase/hooks";
+import { useState } from "preact/hooks";
 
 // NOTE using Github as a reference, it refreshes the page when changes are made
 // Is this behaviour we want or do we want it to update with no refresh. They also
 // keep this optional so can be blank.
 export default function Page() {
-    const [user, authLoading] = useFirebaseAuth();
-    const { error, resetError, updateAvatar, onUpdateProfile } = use({ user });
+    const [auth, isLoading] = useFirebaseAuth();
+    const { error, resetError, updateAvatar, onUpdateProfile, onDeleteAccount } =
+        use({ auth });
 
     if (error) return <ErrorMessage {...{ error, resetError }} />;
 
-    if (authLoading) return <div>Loading...</div>;
+    if (isLoading) return <div>Loading...</div>;
 
-    if (!user) return <Redirect to="/" />;
+    if (!auth) return <Redirect to="/" />;
 
     return (
-        <div>
+        <div className="page profile-page">
             <h1>Profile</h1>
-            {user.displayName && <h2>{user.displayName}'s Profile</h2>}
-            <p>{user.email}</p>
+            {auth.displayName && <h2>{auth.displayName}'s Profile</h2>}
 
             <div>
                 <label htmlFor="avatar">
                     <img
-                        src={user?.photoURL ?? defaultAvatar}
+                        src={auth?.photoURL ?? defaultAvatar}
                         alt="avatar"
                         onError={(e) => (e.target.src = defaultAvatar)}
-                        style={{ width: 75, borderRadius: 50, cursor: "pointer" }}
+                        style={{
+                            width: 75,
+                            height: 75,
+                            objectFit: "cover",
+                            borderRadius: 50,
+                            cursor: "pointer",
+                        }}
                     />
                 </label>
+                <p>{auth.email}</p>
                 <input
                     type="file"
                     id="avatar"
@@ -47,17 +56,21 @@ export default function Page() {
 
             {/* TODO update user details form */}
             <SettingsProfileForm onUpdateProfile={onUpdateProfile} />
+
+            {/* have this in red */}
+
+            <DeleteAccountForm onDeleteAccount={onDeleteAccount} />
         </div>
     );
 }
 
-const use = ({ user }) => {
+const use = ({ auth: user }) => {
     const { error, setError, resetError } = useError();
     const [, setLocation] = useLocation();
 
     const onUpdateProfile = async ({ name }) => {
         // do something if name exists
-        // TODO error handling
+        // TODO: error handling
         await updateProfile(user, { displayName: name });
         alert(`Your profile display name has been updated for ${name}`);
     };
@@ -84,5 +97,43 @@ const use = ({ user }) => {
         });
     };
 
-    return { error, resetError, updateAvatar, onUpdateProfile };
+    const onDeleteAccount = async ({ password }) => {
+        try {
+            await deleteUserAccount(user, password);
+            alert(`Sad to see you leave ☹️`);
+            setLocation("/");
+        } catch (error) {
+            setError(error);
+        }
+    };
+
+    return { error, resetError, updateAvatar, onUpdateProfile, onDeleteAccount };
 };
+
+function DeleteAccountForm({ onDeleteAccount }) {
+    const [password, setPassword] = useState("");
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+        onDeleteAccount({ password });
+    };
+
+    return (
+        <form onSubmit={onSubmit}>
+            <label htmlFor="password">
+                <span>Password</span>
+                <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    required
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+            </label>
+
+            <Button type="submit" classes="btn btn-secondary btn-delete">
+                Delete account
+            </Button>
+        </form>
+    );
+}
