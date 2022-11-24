@@ -1,7 +1,7 @@
 import defaultAvatar from "~/assets/defaults/avatar.jpg";
 import { useError } from "~/utils/hooks";
 import Compressor from "compressorjs";
-import { uploadFile } from "~/firebase/functions";
+import { updateData, uploadFile } from "~/firebase/functions";
 import { updateProfile } from "firebase/auth";
 import ErrorMessage from "~/component/base/ErrorMessage";
 import SettingsProfileForm from "~/component/SettingsProfileForm";
@@ -9,6 +9,9 @@ import { Redirect, useLocation } from "wouter-preact";
 import { useState } from "preact/hooks";
 import styled from "styled-components";
 import { useFireBaseAuth } from "~/firebase/data";
+import { useFirebaseDocumentData } from "~/firebase/hooks";
+import { doc, updateDoc, setDoc } from "firebase/firestore";
+import { fireStore } from "~/firebase";
 
 // NOTE using Github as a reference, it refreshes the page when changes are made
 // Is this behaviour we want or do we want it to update with no refresh. They also
@@ -18,89 +21,71 @@ export default function Page() {
 
     const [formData, setFormData] = useState({ name: user.displayName });
 
-    const { error, resetError, updateAvatar, onUpdateProfile, userPhotoUrl } = useHook({ user, formData });
+    const { error, resetError, updateAvatar, onUpdateProfile, profile } = useHook({ user, formData });
 
     if (!user) return <Redirect to="/" />;
 
     if (error) return <ErrorMessage {...{ error, resetError }} />;
 
     return (
-        <div>
+        <Container>
             <h1>Profile</h1>
             {user.displayName && <h2>{user.displayName}'s Profile</h2>}
             <p>{user.email}</p>
 
-            {/* NOTE component called `AvatarUpdateForm` perhaps */}
-            <ImageInput src={userPhotoUrl ?? defaultAvatar} onChange={updateAvatar} onError={(e) => (e.target.src = defaultAvatar)} />
+            {/* FIXME messy but works */}
+            <ImageInput src={profile.avatarUrl ?? defaultAvatar} onChange={updateAvatar} onError={(e) => (e.target.src = defaultAvatar)} />
 
             {/* TODO update user details form */}
             <Form onSubmit={onUpdateProfile}>
-                <div className="input-control">
-                    <label className="form-label">Name</label>
-                    <input
-                        type="text"
-                        className="form-control"
-                        name="name"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    />
-                </div>
+                <Input name="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}>
+                    Name
+                </Input>
 
-                <button type="submit">Update profile</button>
+                <Button type="submit">Update profile</Button>
             </Form>
-        </div>
+        </Container>
     );
 }
 
-const useHook = ({ user }) => {
+const useHook = ({ user, formData: { name } }) => {
     const { error, setError, resetError } = useError();
-    const [userPhotoUrl, setUserPhotoUrl] = useState(user?.photoURL);
+    // const [, setLocation] = useLocation();
+    const [profile, ,] = useFirebaseDocumentData(store => {
+        return doc(store, `users/${user.uid}`);
+    }, [user]);
 
+    const avatarUrl = profile?.avatarUrl ?? user?.photoURL;
 
-    const [, setLocation] = useLocation();
+    const onUpdateProfile = async (e) => {
+        e.preventDefault();
 
-    const onUpdateProfile = async ({ name }) => {
         // do something if name exists
         // TODO error handling
         await updateProfile(user, { displayName: name });
         alert(`Your profile display name has been updated for ${name}`);
     };
 
-    const updateAvatar = ({ target: { files: [rawFile] } }) => {
+    const updateAvatar = ({ target: { files: [file] } }) => {
 
-        compressFile(rawFile, async thumbnail => {
+        compressFile(file, async thumbnail => {
             try {
-                const photoURL = await uploadFile(thumbnail, `users/${user?.uid}/avatar`);
-                updateProfile(user, { photoURL });
-                setUserPhotoUrl(photoURL);
+                const avatarUrl = await uploadFile(thumbnail, `users/${user?.uid}/avatar`);
+                // TODO move into util file
+                updateData(`users/${user?.uid}`, { avatarUrl });
+                // this updates the photoURL
+                updateProfile(user, { photoURL: avatarUrl });
+
             } catch (error) {
                 setError(error);
             }
         }, error => setError(error));
-
-
-        // compressFile()
-
-        // new Compressor(e.target.files[0], {
-        //     quality: 0.6, maxWidth: 1500, maxHeight: 1000, error(error) {
-        //         setError(error);
-        //     },
-        //     async success(file) {
-        //         try {
-        //             // file.name = "avatar";
-        //             // TODO return the url of the displayPhoto for this function
-        //             const photoURL = await uploadFile(file, `users/${user?.uid}/avatar`);
-        //             updateProfile(user, { photoURL });
-        //             alert(`Your profile picture has been updated 💚`); //NOTE to replace with a better message
-        //         } catch (error) {
-        //             setError(error);
-        //         }
-        //     },
-        // });
     };
 
-    return { error, resetError, updateAvatar, onUpdateProfile, userPhotoUrl };
+    // TODO include user displayName for profile name
+    return { error, resetError, updateAvatar, onUpdateProfile, profile: { name: profile.name ?? user.displayName, avatarUrl: profile?.avatarUrl ?? user?.photoURL, ...profile }, avatarUrl };
 };
+
 
 /**
  * Throws an error if one occurs
@@ -120,7 +105,6 @@ const compressFile = (file, success, error) => {
 
 const ImageInput = ({ src, onError, onChange, ...props }) => {
     // could dynamically import this asset
-
     return (
         <Avatar>
             <label htmlFor="avatar">

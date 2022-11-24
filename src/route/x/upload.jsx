@@ -1,7 +1,6 @@
 import Compressor from "compressorjs";
 import { doc } from "firebase/firestore";
 import { useState } from "preact/hooks";
-import styled from "styled-components";
 import { Redirect } from "wouter-preact";
 import { Nav, } from "~/component/base/base";
 import ErrorMessage from "~/component/base/ErrorMessage";
@@ -9,11 +8,18 @@ import { fireStore } from "~/firebase";
 import { useFireBaseAuth } from "~/firebase/data";
 import { uploadFile, uploadProduct } from "~/firebase/functions";
 import { useError } from "~/utils/hooks";
+import "./upload.css";
 
 export default function Page() {
     const user = useFireBaseAuth();
     const [formData, setFormData] = useState({});
     const { error, resetError, onUpload } = useHook({ user, formData });
+
+    // user.displayName
+    // user.email
+    // user.phoneNumber
+    // user.photoURL
+    // user.uid
 
     if (!user) return <Redirect to="/x/sign-in" />;
 
@@ -22,10 +28,10 @@ export default function Page() {
     );
 
     return (
-        <Container>
+        <section className="page">
             <h1>Add Product</h1>
 
-            <Form onSubmit={onUpload}>
+            <form onSubmit={onUpload}>
 
                 <Input required name="title" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })}>
                     Title
@@ -39,16 +45,16 @@ export default function Page() {
                     Expiration Date
                 </Input>
 
-                {/* TODO This needs its own component likely */}
-                <Input required type="file" accept="image/jpeg" name="thumbnail" value={formData.thumbnail} onChange={e => setFormData({ ...formData, thumbnail: e.target.files[0] })} >
+                {/* TODO show preview of image upload */}
+                <Input required type="file" accept="image/jpeg" name="photo" value={formData.thumbnail} onChange={e => setFormData({ ...formData, photo: e.target.files[0] })} >
                     Upload Image
                 </Input>
 
-                <Button type="submit">Upload</Button>
-            </Form>
+                <button type="submit">Upload</button>
+            </form>
 
             <Nav />
-        </Container >
+        </section>
     );
 }
 
@@ -67,15 +73,15 @@ const useHook = ({ user, formData }) => {
         };
 
         // NOTE error must be inside the async function
-        compressFile(formData.thumbnail, async (file) => {
+        compressFile(formData.photo, async (file) => {
             // NOTE error must be inside the async function
             try {
-                const thumbnailUrl = await uploadFile(file, `users/${user.uid}/products/${product.uid}`);
+                const thumbnailURL = await uploadFile(file, `users/${user.uid}/products/${product.uid}`);
 
                 const userRef = doc(fireStore, `users/${user.uid}`);
 
                 // NOTE hopefully this gives a reference to the user it belongs to
-                await uploadProduct(user, { ...product, thumbnailUrl, userRef });
+                await uploadProduct(user, { ...product, thumbnailURL, userRef });
 
                 alert(`product has been uploaded 💚`);
             } catch (error) {
@@ -101,71 +107,11 @@ const compressFile = (file, success, error) => {
     });
 };
 
-const Container = styled.div`
-    margin: auto;
-    outline: 1px dashed gray;
-    /* use a more responsive approach */
-    width: 390px;
-    display: flex;
-    flex-direction: column;
-    gap: 21px;
-    align-items: center;
-    padding: 60px;
-`;
-
-const Form = styled.form`
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-`;
-
-const Button = styled.button`
-    font-size:30px;
-    line-height:36px;
-    width: 288px;
-    color: #fff;
-    font-weight: 500;
-    padding: 12px;
-    border-radius: 16px;
-    background: linear-gradient(90deg, #76C893 0%, #52B69A 100%), rgba(0, 0, 0, 0.2);
-    
-    :hover {
-        /* TODO add a transition */
-        box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.10);
-    }
-`;
-
-const Label = styled.label`
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-
-    /* styling span */
-    text-transform: capitalize;
-    
-    /* styling placeholder */
-    input {
-        width: 288px;
-        padding: 4px 0;
-        border-bottom: 1px solid black;
-        
-        /* placeholder styling */
-        ::placeholder {
-            text-transform: capitalize;
-            font-style: italic;
-        }
-        
-        :hover {
-            border-bottom-color: #76C893;
-        }
-    }
-`;
-
 const Input = ({ name, type = "text", children, ...props }) => {
     return (
-        <Label htmlFor={name}>
+        <label htmlFor={name}>
             <span name={name} id={name}>{children}</span>
             <input type={type} name={name} id={name} {...props} />
-        </Label>
+        </label>
     );
 };

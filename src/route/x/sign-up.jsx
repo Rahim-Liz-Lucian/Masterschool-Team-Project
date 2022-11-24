@@ -1,26 +1,32 @@
 import { useState } from "preact/hooks";
-import styled from "styled-components";
-import { useLocation } from "wouter-preact";
+import { Redirect, useLocation } from "wouter-preact";
 import ErrorMessage from "~/component/base/ErrorMessage";
 import { WasteLess } from "~/component/icons/icons";
-import { registerUser, uploadUserDetails } from "~/firebase/functions";
+import { useFireBaseAuth } from "~/firebase/data";
+import { registerUser, updateUserProfile } from "~/firebase/functions";
 import { validateEmailAndPassword } from "~/utils";
 import { useError } from "~/utils/hooks";
 
+import "./sign-up.css";
+
 export default function Page() {
-    const [formData, setFormData] = useState({ city: "" });
+    const user = useFireBaseAuth();
+    const [formData, setFormData] = useState({ city: "none" });
     const { error, resetError, onSignUp } = useHook({ formData });
+
+    // will redirect elsewhere later
+    if (user) return <Redirect to="/x/upload" />;
 
     if (error) return (
         <ErrorMessage {...{ error, resetError }} />
     );
 
     return (
-        <Container>
+        <div className="page">
             <WasteLess width={220} />
 
-            <Form id="sign-up" onSubmit={onSignUp}>
-                <Input required type="text" name="name" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
+            <form id="sign-up" onSubmit={onSignUp}>
+                <Input required type="text" name="displayName" value={formData.displayName} onChange={e => setFormData({ ...formData, displayName: e.target.value })} />
                 <Input required type="email" name="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
                 <Input required type="password" name="password" value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} />
                 <Input type="password" name="repeatPassword" value={formData.repeatPassword} onChange={e => setFormData({ ...formData, repeatPassword: e.target.value })} />
@@ -31,15 +37,15 @@ export default function Page() {
                     <option value="paris">Paris</option>
                     <option value="tlv">Tel-Aviv</option>
                 </Select>
-            </Form>
+            </form>
 
-            <Button type="submit" form="sign-up">Login</Button>
-        </Container>
+            <button type="submit" form="sign-up">Login</button>
+        </div>
     );
 }
 
 /** HOOK */
-const useHook = ({ formData: { email, password, repeatPassword, city, name } }) => {
+const useHook = ({ formData: { email, password, repeatPassword, city, displayName } }) => {
     const [, setLocation] = useLocation();
     const { error, setError, resetError } = useError();
 
@@ -51,7 +57,7 @@ const useHook = ({ formData: { email, password, repeatPassword, city, name } }) 
 
             const { user } = await registerUser(email, password);
 
-            await uploadUserDetails(user, { name, email, password, location: { city } });
+            await updateUserProfile(user, { displayName, email, password, location: { city } });
 
             alert(`successfully created an account`);
             setLocation("/x/upload");
@@ -61,91 +67,27 @@ const useHook = ({ formData: { email, password, repeatPassword, city, name } }) 
     return { onSignUp, error, resetError };
 };
 
-/** STYLING */
+/** COMPONENTS */
 
-const Container = styled.div`
-    margin: auto;
-    outline: 1px dashed gray;
-    /* use a more responsive approach */
-    width: 390px;
-    display: flex;
-    flex-direction: column;
-    gap: 21px;
-    align-items: center;
-    padding: 60px;
-`;
-
-const Form = styled.form`
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-`;
-
-const Label = styled.label`
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-
-    /* styling span */
-    text-transform: capitalize;
-    
-    /* styling placeholder */
-    input {
-        width: 288px;
-        padding: 4px 0;
-        border-bottom: 1px solid black;
-        
-        /* placeholder styling */
-        ::placeholder {
-            text-transform: capitalize;
-            font-style: italic;
-        }
-        
-        :hover {
-            border-bottom-color: #76C893;
-        }
-    }
-`;
-
-const Select = ({ name, placeholder, children, ...props }) => {
+const Select = ({ name, placeholder, children, value, ...props }) => {
     return (
-        <Label htmlFor={name}>
+        <label htmlFor={name}>
             <span>{name}</span>
-            <select name={name} id={name} {...props}>
-                <option value={""} disabled>
+            <select name={name} id={name} value={value} {...props}>
+                <option value={value} disabled>
                     {placeholder}
                 </option>
-                {/* options from select */}
                 {children}
             </select>
-        </Label>
+        </label>
     );
 };
 
 const Input = ({ name, type, ...props }) => {
     return (
-        <Label htmlFor={name}>
+        <label htmlFor={name}>
             <span>{name}</span>
             <input type={type} name={name} id={name} {...props} />
-        </Label>
+        </label>
     );
 };
-
-const Button = styled.button`
-    font-size:30px;
-    line-height:36px;
-    width: 288px;
-    color: #fff;
-    font-weight: 500;
-    padding: 12px;
-    border-radius: 16px;
-    background: linear-gradient(90deg, #76C893 0%, #52B69A 100%), rgba(0, 0, 0, 0.2);
-    
-    :hover {
-        /* TODO add a transition */
-        box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.10);
-    }
-`;
-
-
-// amy peacock, trip phone after 12

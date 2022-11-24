@@ -1,0 +1,44 @@
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    text-transform: capitalize;
+}
+
+input {
+    width: 288px;
+    padding: 4px 0;
+    border-bottom: 1px solid black;
+}
+
+input:hover {
+    border-bottom-color: #76C893;
+}
+
+input::placeholder {
+    text-transform: capitalize;
+    font-style: italic;
+}
+
+button[type=submit] {
+    font-size: 30px;
+    line-height: 36px;
+    width: 288px;
+    color: #fff;
+    font-weight: 500;
+    padding: 12px;
+    border-radius: 16px;
+    background: linear-gradient(90deg, #76C893 0%, #52B69A 100%), rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+    /* TODO add a transition */
+    box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.10);
+}
