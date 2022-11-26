@@ -1,181 +1,99 @@
-import "./upload.css";
-import Compressor from "compressorjs";
 import { collection } from "firebase/firestore";
-import { useEffect, useState } from "preact/hooks";
-import ErrorMessage from "../component/base/ErrorMessage";
-import { uploadFile, uploadProduct } from "../firebase/functions";
-import { useFirebaseCollectionData } from "../firebase/hooks";
-import { useError } from "../utils/hooks";
-
-import { useFireBaseAuth } from "~/firebase/data";
-import { Input } from "~/component/base/input";
-import Button, { BackButton } from "~/component/base/button";
+import { useState } from "preact/hooks";
+import ErrorMessage from "~/component/ErrorMessage";
+import { useFirebaseCollection } from "~/firebase";
+import { useError } from "~/utils";
+import { useFireBaseAuth } from "~/firebase";
 import { Redirect } from "wouter-preact";
+import { compressFile } from "~/utils";
+import { uploadProduct } from "~/firebase/functions";
+import { Input, BackButton } from "~/component/core";
+
+import "./upload.css";
+import NavMenu from "~/component/NavMenu";
+import { LinkAvatar } from "~/component/core/icons";
 
 export default function Page() {
     const user = useFireBaseAuth();
-    const [formData, setFormData] = useState({});
-    const { onUpload, products, dataLoading, error, resetError } = useHook({ user, formData });
 
-    if (dataLoading) return <div>Loading...</div>;
+    const minDate = new Date().toLocaleDateString("en-CA");
 
+    const [formData, setFormData] = useState({ expirationDate: minDate });
+    const { onUpload, products, loading, error, resetError } = useHook({ user, formData });
+
+    const onChange = (key) => ({ target: { files, value } }) => {
+        setFormData({ ...formData, [key]: files ? files[0] : value });
+    };
+
+    // FIXME this should not be here
     if (!user) return <Redirect to="/sign-in" />;
 
-    if (error) return (
-        <div>
-            <BackButton />
-            <ErrorMessage {...{ error, resetError }} />
-        </div>
-    );
+    if (error) return <ErrorMessage {...{ error, resetError }} />;
+
+    if (loading) return <div>Loading...</div>;
 
     return (
-        <div className="page">
-            <BackButton />
-            <p>I have {products.length} Products in my basket</p>
+        <>
+            <header className="header">
+                <BackButton className="header__nav" />
+                <h1 className="header__title">Upload</h1>
+                <LinkAvatar user={user} to="/profile/" title={`Goto Profile`} />
+            </header>
 
-            <form onSubmit={onUpload}>
-                <Input required name="title" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })}>
-                    Title
-                </Input>
+            <main>
+                <p>I have {products.length} Products in my account so far</p>
 
-                <Input name="description" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })}>
-                    Description
-                </Input>
+                <form className="form" id="upload" onSubmit={onUpload}>
+                    <Input required name="title" value={formData.title} onChange={onChange("title")}>Title</Input>
 
-                <Input required name="expirationDate" type="date" value={formData.expirationDate} onChange={e => setFormData({ ...formData, expirationDate: e.target.value })}>
-                    Expiration Date
-                </Input>
+                    <Input name="description" value={formData.description} onChange={onChange("description")}>Description</Input>
 
-                {/* TODO show preview of image upload */}
-                <Input required type="file" accept="image/jpeg" name="photo" value={formData.thumbnail} onChange={e => setFormData({ ...formData, photo: e.target.files[0] })} >
-                    Upload Image
-                </Input>
+                    <Input required type="date" name="expirationDate" value={formData.expirationDate} onChange={onChange("expirationDate")} min={minDate}>Expiration Date</Input>
 
-                <Button className="btn btn-primary" type="submit">Upload</Button>
-            </form>
-        </div>
+                    {/* FIXME add styling from Liz's branch */}
+                    <label htmlFor="thumbnail">
+                        <span>Upload Thumbnail</span>
+                        <input required type="file" name="thumbnail" id="thumbnail" accept="image/jpeg" value={formData.thumbnail} onChange={onChange("thumbnail")} />
+                    </label>
+
+                    <button className="form__submit" type="submit" form="upload">Upload</button>
+                </form>
+            </main>
+
+            <aside>
+                <NavMenu user={user} />
+            </aside>
+        </>
     );
 }
 
-const useHook = ({ auth: user }) => {
-    const { error, setError, resetError } = useError();
+const useHook = ({ user, formData }) => {
+    const [products, productsError, productsLoading] = useFirebaseCollection((store) => {
+        return collection(store, `users/${user?.uid}/products`);
+    }, [user]);
 
-    // products
-    const [products, productsError, productsLoading] = useFirebaseCollectionData(
-        (store) => {
-            return collection(store, `users/${user?.uid}/products`);
-        },
-        [user]
-    );
+    const { error, setError, resetError } = useError(productsError);
 
-    useEffect(() => {
-        productsError && setError(productsError);
-    }, [productsError]);
-
-    const onUpload = async ({
-        title,
-        description,
-        expirationDate,
-        thumbnail,
-    }) => {
-        const product = {
-            title,
-            expirationDate,
-            uid: crypto.randomUUID(),
-            description: description ?? ``,
-        };
-
-        new Compressor(thumbnail, {
-            quality: 0.6,
-            maxWidth: 1500,
-            maxHeight: 1000,
-            error(error) {
-                setError(error);
-            },
-            async success(file) {
-                try {
-                    const thumbnailURL = await uploadFile(
-                        file,
-                        `users/${user?.uid}/images/products/${product.uid}`
-                    );
-                    await uploadProduct(user, { ...product, thumbnailURL });
-                    alert(`Product has been uploaded 💚`);
-                } catch (error) {
-                    setError(error);
-                }
-            },
-        });
-    };
-
-    return {
-        error,
-        resetError,
-        onUpload,
-        products,
-        dataLoading: productsLoading,
-    };
-};
-
-function ProductUploadForm({ onUpload }) {
-    const [product, setProduct] = useState({});
-
-    const onSubmit = (e) => {
+    const onUpload = (e) => {
         e.preventDefault();
 
-        onUpload(product);
+        const product = {
+            title: formData.title,
+            description: formData.description ?? "",
+            // tags: formData.tags
+            expirationDate: new Date(formData.expirationDate),
+            createdAt: new Date(),
+        };
+
+        compressFile(formData.thumbnail, async (file) => {
+            try {
+                await uploadProduct(user, { product, file });
+                alert(`product has been uploaded 💚`);
+            } catch (error) {
+                setError(error);
+            }
+        }, error => setError(error));
     };
 
-    return (
-        <form onSubmit={onSubmit}>
-            <label htmlFor="title">
-                <span>Title</span>
-                <input
-                    required
-                    type="text"
-                    name="title"
-                    id="title"
-                    onChange={(e) => setProduct({ ...product, title: e.target.value })}
-                />
-            </label>
-
-            <label htmlFor="description">
-                <span>Description</span>
-                <input
-                    type="text"
-                    name="description"
-                    id="description"
-                    onChange={(e) =>
-                        setProduct({ ...product, description: e.target.value })
-                    }
-                />
-            </label>
-
-            <label htmlFor="expirationDate">
-                <span>Expiration Date</span>
-                <input
-                    required
-                    type="date"
-                    name="expirationDate"
-                    id="expirationDate"
-                    onChange={(e) =>
-                        setProduct({ ...product, expirationDate: e.target.value })
-                    }
-                />
-            </label>
-
-            <label htmlFor="thumbnail">
-                <input
-                    required
-                    type="file"
-                    name="thumbnail"
-                    id="thumbnail"
-                    onChange={(e) =>
-                        setProduct({ ...product, thumbnail: e.target.files[0] })
-                    }
-                />
-            </label>
-            <Button classes="btn btn-primary">Upload Product</Button>
-            {/* <button type="submit">Upload product</button> */}
-        </form>
-    );
-}
+    return { error, resetError, onUpload, products, loading: productsLoading, };
+};
