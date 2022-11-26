@@ -1,0 +1,65 @@
+.form {
+    --border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 300px;
+    margin: 0 auto;
+    flex-grow: 1;
+    justify-content: space-between;
+    padding: 0 6px;
+}
+
+.form__control {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.form__control--checkbox {
+    display: flex;
+    gap: 8px;
+    padding: 0 10px;
+}
+
+.form__control :where(input, select) {
+    outline: none;
+    height: 48px;
+    border-radius: var(--border-radius);
+    border: 1px solid white;
+    padding: 0 10px;
+    box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+
+/* TODO this could have  */
+.form__control :where(input, select):invalid {
+    box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+.form__control :where(input, select):focus {
+    outline: 4px solid #76c893;
+}
+
+.form__title {
+    /*  */
+    font-size: small;
+    padding: 0 10px;
+}
+
+/* TODO split up into modular classes */
+.form__submit[type=submit] {
+    border-radius: var(--border-radius);
+    height: 60px;
+    font-weight: 500;
+    font-size: 30px;
+    background: linear-gradient(90deg, #76c893 0%, #52b69a 100%),
+        rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
+/* NOTE can disable button if required fields aren't filled */
+.form__submit:disabled {
+    filter: grayscale(1)
+}

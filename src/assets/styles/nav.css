@@ -1,0 +1,25 @@
+.nav--main {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 16px;
+
+    --green-primary: #76c893;
+    --white: #fff;
+    --icon-width: 48px;
+}
+
+.icon--profile,
+.icon--upload {
+    cursor: pointer;
+    width: var(--icon-width);
+    height: var(--icon-width);
+}
+
+.icon--profile {
+    fill: var(--green-primary);
+}
+
+.icon--upload {
+    stroke: var(--green-primary);
+}
