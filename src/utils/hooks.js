@@ -1,7 +1,7 @@
 import { useState } from "preact/hooks";
 
-export const useError = () => {
-    const [error, setError] = useState();
+export const useError = (error) => {
+    const [e, setError] = useState(error);
     const resetError = () => setError(undefined);
-    return { error, setError, resetError };
+    return { error: e, setError, resetError };
 };
