@@ -1,72 +1,82 @@
-import { signOut } from "firebase/auth";
-import { Link, useLocation } from "wouter-preact";
-import { fireAuth } from "~/firebase";
-// import { useFirebaseAuth } from "~/firebase/data";
-import { WasteLess } from "~/component/icons/icons";
-import Button from "~/component/base/button";
-import ProductCard from "~/component/base/ProductCard";
-import { useFirebaseCollectionData } from "~/firebase/hooks";
-import { collectionGroup } from "firebase/firestore";
+"use strict";
 
 import "./index.css";
-import { useFireBaseAuth } from "~/firebase/data";
+
+import { useLocation } from "wouter-preact";
+import { useState } from "preact/hooks";
+import { signOutUser, useFireBaseAuth, useFirebaseProducts } from "~/firebase";
+import { useError } from "~/utils";
+import { LinkAvatar, BackButton, Select } from "~/component/core";
+import ErrorMessage from "~/component/ErrorMessage";
+import ProductCard from "~/component/ProductCard";
+import NavMenu from "~/component/NavMenu";
+
+
 
 export default function Page() {
     const user = useFireBaseAuth();
-    const { onSignOut, dataLoading, products } = useHook({ user });
 
+    const [query, setQuery] = useState({ city: "none" });
 
-    if (dataLoading) return <div>Data Loading...</div>;
+    const { error, resetError, loading, products } = useHook({ user, query });
+
+    if (loading) return <div>Data Loading...</div>;
+
+    if (error) return <ErrorMessage {...{ error, resetError }} />;
 
     return (
-        <main className="page">
-            {/* <h1>{auth ? `Welcome ${auth.displayName}` : "Welcome"} 💚</h1> */}
+        <>
+            <header className="header">
+                <BackButton className="header__nav" />
+                <h1 className="header__title">Browse</h1>
+                <LinkAvatar user={user} to="/profile/" title={`Goto Profile`} />
+            </header>
 
-            <WasteLess width="220px" />
+            <main>
+                <div className="search">
+                    <button>List View</button>
+                    <button>Map View</button>
+                    <Select value={query.city} onChange={e => setQuery({ ...query, city: e.target.value })}>
+                        <option value="none">Select a location</option>
+                        <option value="amsterdam">Amsterdam</option>
+                        <option value="berlin">Berlin</option>
+                        <option value="london">London</option>
+                        <option value="paris">Paris</option>
+                        <option value="tlv">Tel-Aviv</option>
+                    </Select>
+                </div>
 
-            <div className="product__container">
-                {products.map((product) => {
-                    return (
-                        <ProductCard product={product} />
-                    );
-                })}
-            </div>
-
-            {user ? (
                 <div>
-                    <button onClick={onSignOut}>Sign out</button>
-                    <nav>
-                        <Link to="/upload">Upload product</Link>
-                        <Link to="/settings/profile">My profile</Link>
-                    </nav>
+                    {!products.length ? "No products" : products.map(product => (
+                        <ProductCard product={product} />
+                    ))}
                 </div>
-            ) : (
-                <div className="buttons">
-                    <Link to="/sign-up">
-                        <Button className="btn btn-primary">Sign Up</Button>
-                    </Link>
-                    <Link to="/sign-in">
-                        <Button className="btn btn-primary btn--border">Sign In</Button>
-                    </Link>
-                </div>
-            )}
-        </main>
+            </main>
+
+            <aside>
+                <NavMenu user={user} />
+            </aside>
+        </>
     );
 }
 
-const useHook = ({ user }) => {
+// NOTE Query is only `city` for our MVP but plans to increase this
+const useHook = ({ user, query: { city } }) => {
     const [, setLocation] = useLocation();
-    const [products, productsError, productsLoading] = useFirebaseCollectionData((store) => {
-        // TODO setup for where clause
-        return collectionGroup(store, `products`);
-    }, [user]);
+    const { products, loading, error: productsError } = useFirebaseProducts();
+    const { error, resetError } = useError(productsError);
 
     const onSignOut = async () => {
-        await signOut(fireAuth);
+        await signOutUser();
 
         alert(`Goodbye, see you soon 💚`);
         setLocation("/");
     };
 
-    return { onSignOut, products, dataLoading: productsLoading };
+    const filtered = products.filter(product => {
+        if (city === "none") return true;
+        return product.user.location.city === city;
+    });
+
+    return { onSignOut, products: filtered, loading, error, resetError };
 };
