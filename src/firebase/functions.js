@@ -1,7 +1,31 @@
-import { createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
-import { collection, deleteDoc, doc, getDoc, getDocs, setDoc, updateDoc, writeBatch } from "firebase/firestore";
-import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { fireStorage, fireStore, fireAuth } from ".";
+import { signal, useSignal } from "@preact/signals";
+import { initializeApp } from "firebase/app";
+import { createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, getAuth, onAuthStateChanged, reauthenticateWithCredential, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
+// TODO find the location of this function to 
+// minimise the import size
+import { addDoc, collection, doc, getDoc, getFirestore, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { useEffect } from "preact/hooks";
+import { fireAuth, fireStorage, fireStore, user } from "./firebase";
+
+
+export const initApp = () => {
+    const isLoading = useSignal(true);
+
+    useEffect(() => {
+        return onAuthStateChanged(fireAuth, next => {
+            [user.value, isLoading.value] = [next, false];
+        });
+    }, []);
+
+    return { isLoading: isLoading.value };
+};
+
+export const useFireBaseAuth = () => {
+    return user.value;
+};
+
+/** FUNCTIONS */
 
 /**
  * Register a new user to the firebase Application
@@ -50,10 +74,8 @@ export async function signOutUser() {
  * @returns
  */
 export async function uploadFile(file, filePath) {
-    const fileRef = ref(fireStorage, filePath);
-
-    const res = await uploadBytes(fileRef, file, { contentType: file.type, customMetadata: { /* TODO */ } });
-    return await getDownloadURL(res.ref);
+    const res = await uploadBytes(ref(fireStorage, filePath), file, { contentType: file.type, customMetadata: { /* TODO */ } });
+    return getDownloadURL(res.ref);
 }
 
 /**
@@ -65,9 +87,15 @@ export async function uploadFile(file, filePath) {
  * @param {*} product 
  * @returns 
  */
-export function uploadProduct(user, product) {
-    const productRef = doc(fireStore, `users/${user?.uid}/products/${product.uid}`);
-    return setDoc(productRef, product);
+export async function uploadProduct(user, { product, file }) {
+    const docRef = await addDoc(collection(fireStore, `users/${user.uid}/products/`), product);
+    const thumbnailURL = await uploadFile(file, `users/${user.uid}/products/${docRef.id}`);
+    return updateDoc(docRef, { thumbnailURL });
+}
+
+export async function getUserProfile(userRef) {
+    const snapshot = await getDoc(userRef);
+    return snapshot.data();
 }
 
 /**
@@ -93,38 +121,4 @@ export function updateUserProfile(user, details) {
  */
 export async function updateData(path, data) {
     return updateDoc(doc(fireStore, path), data);
-}
-
-/**
- * This function deletes all user data from the system
- * 
- * @remarks This is not production ready as the API is too complicated to understand ☹️
- */
-export async function deleteUserAccount(user, password) {
-    // TOOD re-auth and if that passes then delete account
-    const credential = EmailAuthProvider.credential(user.email, password);
-    await reauthenticateWithCredential(user, credential);
-
-    // fireStorage
-    const filesRef = ref(fireStorage, `users/${user?.uid}`);
-    // (storage/object-not-found) Not Found
-
-    // fireStore
-    const userRef = doc(fireStore, `users/${user?.uid}`);
-
-    const productsRef = collection(fireStore, `users/${user?.uid}/products`);
-
-    const batch = writeBatch(fireStore);
-    const snap = await getDocs(productsRef);
-    snap.forEach(document => document.exists && batch.delete(document.ref));
-
-
-    return Promise.all([
-        // collection on top level
-        deleteDoc(userRef),
-        // collection on products level
-        batch.commit(),
-        // deleteObject(filesRef),
-        deleteUser(user)
-    ]);
 }

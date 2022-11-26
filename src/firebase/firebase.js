@@ -1,9 +1,9 @@
+import { signal } from "@preact/signals";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-// TODO find the location of this function to 
-// minimise the import size
 import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { useCallback, useEffect, useMemo } from "preact/hooks";
 
 const fireApp = initializeApp({
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -13,8 +13,6 @@ const fireApp = initializeApp({
     messagingSenderId: import.meta.env.VITE_FIREBASE_SENDER_ID,
     appId: import.meta.env.VITE_FIREBASE_APP_ID
 });
-
-/** FIREBASE AUTHENTICATION  */
 
 /**
  * @remarks
@@ -33,3 +31,5 @@ export const fireAuth = getAuth(fireApp);
 export const fireStore = getFirestore(fireApp);
 
 export const fireStorage = getStorage(fireApp);
+
+export const user = signal(fireAuth.currentUser);
