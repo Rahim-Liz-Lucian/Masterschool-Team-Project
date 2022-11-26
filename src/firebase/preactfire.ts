@@ -67,6 +67,10 @@ export function useFirebaseCollection<T = DocumentData>(query: (db: Firestore) =
     return [data.value, error.value, pending.value] as const;
 }
 
+export const useFirebaseProductById = () => {
+    return true;
+};
+
 export const useFirebaseProducts = (props?: { query?: string; }) => {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
@@ -92,6 +96,32 @@ export const useFirebaseProducts = (props?: { query?: string; }) => {
     }, []);
 
     return { products, loading, error };
+};
+
+export const useFirebaseProductByID = (id: string) => {
+    const [product, setProduct] = useState<Product>();
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<Error>();
+
+    useEffect(() => {
+        return onSnapshot(collectionGroup(fireStore, `products`), async (next: QuerySnapshot<DocumentData>) => {
+            const [res] = await Promise.all((next.docs.filter(doc => doc.id === id)).map(async doc => {
+                const { createdAt, expirationDate, ...product } = doc.data();
+                // FIXME making an assumption that this needs to exist
+                const user = await getDoc((doc.ref.parent.parent)!);
+                // type casting
+                return { ...(product as Product), uid: doc.id, createdAt: createdAt.toDate() as Date, expirationDate: expirationDate.toDate() as Date, user: user.data() as User };
+            }));
+
+            setProduct(res);
+            setLoading(false);
+        }, fireError => {
+            setError(fireError);
+            setLoading(false);
+        });
+    }, []);
+
+    return { product, loading, error };
 };
 
 type User = {
