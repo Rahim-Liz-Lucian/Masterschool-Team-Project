@@ -1,21 +1,17 @@
-import { doc } from "firebase/firestore";
-import { useEffect, useState } from "preact/hooks";
-import { AiFillStar } from "react-icons/ai";
-import { FaShare } from "react-icons/fa";
-import { BsFillTelephoneOutboundFill, BsPersonCircle } from "react-icons/bs";
-import { Link } from "wouter-preact";
-import Button, { BackButton } from "~/component/core/button";
-import ErrorMessage from "~/component/ErrorMessage";
-import { getUserProfile, useFireBaseAuth, useFirebaseDocument } from "~/firebase";
-import { useError } from "~/utils";
+import "./[id].css";
 import avatarFallback from "../../assets/brand/avatar-fallback.jpg";
 
-import "./[id].css";
+import { Link } from "wouter-preact";
+import ErrorMessage from "~/component/ErrorMessage";
+import { useFireBaseAuth, useFirebaseProductByID } from "~/firebase";
+import { useError } from "~/utils";
+import { Star, Share, Telephone, Person, BackButton, Button } from "~/component/core";
+
 
 export default function ProductPage({ id, ...props }) {
     const user = useFireBaseAuth();
 
-    const { error, resetError, product, dataLoading, owner } = useHook({ user, id });
+    const { error, resetError, product, loading: dataLoading } = useHook({ user, id });
 
     const thumbnailURL = product?.thumbnailURL ?? avatarFallback;
 
@@ -48,8 +44,6 @@ export default function ProductPage({ id, ...props }) {
     // TODO 404 component
     if (!product) return (<div>404 Product does not exist</div>);
 
-    console.log(owner);
-
     return (
         <>
             <header className="header">
@@ -71,20 +65,20 @@ export default function ProductPage({ id, ...props }) {
                     et exercitationem nisi quae officia tempora magni explicabo.
                 </p>
                 <div>
-                    <BsPersonCircle size={"2rem"} />
+                    <Person size={"2rem"} />
                     <h3>User Name</h3>
-                    <AiFillStar />
-                    <AiFillStar />
-                    <AiFillStar />
-                    <AiFillStar />
+                    <Star />
+                    <Star />
+                    <Star />
+                    <Star />
                 </div>
                 <div className="buttons">
                     <Button classes="btn btn-primary">
-                        <BsFillTelephoneOutboundFill />
+                        <Telephone />
                         Call
                     </Button>
                     <Button classes="btn btn-primary btn--border">
-                        <FaShare />
+                        <Share />
                         Share
                     </Button>
                 </div>
@@ -95,32 +89,8 @@ export default function ProductPage({ id, ...props }) {
 }
 
 const useHook = ({ id }) => {
-    const { error, setError, resetError } = useError();
+    const { product, error: productError, loading } = useFirebaseProductByID(id);
+    const { error, resetError } = useError(productError);
 
-
-    const [product, productError, productLoading] = useFirebaseDocument(store => {
-        return doc(store, `products/${id}`);
-    }, [id]);
-
-    const [user, setUser] = useState();
-
-    useEffect(() => {
-        (async () => {
-            // error handling should go here
-            try {
-                const snapshot = await getUserProfile(product?.userRef);
-                setUser(snapshot);
-                // setDataLoading(false);
-
-            } catch (error) {
-                setError(error);
-            }
-        })();
-    }, [product]);
-
-    useEffect(() => {
-        productError && setError(productError);
-    }, []);
-
-    return { error, resetError, dataLoading: productLoading, product, owner: user };
+    return { error, resetError, loading, product, owner: product?.user };
 };
