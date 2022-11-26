@@ -1,15 +1,11 @@
-import { Link, Redirect, useLocation } from "wouter-preact";
-import ErrorMessage from "~/component/base/ErrorMessage";
-import { registerUser, updateUserProfile } from "~/firebase/functions";
-import { validateEmailAndPassword } from "~/utils";
-import { useError } from "~/utils/hooks";
-import { useFireBaseAuth } from "~/firebase/data";
-import { useState } from "preact/hooks";
-import { WasteLess } from "~/component/icons/icons";
-import { Checkbox, Input, Select } from "~/component/base/input";
-import Button, { BackButton } from "~/component/base/button";
-
 import "./sign-up.css";
+
+import { Link, useLocation } from "wouter-preact";
+import { useState } from "preact/hooks";
+import { Checkbox, Input, Select, WasteLess, BackButton } from "~/component/core";
+import ErrorMessage from "~/component/ErrorMessage";
+import { registerUser, updateUserProfile, useFireBaseAuth } from "~/firebase";
+import { useError, validateEmailAndPassword } from "~/utils";
 
 export default function Page() {
     const user = useFireBaseAuth();
@@ -21,49 +17,49 @@ export default function Page() {
         setFormData({ ...formData, [key]: e.target.value });
     };
 
-    if (user) return <Redirect to="/" />;
+    // if (user) return <Redirect to="/" />;
 
     if (error) return <ErrorMessage {...{ error, resetError }} />;
 
     return (
-        <div className="page">
-            <BackButton />
+        <>
+            <header className="header">
+                <BackButton />
+            </header>
 
-            <WasteLess width={220} />
+            <main>
+                <WasteLess width={220} />
 
-            <form id="sign-up" onSubmit={onRegister}>
-                <Input required name="displayName" value={formData.displayName} onChange={onChange("displayName")}>
-                    Name
-                </Input>
-                <Input required type="email" name="email" value={formData.email} onChange={onChange("email")}>
-                    Email
-                </Input>
-                <Input required type="password" name="password" value={formData.password} onChange={onChange("password")} >
-                    Password
-                </Input>
-                <Input type="password" name="repeatPassword" value={formData.repeatPassword} onChange={onChange("repeatPassword")}>
-                    Repeat Password
-                </Input>
+                <form className="form" id="sign-up" onSubmit={onRegister}>
+                    <Input required type="text" name="displayName" value={formData.displayName} onChange={onChange("displayName")}>Name</Input>
+                    <Input required type="email" name="email" value={formData.email} onChange={onChange("email")}>Email</Input>
+                    <Input required type="password" name="password" value={formData.password} onChange={onChange("password")}>Password</Input>
+                    <Input type="password" name="repeatPassword" value={formData.repeatPassword} onChange={onChange("repeatPassword")} >Verify Password</Input>
 
-                <Select required name="location" placeholder="Select Your City" value={formData.city} onChange={onChange("city")}>
-                    <option value="amsterdam">Amsterdam</option>
-                    <option value="berlin">Berlin</option>
-                    <option value="london">London</option>
-                    <option value="paris">Paris</option>
-                    <option value="tlv">Tel-Aviv</option>
-                </Select>
+                    <Input required type="tel" name="phoneNumber">Phone Number</Input>
 
-                <Checkbox required type="checkbox" name="terms">
-                    I agree to the <Link href="/">Terms and conditions</Link>
-                </Checkbox>
+                    {/* <input type="tel" name="" id="" /> */}
 
-                <Checkbox type="checkbox" name="newsletter">
-                    Sign me up to the newsletter
-                </Checkbox>
+                    {/* <Input re>Phone Number</Input> */}
 
-                <Button className="btn btn-primary" type="submit" form="sign-up">Login</Button>
-            </form>
-        </div>
+
+                    {/* FIXME required tag not working */}
+                    <Select required name="city" title="Location" value={formData.city} onChange={onChange("city")}>
+                        <option value="none" disabled>Select Your City</option>
+                        <option value="amsterdam">Amsterdam</option>
+                        <option value="berlin">Berlin</option>
+                        <option value="london">London</option>
+                        <option value="paris">Paris</option>
+                        <option value="tlv">Tel-Aviv</option>
+                    </Select>
+
+                    <Checkbox name="terms" required>I agree to the <Link href="/">Terms and conditions</Link></Checkbox>
+                    <Checkbox name="newsletter">Sign me up to the newsletter</Checkbox>
+
+                    <button className="form__submit" type="submit" form="sign-up">Sign Up</button>
+                </form>
+            </main>
+        </>
     );
 }
 
@@ -79,10 +75,10 @@ const useHook = ({ formData: { email, password, repeatPassword, city, displayNam
 
             const { user } = await registerUser(email, password);
 
-            await updateUserProfile(user, { displayName, email, password, location: { city } });
+            await updateUserProfile(user, { displayName, email, location: { city } });
 
             alert(`successfully created an account`);
-            setLocation("/x/upload");
+            setLocation("/");
         } catch (error) { setError(error); }
     };
 

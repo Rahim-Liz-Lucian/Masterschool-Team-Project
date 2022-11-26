@@ -1,12 +1,4 @@
-.page {
-    margin: auto;
-    outline: 1px dashed gray;
-    /* use a more responsive approach */
-    width: 390px;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    gap: 21px;
-    align-items: center;
-    padding: 60px;
-}
+@import url('https://unpkg.com/tailwindcss@3.2.4/src/css/preflight.css');
+
+@import url('../assets/styles/base.css');
+@import url('../assets/styles/form.css');
