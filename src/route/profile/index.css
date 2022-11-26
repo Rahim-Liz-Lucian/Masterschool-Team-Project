@@ -1,0 +1,32 @@
+@import url('https://unpkg.com/tailwindcss@3.2.4/src/css/preflight.css');
+
+@import url('~/assets/styles/base.css');
+@import url('~/assets/styles/nav.css');
+
+:root {
+    --circle-radius: 50px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header__avatar {
+    width: var(--circle-radius);
+    height: var(--circle-radius);
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+}
+
+.header__title {
+    font-size: x-large;
+    font-weight: 600;
+}
+
+.settings__list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
