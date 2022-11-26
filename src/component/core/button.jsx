@@ -16,5 +16,3 @@ export const BackButton = ({ className }) => {
         </Link>
     );
 };
-
-export default Button;
