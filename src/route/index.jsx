@@ -11,8 +11,6 @@ import ErrorMessage from "~/component/ErrorMessage";
 import ProductCard from "~/component/ProductCard";
 import NavMenu from "~/component/NavMenu";
 
-
-
 export default function Page() {
     const user = useFireBaseAuth();
 
@@ -27,7 +25,7 @@ export default function Page() {
     return (
         <>
             <header className="header">
-                <BackButton className="header__nav" />
+                <BackButton />
                 <h1 className="header__title">Browse</h1>
                 <LinkAvatar user={user} to="/profile/" title={`Goto Profile`} />
             </header>

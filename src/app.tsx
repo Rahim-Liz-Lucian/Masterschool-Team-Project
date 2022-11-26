@@ -1,27 +1,25 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Suspense } from "preact/compat";
+import "./app.css";
+
 import { Redirect, Route, Switch } from "wouter-preact";
-import { initApp } from "./firebase/data";
-import { routes } from "./routes";
+import { initApp } from "./firebase";
+import { routesSync } from "./routes";
 
 export function App() {
-    const { isLoading } = initApp();
+    const { firebaseLoading } = initApp();
 
-    if (isLoading) return (
-        <div>Custom hook is loading...</div>
+    if (firebaseLoading) return (
+        <div>Firebase is syncing...</div>
     );
 
     return (
-        // @ts-ignore
-        <Suspense fallback={<div>App Loading...</div>}>
-            <Switch>
-                {routes.map(({ path, Page }) => (
-                    <Route path={path}>
-                        {/* @ts-ignore */}
-                        {(params) => <Page {...params} />}
-                    </Route>
-                )).concat(<Redirect to="/" />)}
-            </Switch>
-        </Suspense>
+        <Switch>
+            {routesSync.map(({ path, Page }) => (
+                <Route path={path}>
+                    {/* @ts-ignore */}
+                    {(params) => <Page {...params} />}
+                </Route>
+            )).concat(<Redirect to="/" />)}
+        </Switch>
     );
 }

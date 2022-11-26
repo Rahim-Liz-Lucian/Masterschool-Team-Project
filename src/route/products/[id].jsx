@@ -5,7 +5,7 @@ import { Link } from "wouter-preact";
 import ErrorMessage from "~/component/ErrorMessage";
 import { useFireBaseAuth, useFirebaseProductByID } from "~/firebase";
 import { useError } from "~/utils";
-import { Star, Share, Telephone, Person, BackButton, Button } from "~/component/core";
+import { Star, Share, Telephone, Person, BackButton, Button, LinkAvatar, Avatar } from "~/component/core";
 
 
 export default function ProductPage({ id, ...props }) {
@@ -22,7 +22,7 @@ export default function ProductPage({ id, ...props }) {
             <header className="header">
                 <BackButton className="header__nav" />
                 <h1 className="header__title">Product</h1>
-                <img className="header__icon" src={avatarFallback} alt="" />
+                <LinkAvatar user={user} to="/profile/" title={`Goto Profile`} />
             </header>
 
             <main>
@@ -49,7 +49,7 @@ export default function ProductPage({ id, ...props }) {
             <header className="header">
                 <BackButton className="header__nav" />
                 <h1 className="header__title">Details</h1>
-                <img className="header__icon" src={avatarFallback} alt="" />
+                <LinkAvatar user={user} to="/profile/" title={`Goto Profile`} />
             </header>
 
             <main className="product__page">

@@ -41,7 +41,7 @@
     outline: 4px solid #76c893;
 }
 
-.form__title {
+.form__control span {
     /*  */
     font-size: small;
     padding: 0 10px;

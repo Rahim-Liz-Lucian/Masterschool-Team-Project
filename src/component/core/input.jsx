@@ -1,4 +1,4 @@
-export const Input = ({ name, children, type = "text", ...props }) => {
+export const Input = ({ name, children, className, type = "text", ...props }) => {
     return (
         <label className="form__control" htmlFor={name}>
             <span className="form__title">{children}</span>

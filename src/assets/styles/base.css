@@ -1,3 +1,4 @@
+@import url('./reset.css');
 @import url("https://fonts.googleapis.com/css2?family=Barlow:wght@400;500&family=Cookie&display=swap");
 
 :root {
@@ -53,33 +54,4 @@
 
 .icon__logo {
     margin: 0 auto;
-}
-
-
-
-/* Button styling */
-[class*=button]:is(button, a) {
-    display: grid;
-    align-content: center;
-    width: 100%;
-    border-radius: 10px;
-    font-weight: 500;
-    font-size: 24px;
-
-    text-align: center;
-    border: #76c893 solid 1px;
-    height: 100%;
-    max-height: 60px;
-}
-
-[class*=button][class*=--primary] {
-    color: var(--white);
-    background: linear-gradient(90deg, var(--green-primary) 0%, #52b69a 100%), rgba(0, 0, 0, 0.2);
-}
-
-[class*=button][class*=--secondary] {
-    border: 2px solid var(--green-primary);
-    padding: 4px;
-    color: var(--green-primary);
-    background-color: var(--white);
 }

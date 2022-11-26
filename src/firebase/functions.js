@@ -18,7 +18,7 @@ export const initApp = () => {
         });
     }, []);
 
-    return { isLoading: isLoading.value };
+    return { firebaseLoading: isLoading.value };
 };
 
 export const useFireBaseAuth = () => {
