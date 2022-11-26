@@ -6,20 +6,29 @@
     margin: 10px 0;
 }
 
-.product__card img {
-    width: 100px;
-    max-height: 100px;
+.product__title {
+    font-weight: 700;
+    font-size: large;
+    text-align: left;
+}
+
+.product__thumbnail {
+    --thumbnail-width: 100px;
+
+    width: var(--thumbnail-width);
+    height: var(--thumbnail-width);
     object-fit: cover;
 }
 
-.product__info {
+.product__list {
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
     justify-content: space-between;
     padding: 0.5rem;
 }
 
-.product__info div {
+.product__info {
     display: flex;
     gap: 1rem;
 }

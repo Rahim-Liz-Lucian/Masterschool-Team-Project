@@ -1,4 +1,3 @@
-import "./button.css";
 import { RiArrowGoBackFill } from "react-icons/ri";
 import { Link } from "wouter-preact";
 
@@ -10,10 +9,10 @@ export const Button = ({ ...props }) => {
     );
 };
 
-export const BackButton = () => {
+export const BackButton = ({ className }) => {
     return (
-        <Link to="..">
-            <RiArrowGoBackFill className="back-btn" size="2.5rem" />
+        <Link to=".." >
+            <RiArrowGoBackFill size="2.5rem" className="header__nav" />
         </Link>
     );
 };

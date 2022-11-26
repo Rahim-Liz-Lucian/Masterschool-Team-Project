@@ -1,46 +1,26 @@
 import "./product-card.css";
 
-import fallback from "~/assets/brand/fallback.png";
-import { useEffect, useState } from "preact/hooks";
-import { getDoc } from "firebase/firestore";
+import { relativeDays } from "~/utils";
+import { Link } from "wouter-preact";
 
 const ProductCard = ({ product }) => {
-    const { dataLoading, data: { user } } = useAggregateData({ product });
-
-    if (dataLoading) return (
-        <div>Loading...</div>
-    );
+    const expirationDate = product.expirationDate.toLocaleDateString();
+    const createdAt = relativeDays(product.createdAt.getTime());
 
     return (
-        <div className="product__card">
-            <img src={product.thumbnailURL} alt={product.description} />
-            <div className="product__info">
-                <h3>{product.title}</h3>
-                <div>
-                    <p>{user.location.city}</p>
-                    <p>{product.expirationDate}</p>
-                    <p>{2} days ago</p>
+        <Link to={`/products/${product.uid}`} title={`View more on ${product.user.displayName}'s ${product.title} upload`} className="product__card">
+            <img className="product__thumbnail" src={product.thumbnailURL} alt={product.description} />
+            <div className="product__list">
+                <p className="product__title">{product.title}</p>
+
+                <div class="product__info">
+                    <p>{product.user.location.city}</p>
+                    <p>{expirationDate}</p>
+                    <p>{createdAt}</p>
                 </div>
-                {/* <Button classes={"btn btn-secondary"}>More</Button> */}
             </div>
-        </div>
+        </Link>
     );
-};
-
-const useAggregateData = ({ product: { userRef, ...product } }) => {
-    const [dataLoading, setDataLoading] = useState(true);
-    const [user, setUser] = useState();
-
-    useEffect(() => {
-        (async () => {
-            // error handling should go here
-            const snapshot = await getDoc(userRef);
-            setUser(snapshot.data());
-            setDataLoading(false);
-        })();
-    }, []);
-
-    return { dataLoading, data: { user, product } };
 };
 
 export default ProductCard;
