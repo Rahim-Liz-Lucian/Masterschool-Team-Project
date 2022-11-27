@@ -1,0 +1,23 @@
+[class*=icon] {
+    height: var(--icon-width);
+    width: var(--icon-width);
+}
+
+.icon--google {
+    fill: var(--google-primary);
+}
+
+.icon--facebook {
+    fill: var(--facebook-primary);
+}
+
+.icon--back {
+    /* width: calc(1rem * 167/16); */
+    fill: var(--green-primary);
+}
+
+.nav--main [class*=icon] {
+    cursor: pointer;
+    fill: var(--grey);
+    height: calc(35/16 * 1rem);
+}

@@ -1,0 +1,39 @@
+[class*=button]:is(button, a) {
+    /* NOTE in order to style both a link tag and a button this is required */
+    display: grid;
+    /* NOTE in order to style both a link tag and a button this is required */
+    align-items: center;
+    /* NOTE in order to style both a link tag and a button this is required */
+    text-align: center;
+    text-transform: capitalize;
+    font-weight: 600;
+    height: 60px;
+    width: 100%;
+    color: var(--white);
+    font-size: calc(30/16 * 1rem);
+    line-height: calc(36/16 * 1rem);
+    background: var(--gradient-1);
+    border-radius: var(--border-radius);
+    box-shadow: var(--drop-shadow-1);
+}
+
+[class*=button][class*=secondary] {
+    background: var(--white);
+    color: var(--green-primary);
+    border: .25rem solid var(--green-primary);
+}
+
+[class*=red][class*=secondary] {
+    color: var(--red-primary);
+    border-color: var(--red-primary);
+}
+
+[class*=nav] [class*=button] {
+    line-height: calc(1rem * 28.8/16);
+    font-size: calc(1rem * 24/16);
+    height: calc(1rem * 53/16);
+}
+
+[class*=nav] {
+    gap: 16px
+}
