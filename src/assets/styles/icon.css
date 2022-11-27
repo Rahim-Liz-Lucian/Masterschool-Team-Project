@@ -25,3 +25,17 @@
 [class*=nav][class*=active] {
     fill: var(--green-primary)
 }
+
+[class*=icon][class*=rating] {
+    --icon-width: .5rem;
+    fill: var(--grey);
+}
+
+.icon--avatar {
+    --icon-width: calc(20/16 * 1rem);
+    fill: var(--grey);
+}
+
+[class*=full][class*=rating] {
+    fill: var(--green-secondary);
+}

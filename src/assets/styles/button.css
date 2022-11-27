@@ -21,6 +21,7 @@
     background: var(--white);
     color: var(--green-primary);
     border: .25rem solid var(--green-primary);
+    box-shadow: none;
 }
 
 [class*=red][class*=secondary] {
