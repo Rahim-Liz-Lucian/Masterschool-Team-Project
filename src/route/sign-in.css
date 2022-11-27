@@ -1,5 +1,16 @@
-@import url('../assets/styles/base.css');
-@import url('../assets/styles/form.css');
+main.sign-in {
+    display: flex;
+    flex-direction: column;
+    gap: calc(1rem * 34.56/16);
+}
+
+/* may need to make more specific */
+
+
+/* only for sign-in there */
+.form.sign-in>*:is(:not(:nth-child(1), :nth-child(2))) {
+    margin-top: calc(34.56/16 * 1rem);
+}
 
 .oauth {
     font-weight: 400;
@@ -9,22 +20,11 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: center;
     gap: 8px 12px;
-    margin: 0 auto;
 }
 
-.oauth>svg {
-    --icon-width: 30px;
-
+.oauth [class*=icon] {
     width: var(--icon-width);
     height: var(--icon-width);
-}
-
-.icon--google {
-    color: #de5246;
-}
-
-
-.icon--facebook {
-    color: #3b5998;
 }

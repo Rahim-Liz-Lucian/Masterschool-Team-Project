@@ -1,7 +1,8 @@
-import "./sign-in.css";
+import "./sign-in.css"; // move soon
+
 import { Link, useLocation } from "wouter-preact";
 import { useError } from "~/utils";
-import { WasteLess, Input, BackButton, Google, Facebook } from "~/component/core";
+import { WasteLess, Input, Google, Facebook } from "~/component/core";
 import ErrorMessage from "~/component/ErrorMessage";
 import { useState } from "preact/hooks";
 import { signInUser } from "~/firebase";
@@ -20,32 +21,32 @@ export default function Page() {
 
     return (
         <>
-            <header className="header">
-                <BackButton />
+            <header className="sign-in header">
+                <WasteLess className="icon--hero" />
             </header>
 
-            <main>
+            <main className="sign-in">
                 {/* TODO move logo to header */}
-                <WasteLess width={220} />
 
-                <form className="form" id="sign-in" onSubmit={onSignIn}>
+                <form className="sign-in form" id="sign-in" onSubmit={onSignIn}>
                     <Input name="email" type="email" value={formData.email} onChange={onChange("email")}>Email</Input>
 
                     <Input name="password" type="password" value={formData.password} onChange={onChange("password")}>Password</Input>
 
                     <a className="form__reset" href="/forgot-password">Forgot Password?</a>
 
-                    <button className="form__submit" type="submit">Login</button>
+                    <div className="oauth">
+                        <span>Or Sign Up using</span>
+                        <Facebook className="icon--facebook" />
+                        <Google className="icon--google" />
+                    </div>
+
+                    <button className="button" type="submit">Login</button>
 
                     <span>Don't have an account yet?<Link href="/sign-up"> Sign up!</Link></span>
-
-                    {/* TODO sign in with google/facebook */}
-                    <div className="oauth">
-                        <p>Or Sign Up using</p>
-                        <Google className="icon--google" />
-                        <Facebook className="icon--facebook" />
-                    </div>
                 </form>
+
+                <Link to="/" className="button--secondary">Browse</Link>
             </main>
         </>
     );
