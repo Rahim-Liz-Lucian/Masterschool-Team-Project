@@ -117,3 +117,23 @@ export async function deleteUserAccount(user, password) {
         deleteUser(user)
     ]);
 }
+
+export async function changePassword(newPassword) {
+    const user = fireAuth.currentUser
+    updatePassword(user, newPassword).then(() => {
+        console.log("password updated")
+      }).catch((error) => {
+        console.log(error)
+      });
+    
+}
+
+export async function changeEmail(newEmail) {
+    const user = fireAuth.currentUser
+    updateEmail(user, newEmail).then(() => {
+        console.log("email updated")
+      }).catch((error) => {
+        console.log(error)
+      });
+    
+}
