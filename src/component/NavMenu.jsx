@@ -1,42 +1,39 @@
-import { BsPersonCircle } from "react-icons/bs";
-import { TbHeartPlus } from "react-icons/tb";
-import { Link } from "wouter-preact";
-import { onDisabledLink } from "~/utils";
+import { Link, useLocation } from "wouter-preact";
+import { Add, Home, Message, More, Profile } from "./core";
 
 const NavMenu = ({ user }) => {
+    const [location] = useLocation();
+
     if (!user) return (
         <div className="nav--main">
-            <Link to="/sign-in">Login</Link>
-            <Link to="/sign-up">Sign Up</Link>
+            <Link className="button" to="/sign-in">Login</Link>
+            <Link className="button--secondary" to="/sign-up">Sign Up</Link>
         </div>
     );
 
+    console.log(location);
+
+    const className = "nav__icon";
+
     return (
         <nav className="nav--main">
-            <Link to="/">Home</Link>
-            <Link to="/people" disabled>Contact</Link>
-            <Link to="/upload">Products</Link>
-            <Link to="/profile/">Settings</Link>
+            <Link to="/settings/">
+                <Profile className={className} />
+            </Link>
+            <Link to="/upload">
+                <Add className={className} />
+            </Link>
+            <Link to="/">
+                <Home className={className} />
+            </Link>
+            <Link to="/people" disabled>
+                <Message className={className} disabled />
+            </Link>
+            <Link to="/misc">
+                <More className={className} />
+            </Link>
         </nav>
     );
-
-    // return (
-    //     <nav className="nav--main">
-    //         {user && <Link to="/more" onClick={onDisabledLink}>More</Link>}
-    //         {user && <Link to="/profile/">
-    //             {/* <BsPersonCircle className="icon--profile" /> */}
-    //             Profile
-    //         </Link>}
-
-    //         {user && <Link to="/chat">Chat</Link>}
-    //         {user && <Link to="/upload">
-    //             {/* <TbHeartPlus className="icon--upload" /> */}
-    //             Upload
-    //         </Link>}
-    //         <Link to="/">Browse</Link>
-    //         {!user && <Link to="/sign-in">Sign In</Link>}
-    //     </nav>
-    // );
 };
 
 export default NavMenu;

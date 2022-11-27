@@ -9,8 +9,8 @@ export * from "./input";
 export * from "./icons";
 
 export {
-    AiFillGoogleCircle as Google,
-    BsFacebook as Facebook,
+    // AiFillGoogleCircle as Google,
+    // BsFacebook as Facebook,
     FaShare as Share,
     AiFillStar as Star,
     BsFillTelephoneOutboundFill as Telephone,
