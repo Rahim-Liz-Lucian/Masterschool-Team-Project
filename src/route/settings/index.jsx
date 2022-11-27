@@ -1,21 +1,16 @@
-
-
 import "./index.css";
-
-import avatarFallback from "~/assets/brand/avatar-fallback.jpg";
 
 import { Link, Redirect, useLocation } from "wouter-preact";
 import { signOutUser, useFireBaseAuth } from "~/firebase";
 import { onDisabledLink, useError } from "~/utils";
 import { BackButton, WasteLessLite } from "~/component/core";
 import ErrorMessage from "~/component/ErrorMessage";
-import NavMenu from "~/component/NavMenu";
+import { Nav, Header, Banner } from "~/component/layout";
+import { Settings } from "~/component/core/list";
 
 export default function Page() {
     const user = useFireBaseAuth();
     const { error, resetError, onSignOut } = useHook({ user });
-
-    const photoURL = user?.photoURL ?? avatarFallback;
 
     if (!user) return <Redirect to="/" />;
 
@@ -23,19 +18,16 @@ export default function Page() {
 
     return (
         <>
-            <header className="header">
+            <Header>
                 <BackButton />
-                <h1 className="header__title">Settings</h1>
-                <WasteLessLite className="icon" />
-            </header>
+                <h1>Settings</h1>
+                <WasteLessLite />
+            </Header>
 
             <main>
-                <figure className="profile__banner">
-                    <figcaption className="profile__title">{user.displayName}</figcaption>
-                    <img className="profile__avatar" src={photoURL} alt="avatar" />
-                </figure>
+                <Banner user={user} />
 
-                <ul className="settings__list">
+                <Settings>
                     <li><Link to="/settings/reset-password">Change Password</Link></li>
                     <li><Link to="/settings/rewards" onClick={onDisabledLink}>Rewards</Link></li>
                     <li><Link to="/settings/profile">Profile Settings</Link></li>
@@ -43,11 +35,11 @@ export default function Page() {
                     <li><Link to="/about" onClick={onDisabledLink}>About</Link></li>
                     <li><Link to="/help" onClick={onDisabledLink}>Help</Link></li>
                     <li><button onClick={onSignOut}>Sign Out</button></li>
-                </ul>
+                </Settings>
             </main>
 
             <aside>
-                <NavMenu user={user} />
+                <Nav user={user} />
             </aside>
         </>
     );

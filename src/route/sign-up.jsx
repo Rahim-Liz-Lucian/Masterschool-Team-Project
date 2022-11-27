@@ -1,9 +1,12 @@
 import { Link, useLocation } from "wouter-preact";
 import { useState } from "preact/hooks";
-import { Checkbox, Input, Select, WasteLess } from "~/component/core";
+import { Button, Checkbox, Input, Select, WasteLess, Form } from "~/component/core";
 import ErrorMessage from "~/component/ErrorMessage";
 import { registerUser, updateUserProfile, useFireBaseAuth } from "~/firebase";
 import { useError, validateEmailAndPassword } from "~/utils";
+import { Header } from "~/component/layout";
+
+// FIXME don't do this
 
 export default function Page() {
     const user = useFireBaseAuth();
@@ -21,12 +24,12 @@ export default function Page() {
 
     return (
         <>
-            <header className="sign-up header">
-                <WasteLess className="icon--hero" />
-            </header>
+            <Header>
+                <WasteLess />
+            </Header>
 
             <main className="sign-up">
-                <form className="form" id="sign-up" onSubmit={onRegister}>
+                <Form id="sign-up" onSubmit={onRegister}>
                     <Input required type="text" name="displayName" value={formData.displayName} onChange={onChange("displayName")}>Name</Input>
 
                     <Input required type="email" name="email" value={formData.email} onChange={onChange("email")}>Email</Input>
@@ -47,14 +50,13 @@ export default function Page() {
 
                     <Input required type="tel" name="phoneNumber">Phone Number</Input>
 
-
                     <div>
                         <Checkbox name="terms" required>I agree to the <Link href="/">Terms and conditions</Link></Checkbox>
                         <Checkbox name="newsletter">Sign me up to the newsletter</Checkbox>
                     </div>
 
-                    <button className="button" type="submit" form="sign-up">Sign Up</button>
-                </form>
+                    <Button type="submit" form="sign-up">Sign Up</Button>
+                </Form>
             </main>
         </>
     );

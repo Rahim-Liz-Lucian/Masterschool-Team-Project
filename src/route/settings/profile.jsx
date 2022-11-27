@@ -9,8 +9,8 @@ import { Redirect, useLocation } from "wouter-preact";
 import { signOutUser, updateData, uploadFile, useFireBaseAuth, useFirebaseDocument } from "~/firebase";
 import { Avatar, Input, BackButton, WasteLessLite, Select } from "~/component/core";
 import ErrorMessage from "~/component/ErrorMessage";
-import NavMenu from "~/component/NavMenu";
 import { compressFile, useError } from "~/utils";
+import { Nav, Header } from "~/component/layout";
 
 // keep this optional so can be blank.
 export default function Page() {
@@ -30,11 +30,11 @@ export default function Page() {
 
     return (
         <>
-            <header className="header">
+            <Header>
                 <BackButton />
-                <h1 className="header__title">Profile</h1>
-                <WasteLessLite className="icon" />
-            </header>
+                <h1>Profile</h1>
+                <WasteLessLite />
+            </Header>
 
             <main>
                 <form className="form" id="update-profile" onSubmit={onUpdateProfile}>
@@ -70,7 +70,7 @@ export default function Page() {
             </main>
 
             <aside>
-                <NavMenu user={user} />
+                <Nav user={user} />
             </aside>
         </>
     );

@@ -8,8 +8,8 @@ import { signOutUser, useFireBaseAuth, useFirebaseProducts } from "~/firebase";
 import { useError } from "~/utils";
 import { BackButton, Select, WasteLessLite } from "~/component/core";
 import ErrorMessage from "~/component/ErrorMessage";
-import ProductCard from "~/component/ProductCard";
-import NavMenu from "~/component/NavMenu";
+import { ProductList } from "~/component/product";
+import { Header, Nav } from "~/component/layout";
 
 export default function Page() {
     const user = useFireBaseAuth();
@@ -24,11 +24,11 @@ export default function Page() {
 
     return (
         <>
-            <header className="header">
+            <Header>
                 <BackButton />
-                <h1 className="header__title">Browse</h1>
-                <WasteLessLite className="icon" />
-            </header>
+                <h1>Browse</h1>
+                <WasteLessLite />
+            </Header>
 
             <main className="browse">
                 <div className="search">
@@ -45,14 +45,13 @@ export default function Page() {
                 </div>
 
                 <div>
-                    {!products.length ? "No products" : products.map(product => (
-                        <ProductCard product={product} />
-                    ))}
+                    {!products.length ? "No products" : <ProductList products={products} />}
+                    {/* {!products.length ? "No products" : <ProductList products={[...products, ...products, ...products, ...products, ...products]} />} */}
                 </div>
             </main>
 
             <aside>
-                <NavMenu user={user} />
+                <Nav user={user} />
             </aside>
         </>
     );

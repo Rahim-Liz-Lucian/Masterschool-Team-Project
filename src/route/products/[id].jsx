@@ -1,11 +1,12 @@
-import avatarFallback from "../../assets/brand/avatar-fallback.jpg";
 
 import { Link } from "wouter-preact";
 import ErrorMessage from "~/component/ErrorMessage";
 import { useFireBaseAuth, useFirebaseProductByID } from "~/firebase";
-import { useError } from "~/utils";
-import { Star, Share, Telephone, Person, BackButton, Button, LinkAvatar, Avatar, WasteLessLite } from "~/component/core";
-import NavMenu from "~/component/NavMenu";
+import { relativeDays, useError } from "~/utils";
+import { Star, Share, Telephone, Person, BackButton, Button, LinkAvatar, Avatar, WasteLessLite, Profile } from "~/component/core";
+import { Nav, Header } from "~/component/layout";
+import { UserRating } from "~/component/user";
+import { ProductArticle } from "~/component/product";
 
 
 export default function ProductPage({ id, ...props }) {
@@ -13,17 +14,16 @@ export default function ProductPage({ id, ...props }) {
 
     const { error, resetError, product, loading: dataLoading } = useHook({ user, id });
 
-    const thumbnailURL = product?.thumbnailURL ?? avatarFallback;
 
     if (error) return <ErrorMessage {...{ error, resetError }} />;
 
     if (!user) return (
         <>
-            <header className="header">
+            <Header>
                 <BackButton />
-                <h1 className="header__title">Details</h1>
-                <WasteLessLite className="icon" />
-            </header>
+                <h1>Details</h1>
+                <WasteLessLite />
+            </Header>
 
             <main>
                 <h1>Hi! you must be signed in to be here</h1>
@@ -37,7 +37,9 @@ export default function ProductPage({ id, ...props }) {
                 </div>
             </main>
 
-            <NavMenu user={user} />
+            <aside>
+                <Nav user={user} />
+            </aside>
         </>
     );
 
@@ -46,49 +48,23 @@ export default function ProductPage({ id, ...props }) {
     // TODO 404 component
     if (!product) return (<div>404 Product does not exist</div>);
 
+    console.log(product.user.rating);
+
+
     return (
         <>
-            <header className="header">
+            <Header>
                 <BackButton />
-                <h1 className="header__title">Details</h1>
-                <WasteLessLite className="icon" />
-            </header>
+                <h1>Details</h1>
+                <WasteLessLite />
+            </Header>
 
             <main className="product__page">
-                <h2 className="product__title">product Title</h2>
-                <img className="product__thumbnail" src={thumbnailURL} alt="" />
-                <div>
-                    <p>location</p>
-                    <p>date</p>
-                    <p>days ago</p>
-                </div>
-                <p>
-                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cupiditate
-                    et exercitationem nisi quae officia tempora magni explicabo.
-                </p>
-                <div>
-                    <Person size={"2rem"} />
-                    <h3>User Name</h3>
-                    <Star />
-                    <Star />
-                    <Star />
-                    <Star />
-                </div>
-                <div className="buttons">
-                    <Button classes="btn btn-primary">
-                        <Telephone />
-                        Call
-                    </Button>
-                    <Button classes="btn btn-primary btn--border">
-                        <Share />
-                        Share
-                    </Button>
-                </div>
-
+                <ProductArticle product={product} />
             </main>
 
             <aside>
-                <NavMenu user={user} />
+                <Nav user={user} />
             </aside>
         </>
     );

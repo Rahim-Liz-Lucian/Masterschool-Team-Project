@@ -7,9 +7,9 @@ import { useFireBaseAuth } from "~/firebase";
 import { Redirect } from "wouter-preact";
 import { compressFile } from "~/utils";
 import { uploadProduct } from "~/firebase/functions";
-import { Input, BackButton } from "~/component/core";
-import NavMenu from "~/component/NavMenu";
+import { Input, BackButton, Form, Button } from "~/component/core";
 import { WasteLessLite } from "~/component/core/icons";
+import { Nav, Header } from "~/component/layout";
 
 export default function Page() {
     const user = useFireBaseAuth();
@@ -32,17 +32,17 @@ export default function Page() {
 
     return (
         <>
-            <header className="header">
+            <Header>
                 <BackButton />
-                <h1 className="header__title">Upload</h1>
-                <WasteLessLite className="icon" />
-            </header>
-
+                <h1>Upload</h1>
+                <WasteLessLite />
+            </Header>
 
             <main>
+                {/* TODO have a basket in top right corner */}
                 <p>I have {products.length} Products in my account so far</p>
 
-                <form className="form" id="upload" onSubmit={onUpload}>
+                <Form id="upload" onSubmit={onUpload}>
                     <Input required name="title" value={formData.title} onChange={onChange("title")}>Title</Input>
 
                     <Input name="description" value={formData.description} onChange={onChange("description")}>Description</Input>
@@ -55,12 +55,12 @@ export default function Page() {
                         <input required type="file" name="thumbnail" id="thumbnail" accept="image/jpeg" value={formData.thumbnail} onChange={onChange("thumbnail")} />
                     </label>
 
-                    <button className="form__submit" type="submit" form="upload">Upload</button>
-                </form>
+                    <Button className="primary" type="submit" form="upload">Upload</Button>
+                </Form>
             </main>
 
             <aside>
-                <NavMenu user={user} />
+                <Nav user={user} />
             </aside>
         </>
     );

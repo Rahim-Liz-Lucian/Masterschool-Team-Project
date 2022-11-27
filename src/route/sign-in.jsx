@@ -1,11 +1,12 @@
 import "./sign-in.css"; // move soon
 
-import { Link, useLocation } from "wouter-preact";
+import { Link as WouterLink, useLocation } from "wouter-preact";
 import { useError } from "~/utils";
-import { WasteLess, Input, Google, Facebook } from "~/component/core";
+import { WasteLess, Input, Google, Facebook, Form, Button, Link } from "~/component/core";
 import ErrorMessage from "~/component/ErrorMessage";
 import { useState } from "preact/hooks";
 import { signInUser } from "~/firebase";
+import { Header } from "~/component/layout";
 
 export default function Page() {
     // const [auth, isLoaded] = useFirebaseAuthData();
@@ -21,14 +22,14 @@ export default function Page() {
 
     return (
         <>
-            <header className="sign-in header">
+            <Header>
                 <WasteLess className="icon--hero" />
-            </header>
+            </Header>
 
             <main className="sign-in">
                 {/* TODO move logo to header */}
 
-                <form className="sign-in form" id="sign-in" onSubmit={onSignIn}>
+                <Form id="sign-in" onSubmit={onSignIn}>
                     <Input name="email" type="email" value={formData.email} onChange={onChange("email")}>Email</Input>
 
                     <Input name="password" type="password" value={formData.password} onChange={onChange("password")}>Password</Input>
@@ -37,16 +38,16 @@ export default function Page() {
 
                     <div className="oauth">
                         <span>Or Sign Up using</span>
-                        <Facebook className="icon--facebook" />
-                        <Google className="icon--google" />
+                        <Facebook />
+                        <Google />
                     </div>
 
-                    <button className="button" type="submit">Login</button>
+                    <Button className="primary" type="submit">Login</Button>
 
-                    <span>Don't have an account yet?<Link href="/sign-up"> Sign up!</Link></span>
-                </form>
+                    <span>Don't have an account yet?<WouterLink href="/sign-up"> Sign up!</WouterLink></span>
+                </Form>
 
-                <Link to="/" className="button--secondary">Browse</Link>
+                <Link to="/" className="secondary">Browse</Link>
             </main>
         </>
     );
