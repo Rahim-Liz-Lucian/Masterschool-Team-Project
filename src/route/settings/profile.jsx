@@ -1,13 +1,13 @@
 "use strict";
 
-import "./settings.css";
+import "./profile.css";
 
 import { updateProfile } from "firebase/auth";
 import { doc } from "firebase/firestore";
 import { useState } from "preact/hooks";
 import { Redirect, useLocation } from "wouter-preact";
 import { signOutUser, updateData, uploadFile, useFireBaseAuth, useFirebaseDocument } from "~/firebase";
-import { Avatar, Input, BackButton } from "~/component/core";
+import { Avatar, Input, BackButton, WasteLessLite, Select } from "~/component/core";
 import ErrorMessage from "~/component/ErrorMessage";
 import NavMenu from "~/component/NavMenu";
 import { compressFile, useError } from "~/utils";
@@ -24,7 +24,6 @@ export default function Page() {
         setFormData({ ...formData, [key]: e.target.value });
     };
 
-
     if (!user) return <Redirect to="/" />;
 
     if (error) return <ErrorMessage {...{ error, resetError }} />;
@@ -33,19 +32,40 @@ export default function Page() {
         <>
             <header className="header">
                 <BackButton />
+                <h1 className="header__title">Profile</h1>
+                <WasteLessLite className="icon" />
             </header>
 
             <main>
                 <form className="form" id="update-profile" onSubmit={onUpdateProfile}>
                     <label className="avatar__control" htmlFor="avatar">
                         <Avatar user={user} />
-                        <span>Update Avatar</span>
-                        <input type="file" name="avatar" id="avatar" accept="image/jpeg" onChange={onUpdateAvatar} />
+                        <span>{user.displayName}</span>
+                        <input type="file" style={{ display: "none" }} name="avatar" id="avatar" accept="image/jpeg" onChange={onUpdateAvatar} />
                     </label>
 
-                    <Input name="displayName" placeholder={user.displayName} value={formData.displayName} onChange={onChange("displayName")}>Name</Input>
+                    <Input name="displayName" value={formData.displayName} onChange={onChange("displayName")}>Name</Input>
 
-                    <button className="form__submit" form="update-profile" type="submit">Update profile</button>
+                    {/* FIXME not implemented */}
+                    <Input name="phoneNumber" value={formData.phoneNumber} onChange={onChange("phoneNumber")}>Phone Number</Input>
+
+                    {/* FIXME not implemented */}
+                    <Select name="city" title="City" value={formData.city} onChange={onChange("city")}>
+                        <option value="none" disabled></option>
+                        <option value="amsterdam">Amsterdam</option>
+                        <option value="berlin">Berlin</option>
+                        <option value="london">London</option>
+                        <option value="paris">Paris</option>
+                        <option value="tlv">Tel-Aviv</option>
+                    </Select>
+
+                    <button className="button--secondary" form="update-profile" type="submit">Update profile</button>
+                </form>
+
+                {/* NOTE not ready for MVP */}
+                <form className="form" id="delete-profile">
+                    <Input required type="password" name="password" value={formData.password} onChange={onChange("password")}>Password</Input>
+                    <button className="button--secondary--red" form="update-profile" type="submit">Delete Profile</button>
                 </form>
             </main>
 

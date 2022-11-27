@@ -1,11 +1,13 @@
-"use strict";
+
+
 import "./index.css";
+
 import avatarFallback from "~/assets/brand/avatar-fallback.jpg";
 
 import { Link, Redirect, useLocation } from "wouter-preact";
 import { signOutUser, useFireBaseAuth } from "~/firebase";
 import { onDisabledLink, useError } from "~/utils";
-import { BackButton } from "~/component/core";
+import { BackButton, WasteLessLite } from "~/component/core";
 import ErrorMessage from "~/component/ErrorMessage";
 import NavMenu from "~/component/NavMenu";
 
@@ -23,27 +25,25 @@ export default function Page() {
         <>
             <header className="header">
                 <BackButton />
+                <h1 className="header__title">Settings</h1>
+                <WasteLessLite className="icon" />
             </header>
 
             <main>
-
-
-                <div className="header">
-                    <img className="header__avatar" src={photoURL} alt="avatar" />
-                    <h1 className="header__title">{user.displayName}</h1>
-                </div>
+                <figure className="profile__banner">
+                    <figcaption className="profile__title">{user.displayName}</figcaption>
+                    <img className="profile__avatar" src={photoURL} alt="avatar" />
+                </figure>
 
                 <ul className="settings__list">
-                    <li><Link to="/profile/settings/reset-password">Change Password</Link></li>
-                    <li><Link to="/profile/rewards" onClick={onDisabledLink}>Rewards</Link></li>
-                    <li><Link to="/profile/history" onClick={onDisabledLink}>History</Link></li>
-                    <li><Link to="/profile/settings">Settings</Link></li>
+                    <li><Link to="/settings/reset-password">Change Password</Link></li>
+                    <li><Link to="/settings/rewards" onClick={onDisabledLink}>Rewards</Link></li>
+                    <li><Link to="/settings/profile">Profile Settings</Link></li>
+                    <li><Link to="/settings/history" onClick={onDisabledLink}>History</Link></li>
                     <li><Link to="/about" onClick={onDisabledLink}>About</Link></li>
                     <li><Link to="/help" onClick={onDisabledLink}>Help</Link></li>
                     <li><button onClick={onSignOut}>Sign Out</button></li>
                 </ul>
-
-
             </main>
 
             <aside>
