@@ -1,0 +1,13 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 34.58px 32px;
+}
+
+.header>:is(h1, h2, h3) {
+    text-transform: uppercase;
+    font-size: 2rem;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.6);
+}

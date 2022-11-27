@@ -1,0 +1,46 @@
+.primary,
+.secondary {
+    /* NOTE in order to style both a link tag and a button this is required */
+    display: grid;
+    /* NOTE in order to style both a link tag and a button this is required */
+    align-items: center;
+    /* NOTE in order to style both a link tag and a button this is required */
+    text-align: center;
+
+    font-weight: 600;
+    font-size: calc(30/16 * 1rem);
+    line-height: calc(36/16 * 1rem);
+
+    text-transform: capitalize;
+
+    height: 60px;
+    width: 100%;
+    color: var(--white);
+    background: var(--gradient-1);
+    border-radius: var(--border-radius);
+}
+
+.primary {
+    box-shadow: var(--drop-shadow-1);
+}
+
+.secondary {
+    background: var(--white);
+    color: var(--green-primary);
+    border: .25rem solid var(--green-primary);
+    box-shadow: none;
+}
+
+.warning {
+    color: var(--red-primary);
+    border-color: var(--red-primary);
+}
+
+.back {
+    width: calc(1rem * 35/16);
+    height: calc(1rem * 35/16);
+}
+
+.back {
+    fill: var(--green-primary);
+}

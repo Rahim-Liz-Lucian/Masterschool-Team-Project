@@ -1,19 +1,25 @@
-import { RiArrowGoBackFill } from "react-icons/ri";
-import { Link } from "wouter-preact";
+import { Link as WouterLink } from "wouter-preact";
 import { Back } from "./icons";
 
-export const Button = ({ ...props }) => {
+import styles from "./button.module.css";
+
+export const Button = ({ className = "primary", ...props }) => {
     return (
-        <button {...props}>
+        <button className={styles[className]}  {...props}>
             {props.children}
         </button>
     );
 };
 
-export const BackButton = ({ className }) => {
+export const Link = ({ className, ...props }) => {
+    return <WouterLink className={styles[className]} {...props}>{props.children}</WouterLink>;
+};
+
+
+export const BackButton = () => {
     return (
-        <Link to=".." >
-            <Back className="icon--back" />
-        </Link>
+        <WouterLink to=".." >
+            <Back className={styles.back} />
+        </WouterLink>
     );
 };
