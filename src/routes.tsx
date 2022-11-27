@@ -4,8 +4,8 @@ import Index from "./route";
 import SignIn from "./route/sign-in";
 import SignUp from "./route/sign-up";
 import Upload from "./route/upload";
-import Profile from "./route/profile";
-import ProfileSettings from "./route/profile/settings";
+import Profile from "./route/settings";
+import ProfileSettings from "./route/settings/profile";
 import ProductsID from "./route/products/[id]";
 
 export const routesSync = [
@@ -13,8 +13,8 @@ export const routesSync = [
     { path: "/sign-in", Page: SignIn },
     { path: "/sign-up", Page: SignUp },
     { path: "/upload", Page: Upload },
-    { path: "/profile", Page: Profile },
-    { path: "/profile/settings", Page: ProfileSettings },
+    { path: "/settings", Page: Profile },
+    { path: "/settings/profile", Page: ProfileSettings },
     { path: "/products/:id", Page: ProductsID }
 ];
 

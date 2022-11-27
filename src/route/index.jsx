@@ -1,12 +1,10 @@
 "use strict";
 
-import "./index.css";
-
 import { useLocation } from "wouter-preact";
 import { useState } from "preact/hooks";
 import { signOutUser, useFireBaseAuth, useFirebaseProducts } from "~/firebase";
 import { useError } from "~/utils";
-import { LinkAvatar, BackButton, Select } from "~/component/core";
+import { BackButton, Select, WasteLessLite } from "~/component/core";
 import ErrorMessage from "~/component/ErrorMessage";
 import ProductCard from "~/component/ProductCard";
 import NavMenu from "~/component/NavMenu";
@@ -27,10 +25,10 @@ export default function Page() {
             <header className="header">
                 <BackButton />
                 <h1 className="header__title">Browse</h1>
-                <LinkAvatar user={user} to="/profile/" title={`Goto Profile`} />
+                <WasteLessLite className="icon" />
             </header>
 
-            <main>
+            <main className="browse">
                 <div className="search">
                     <button>List View</button>
                     <button>Map View</button>

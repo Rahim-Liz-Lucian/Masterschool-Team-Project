@@ -8,10 +8,8 @@ import { Redirect } from "wouter-preact";
 import { compressFile } from "~/utils";
 import { uploadProduct } from "~/firebase/functions";
 import { Input, BackButton } from "~/component/core";
-
-import "./upload.css";
 import NavMenu from "~/component/NavMenu";
-import { LinkAvatar } from "~/component/core/icons";
+import { WasteLessLite } from "~/component/core/icons";
 
 export default function Page() {
     const user = useFireBaseAuth();
@@ -35,10 +33,11 @@ export default function Page() {
     return (
         <>
             <header className="header">
-                <BackButton className="header__nav" />
+                <BackButton />
                 <h1 className="header__title">Upload</h1>
-                <LinkAvatar user={user} to="/profile/" title={`Goto Profile`} />
+                <WasteLessLite className="icon" />
             </header>
+
 
             <main>
                 <p>I have {products.length} Products in my account so far</p>

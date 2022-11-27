@@ -1,11 +1,11 @@
-import "./[id].css";
 import avatarFallback from "../../assets/brand/avatar-fallback.jpg";
 
 import { Link } from "wouter-preact";
 import ErrorMessage from "~/component/ErrorMessage";
 import { useFireBaseAuth, useFirebaseProductByID } from "~/firebase";
 import { useError } from "~/utils";
-import { Star, Share, Telephone, Person, BackButton, Button, LinkAvatar, Avatar } from "~/component/core";
+import { Star, Share, Telephone, Person, BackButton, Button, LinkAvatar, Avatar, WasteLessLite } from "~/component/core";
+import NavMenu from "~/component/NavMenu";
 
 
 export default function ProductPage({ id, ...props }) {
@@ -20,9 +20,9 @@ export default function ProductPage({ id, ...props }) {
     if (!user) return (
         <>
             <header className="header">
-                <BackButton className="header__nav" />
-                <h1 className="header__title">Product</h1>
-                <LinkAvatar user={user} to="/profile/" title={`Goto Profile`} />
+                <BackButton />
+                <h1 className="header__title">Details</h1>
+                <WasteLessLite className="icon" />
             </header>
 
             <main>
@@ -36,6 +36,8 @@ export default function ProductPage({ id, ...props }) {
                     </Link>
                 </div>
             </main>
+
+            <NavMenu user={user} />
         </>
     );
 
@@ -47,9 +49,9 @@ export default function ProductPage({ id, ...props }) {
     return (
         <>
             <header className="header">
-                <BackButton className="header__nav" />
+                <BackButton />
                 <h1 className="header__title">Details</h1>
-                <LinkAvatar user={user} to="/profile/" title={`Goto Profile`} />
+                <WasteLessLite className="icon" />
             </header>
 
             <main className="product__page">
@@ -84,6 +86,10 @@ export default function ProductPage({ id, ...props }) {
                 </div>
 
             </main>
+
+            <aside>
+                <NavMenu user={user} />
+            </aside>
         </>
     );
 }
