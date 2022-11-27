@@ -1,5 +1,7 @@
 "use strict";
 
+import "./index.css";
+
 import { useLocation } from "wouter-preact";
 import { useState } from "preact/hooks";
 import { signOutUser, useFireBaseAuth, useFirebaseProducts } from "~/firebase";
@@ -30,10 +32,10 @@ export default function Page() {
 
             <main className="browse">
                 <div className="search">
-                    <button>List View</button>
-                    <button>Map View</button>
+                    {/* <button>List View</button> */}
+                    {/* <button>Map View</button> */}
                     <Select value={query.city} onChange={e => setQuery({ ...query, city: e.target.value })}>
-                        <option value="none">Select a location</option>
+                        <option value="none">Location</option>
                         <option value="amsterdam">Amsterdam</option>
                         <option value="berlin">Berlin</option>
                         <option value="london">London</option>

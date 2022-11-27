@@ -21,3 +21,7 @@
     fill: var(--grey);
     height: calc(35/16 * 1rem);
 }
+
+[class*=nav][class*=active] {
+    fill: var(--green-primary)
+}

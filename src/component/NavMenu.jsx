@@ -11,14 +11,21 @@ const NavMenu = ({ user }) => {
         </div>
     );
 
-    console.log(location);
-
     const className = "nav__icon";
+
+    linksSync.forEach(link => {
+        console.log({ path: link.path, bool: link.path === "/" + window.location.pathname.split`/`[1] });
+    });
 
     return (
         <nav className="nav--main">
-            <Link to="/settings/">
-                <Profile className={className} />
+            {linksSync.map(link => ({ ...link, className: "/" + window.location.pathname.split`/`[1] === link.path ? "nav__icon--active" : "nav__icon" })).map(({ path, Component, className }) => (
+                <Link to={path}>
+                    <Component className={className} />
+                </Link>
+            ))}
+            {/* <Link to="/settings/">
+                <Profile className={[className, undefined].join`--`} />
             </Link>
             <Link to="/upload">
                 <Add className={className} />
@@ -31,9 +38,21 @@ const NavMenu = ({ user }) => {
             </Link>
             <Link to="/misc">
                 <More className={className} />
-            </Link>
+            </Link> */}
         </nav>
     );
+};
+
+const linksSync = [
+    { path: "/settings", Component: Profile },
+    { path: "/upload", Component: Add },
+    { path: "/", Component: Home },
+    { path: "/people", Component: Message },
+    { path: "/misc", Component: More },
+];
+
+const activeLink = () => {
+    return linksSync.map(link => ({ ...link, className: window.location.pathname.split`/`[1] === link.path ? "nav__icon--active" : "nav__icon" }));
 };
 
 export default NavMenu;
