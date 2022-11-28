@@ -1,26 +1,20 @@
 import { Link, useLocation } from "wouter-preact";
 import { useState } from "preact/hooks";
-import { Button, Checkbox, Input, Select, WasteLess, Form } from "~/component/core";
+import { Button, Checkbox, WasteLess } from "~/component/core";
 import ErrorMessage from "~/component/ErrorMessage";
 import { registerUser, updateUserProfile, useFireBaseAuth } from "~/firebase";
 import { useError, validateEmailAndPassword } from "~/utils";
 import { Header } from "~/component/layout";
+import { Form, Input, Main, Select } from "~/state/sign-up";
 
-// FIXME don't do this
 
 export default function Page() {
-    const user = useFireBaseAuth();
-
-    const [formData, setFormData] = useState({ city: "none" });
-    const { onRegister, error, resetError } = useHook({ formData });
-
-    const onChange = (key) => (e) => {
-        setFormData({ ...formData, [key]: e.target.value });
-    };
+    // const [formData, setFormData] = useState({ city: "none" });
+    // const { onRegister, error, resetError } = useHook({ formData });
 
     // if (user) return <Redirect to="/" />;
 
-    if (error) return <ErrorMessage {...{ error, resetError }} />;
+    // if (error) return <ErrorMessage {...{ error, resetError }} />;
 
     return (
         <>
@@ -28,18 +22,14 @@ export default function Page() {
                 <WasteLess />
             </Header>
 
-            <main className="sign-up">
-                <Form id="sign-up" onSubmit={onRegister}>
-                    <Input required type="text" name="displayName" value={formData.displayName} onChange={onChange("displayName")}>Name</Input>
+            <Main>
+                <Form>
+                    <Input required type="text" name="displayName">Name</Input>
+                    <Input required type="email" name="email">Email</Input>
+                    <Input required type="password" name="password">Password</Input>
+                    <Input required type="password" name="repeatPassword">Verify Password</Input>
 
-                    <Input required type="email" name="email" value={formData.email} onChange={onChange("email")}>Email</Input>
-
-                    <Input required type="password" name="password" value={formData.password} onChange={onChange("password")}>Password</Input>
-
-                    <Input type="password" name="repeatPassword" value={formData.repeatPassword} onChange={onChange("repeatPassword")} >Repeat Password</Input>
-
-                    {/* FIXME required tag not working */}
-                    <Select required name="city" title="City" value={formData.city} onChange={onChange("city")}>
+                    <Select name="city" title="City">
                         <option value="none" disabled></option>
                         <option value="amsterdam">Amsterdam</option>
                         <option value="berlin">Berlin</option>
@@ -48,16 +38,12 @@ export default function Page() {
                         <option value="tlv">Tel-Aviv</option>
                     </Select>
 
-                    <Input required type="tel" name="phoneNumber">Phone Number</Input>
+                    <Checkbox name="terms" required>I agree to the <Link href="/">Terms and conditions</Link></Checkbox>
+                    <Checkbox name="newsletter">Sign me up to the newsletter</Checkbox>
 
-                    <div>
-                        <Checkbox name="terms" required>I agree to the <Link href="/">Terms and conditions</Link></Checkbox>
-                        <Checkbox name="newsletter">Sign me up to the newsletter</Checkbox>
-                    </div>
-
-                    <Button type="submit" form="sign-up">Sign Up</Button>
+                    <Button className="primary" type="submit">Sign Up</Button>
                 </Form>
-            </main>
+            </Main>
         </>
     );
 }
