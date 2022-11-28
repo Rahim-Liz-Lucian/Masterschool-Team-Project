@@ -1,7 +1,7 @@
+import styles from "./button.module.css";
+
 import { Link as WouterLink } from "wouter-preact";
 import { Back } from "./icons";
-
-import styles from "./button.module.css";
 
 export const Button = ({ className = "primary", ...props }) => {
     return (

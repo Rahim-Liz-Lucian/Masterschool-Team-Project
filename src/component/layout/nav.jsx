@@ -1,19 +1,17 @@
-import { Link as WouterLink, useLocation } from "wouter-preact";
-import { Add, Home, Message, More, Profile } from "../core";
-
 import { nav, link, linkActive } from "./nav.module.css";
+
+import { Add, Home, Message, More, Profile } from "../core";
+import { Link as WouterLink } from "wouter-preact";
 
 const linksSync = [
     { path: "/settings", component: Profile },
     { path: "/upload", component: Add },
-    { path: "/", component: Home },
+    { path: "/", component: Home, aliases: ["/products"] },
     { path: "/people", component: Message },
     { path: "/misc", component: More },
 ];
 
-
 export const Nav = ({ user }) => {
-
     if (!user) return (
         <div className={nav}>
             <WouterLink to="/sign-in">Login</WouterLink>
@@ -30,8 +28,8 @@ export const Nav = ({ user }) => {
     );
 };
 
-const Link = ({ path, component: Component }) => {
-    const className = "/" + window.location.pathname.split`/`[1] === path ? linkActive : link;
+const Link = ({ path, component: Component, aliases }) => {
+    const className = ([path, ...(aliases ?? [])].includes("/" + window.location.pathname.split`/`[1])) ? linkActive : link;
 
     return (
         <WouterLink to={path}>

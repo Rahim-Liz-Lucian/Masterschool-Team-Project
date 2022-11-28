@@ -1,3 +1,3 @@
 export * from "./nav";
-export * from "./banner";
+export * from "./container";
 export * from "./header";

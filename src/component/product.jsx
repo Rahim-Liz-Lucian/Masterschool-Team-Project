@@ -68,6 +68,13 @@ export const ProductCard = ({ product }) => {
 };
 
 export const ProductList = ({ products }) => {
+    if (!products.length) return (
+        // className `collectionEmpty`
+        <div className={collection}>
+            No products
+        </div>
+    );
+
     return (
         <section className={collection}>
             {products.map(product => (
