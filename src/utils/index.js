@@ -1,5 +1,6 @@
 // This js function is being used inside a Typescript script
 export * from "./hooks";
+export * from "./store";
 
 import Compressor from "compressorjs";
 

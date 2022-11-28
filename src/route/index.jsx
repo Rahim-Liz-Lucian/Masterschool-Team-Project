@@ -1,10 +1,6 @@
-"use strict";
-
-import "./index.css";
-
 import { useLocation } from "wouter-preact";
 import { useState } from "preact/hooks";
-import { signOutUser, useFireBaseAuth, useFirebaseProducts } from "~/firebase";
+import { useFireBaseAuth, useFirebaseProducts } from "~/firebase";
 import { useError } from "~/utils";
 import { BackButton, Select, WasteLessLite } from "~/component/core";
 import ErrorMessage from "~/component/ErrorMessage";
@@ -44,10 +40,7 @@ export default function Page() {
                     </Select>
                 </div>
 
-                <div>
-                    {!products.length ? "No products" : <ProductList products={products} />}
-                    {/* {!products.length ? "No products" : <ProductList products={[...products, ...products, ...products, ...products, ...products]} />} */}
-                </div>
+                <ProductList products={products} />
             </main>
 
             <aside>
@@ -63,17 +56,10 @@ const useHook = ({ user, query: { city } }) => {
     const { products, loading, error: productsError } = useFirebaseProducts();
     const { error, resetError } = useError(productsError);
 
-    const onSignOut = async () => {
-        await signOutUser();
-
-        alert(`Goodbye, see you soon 💚`);
-        setLocation("/");
-    };
-
     const filtered = products.filter(product => {
         if (city === "none") return true;
         return product.user.location.city === city;
     });
 
-    return { onSignOut, products: filtered, loading, error, resetError };
+    return { products: filtered, loading, error, resetError };
 };

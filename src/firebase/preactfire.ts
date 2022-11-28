@@ -2,7 +2,7 @@
 
 import { useSignal } from "@preact/signals";
 import { DocumentData, Firestore, DocumentReference, onSnapshot, CollectionReference, collection, getDoc, QuerySnapshot, collectionGroup } from "firebase/firestore";
-import { useCallback, useMemo, useEffect, useState } from "preact/hooks";
+import { useCallback, useMemo, useEffect, useState, useRef } from "preact/hooks";
 import { fireStore } from "./firebase";
 
 export function useFirebaseDocument<T = DocumentData>(query: (db: Firestore) => DocumentReference<T>, deps?: any[]) {
@@ -42,39 +42,30 @@ export function useFirebaseCollection<T = DocumentData>(query: (db: Firestore) =
     const memoQuery = useCallback(query, []);
     const memoRef = useMemo(() => query(fireStore), [memoQuery, fireStore].concat(deps || []));
 
-    // convert to a useSignal
     const data = useSignal<T[]>([]);
     const error = useSignal<Error | null>(null);
-    // make this read-only
-    const pending = useSignal(true); // data === undefined
+    const loading = useRef(true);
 
     useEffect(() => {
-        pending.value = true;
         return onSnapshot(memoRef, next => {
-            pending.value = false;
-            error.value = null;
             data.value = next.docs.map(doc => doc.data());
-        }, e => {
-            if (e == null) return; // will link to the video later
+            loading.current = false;
+        }, fireError => {
+            if (fireError == null) return; // will link to the video later
 
-            pending.value = false;
-            error.value = e;
-            // data.value = undefined;
+            error.value = fireError;
+            loading.current = false;
         });
     }, [memoRef]);
 
-    // let pending = null;
-    return [data.value, error.value, pending.value] as const;
+    return [data.value, error.value, loading.current] as const;
 }
 
-export const useFirebaseProductById = () => {
-    return true;
-};
-
-export const useFirebaseProducts = (props?: { query?: string; }) => {
+export const useFirebaseProducts = () => {
     const [products, setProducts] = useState<Product[]>([]);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error>();
+    // NOTE this doesn't need to be state as its dependant on the above.
+    const loading = useRef(true);
 
     useEffect(() => {
         return onSnapshot(collectionGroup(fireStore, `products`), async (next: QuerySnapshot<DocumentData>) => {
@@ -82,26 +73,24 @@ export const useFirebaseProducts = (props?: { query?: string; }) => {
                 const { createdAt, expirationDate, ...product } = doc.data();
                 // FIXME making an assumption that this needs to exist
                 const user = await getDoc((doc.ref.parent.parent)!);
-                // type casting
+                // NOTE type casting
                 return { ...(product as Product), uid: doc.id, createdAt: createdAt.toDate() as Date, expirationDate: expirationDate.toDate() as Date, user: user.data() as User };
             }));
-            // run query here
-
             setProducts(res);
-            setLoading(false);
+            loading.current = false;
         }, fireError => {
             setError(fireError);
-            setLoading(false);
+            loading.current = false;
         });
     }, []);
 
-    return { products, loading, error };
+    return { products, loading: loading.current, error };
 };
 
 export const useFirebaseProductByID = (id: string) => {
     const [product, setProduct] = useState<Product>();
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error>();
+    const loading = useRef(true);
 
     useEffect(() => {
         return onSnapshot(collectionGroup(fireStore, `products`), async (next: QuerySnapshot<DocumentData>) => {
@@ -114,15 +103,19 @@ export const useFirebaseProductByID = (id: string) => {
             }));
 
             setProduct(res);
-            setLoading(false);
+            // setLoading(false);
+            loading.current = false;
         }, fireError => {
             setError(fireError);
-            setLoading(false);
+            // setLoading(false);
+            loading.current = false;
         });
     }, []);
 
-    return { product, loading, error };
+    return { product, loading: loading.current, error };
 };
+
+// NOTE this should really be parsed as User with Products[] field
 
 type User = {
     displayName: string;
@@ -132,6 +125,7 @@ type User = {
     location: {
         city: string;
     };
+    rating: number;
 };
 
 type Product = {
