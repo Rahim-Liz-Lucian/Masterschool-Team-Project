@@ -19,7 +19,10 @@ const NavMenu = ({ user }) => {
   const className = "nav__icon";
 
   linksSync.forEach((link) => {
-    // console.log({ path: link.path, bool: link.path === "/" + window.location.pathname.split`/`[1] });
+    console.log({
+      path: link.path,
+      bool: link.path === "/" + window.location.pathname.split`/`[1],
+    });
   });
 
   return (
