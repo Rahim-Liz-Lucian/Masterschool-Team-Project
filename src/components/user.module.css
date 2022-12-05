@@ -1,0 +1,65 @@
+.banner {
+    font-size: 24px;
+    line-height: 28.8px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+}
+
+.banner img {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+}
+
+.card {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    /* padding: 16px 32px; */
+
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.card img {
+    width: 20px;
+    height: 20px;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.card>:first-child {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.card>:last-child {
+    display: grid;
+    grid-auto-flow: column;
+    place-items: center;
+    gap: 16px;
+}
+
+.card>:last-child button {
+    max-height: 45px;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 29px;
+}
+
+.rating {
+    display: flex;
+    gap: 2px;
+}
+
+.rating svg {
+    height: 8px;
+    width: 8px;
+    fill: var(--grey);
+}

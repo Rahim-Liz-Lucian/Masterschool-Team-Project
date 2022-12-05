@@ -1,0 +1,110 @@
+.card {
+    cursor: pointer;
+    display: grid;
+    grid-template-areas: "image title" "image metadata";
+    grid-template-columns: max-content auto;
+
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 16px;
+
+    box-shadow: var(--drop-shadow-1)
+}
+
+.card>:not(img) {
+    padding: 8px;
+}
+
+.card h3 {
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 18px;
+    text-transform: capitalize;
+}
+
+.card ul {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 16px;
+}
+
+:where(.card, .article) ul>:first-child {
+    text-transform: capitalize;
+    display: flex;
+    gap: 5px;
+}
+
+.card ul>:first-child {
+    flex-grow: 1;
+}
+
+:where(.card, .article) ul>:first-child::before {
+    content: url(../assets/icons/location.svg);
+}
+
+:where(.card, .article) img {
+    aspect-ratio: 1/1;
+    object-fit: cover;
+}
+
+.card img {
+    height: 100px;
+    grid-area: image;
+}
+
+.article {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px 32px;
+}
+
+.article h2 {
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 38px;
+    text-transform: capitalize;
+}
+
+.article img {
+    width: 100%;
+    /* NOTE a div is needed as a wrapper for this to work */
+    /* box-shadow: var(--drop-shadow1); */
+    filter: drop-shadow(var(--drop-shadow-1));
+}
+
+.article ul {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+}
+
+.article p {
+    /* TODO make this italic to differentiate from the neighbouring elements */
+    text-decoration: italic;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    overflow-y: scroll;
+
+    padding: 16px 32px;
+    gap: 16px;
+
+    /* FIXME may this work with flex-grow */
+    /* max-height: 600px; */
+    /* max-height: 300px; */
+}

@@ -1,0 +1,73 @@
+.button {
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 29px;
+    border-radius: 10px;
+    height: 53px;
+
+    width: 100%;
+    min-width: 155px;
+}
+
+.button svg {
+    height: 20px;
+    width: 20px;
+}
+
+.button {
+    display: flex;
+    /* place-items: center; */
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    /* grid-template-rows: repeat(auto, 1fr); */
+}
+
+/* 
+.buttonSmall 
+    font-weight: 700;
+    height: 45px;
+*/
+
+.primary,
+.secondary,
+.caution {
+    composes: button;
+}
+
+.primary {
+    color: var(--white);
+    background: var(--gradient-1);
+    box-shadow: var(--drop-shadow-1);
+    fill: var(--white);
+}
+
+.secondary,
+.caution {
+    border-width: 3px;
+    border-style: solid;
+}
+
+.secondary {
+    color: var(--green-primary);
+    background: var(--white);
+    border-color: var(--green-primary);
+    fill: var(--green-primary);
+}
+
+.caution {
+    color: var(--red-primary);
+    background: var(--white);
+    border-color: var(--red-primary);
+    fill: var(--red-primary)
+}
+
+@container (min-height: 90px) {
+    .button {
+        font-weight: 600;
+        font-size: 30px;
+        line-height: 36px;
+        height: 60px;
+        text-decoration: underline;
+    }
+}

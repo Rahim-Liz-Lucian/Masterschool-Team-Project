@@ -1,0 +1,21 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    /* text-align: center; */
+    align-items: center;
+    width: 100%;
+
+    gap: 6px;
+    padding: 16px 32px;
+
+    height: 100%;
+    outline: 1px solid salmon
+}
+
+.form a {
+    color: var(--green-primary);
+}
+
+.form a:hover {
+    text-decoration: underline;
+}

@@ -1,0 +1,26 @@
+[
+    {
+        "value": "all",
+        "label": "All"
+    },
+    {
+        "value": "amsterdam",
+        "label": "Amsterdam"
+    },
+    {
+        "value": "berlin",
+        "label": "Berlin"
+    },
+    {
+        "value": "london",
+        "label": "London"
+    },
+    {
+        "value": "paris",
+        "label": "Paris"
+    },
+    {
+        "value": "tlv",
+        "label": "Tel-Aviv"
+    }
+]

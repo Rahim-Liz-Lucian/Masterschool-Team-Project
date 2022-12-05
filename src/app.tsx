@@ -1,25 +1,40 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import "./app.css";
+import { useState } from "preact/hooks";
+import { Link, Redirect, Route, Switch, useLocation } from "wouter-preact";
+import Browse from "./routes";
+import SignIn from "./routes/sign-in";
+import SignUp from "./routes/sign-up";
+import Upload from "./routes/upload";
+import Product from "./routes/products/[uid]";
+import Settings from "./routes/settings";
+import UpdateProfile from "./routes/settings/profile";
+import { useInitApplication } from "./lib/firebase";
+import { Protected } from "./lib/routing";
 
-import { Redirect, Route, Switch } from "wouter-preact";
-import { initApp } from "./firebase";
-import { routesSync } from "./routes";
 
 export function App() {
-    const { firebaseLoading } = initApp();
+    const { user, loading } = useInitApplication();
 
-    if (firebaseLoading) return (
-        <div>Firebase is syncing...</div>
-    );
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <Switch>
-            {routesSync.map(({ path, Page }) => (
-                <Route path={path}>
-                    {/* @ts-ignore */}
-                    {(params) => <Page {...params} />}
-                </Route>
-            )).concat(<Redirect to="/" />)}
+            <Route path="/" component={Browse} />
+            <Route path="/sign-in" component={SignIn} />
+            <Route path="/sign-up" component={SignUp} />
+            <Route path="/products/:uid" >
+                {(params) => <Product uid={params.uid} />}
+            </Route>
+            <Protected user={user}>
+                <Route path="/upload" component={Upload} />
+                <Route path="/settings" component={Settings} />
+                <Route path="/settings/profile" component={UpdateProfile} />
+            </Protected>
         </Switch>
     );
 }
+
+// const Protected = ({ user, children }) => {
+//     return (!user) ? <Redirect to="/" replace /> : children;
+// };

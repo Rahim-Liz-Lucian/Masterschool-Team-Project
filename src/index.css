@@ -1,0 +1,56 @@
+* {
+    background-color: rgba(255, 0, 255, 0.05);
+}
+
+:root {
+    /* fill="#D9D9D9" not active */
+    --grey: #d9d9d9;
+    /* fill="#AFAFAF" */
+    --white: #f6faf9;
+    --black: #0c0c20;
+    --red-primary: #DE5246;
+    --green-secondary: #52b69a;
+    --green-primary: #76c893;
+    --orange-primary: #ffa92c;
+    --orange-secondary: #ffc570;
+
+    --google-primary: #de5246;
+    --facebook-primary: #3b5998;
+
+    --drop-shadow-1: 0px 4px 14px rgba(0, 0, 0, 0.1);
+    --drop-shadow-2: 0px 4px 14px rgba(0, 0, 0, 0.1);
+    --drop-shadow-3: 0px 4px 14px rgba(0, 0, 0, 0.1);
+
+    --gradient-1: linear-gradient(90deg, var(--green-primary) 0%, var(--green-secondary) 100%);
+
+    --font-size-56: 56px;
+
+    /* 33/16 rem */
+    --icon-width: calc(33/16 * 1rem);
+
+    --border-radius: calc(10/16 * 1rem);
+
+    font-family: "Barlow", sans-serif;
+}
+
+.container {
+    container-type: inline-size;
+}
+
+.inline-container {
+    container-type: size;
+}
+
+#app {
+    container-type: size;
+}
+
+#app {
+    max-width: 400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    outline: 1px dashed goldenrod;
+    height: 100vh;
+    /* height: 500px; */
+}

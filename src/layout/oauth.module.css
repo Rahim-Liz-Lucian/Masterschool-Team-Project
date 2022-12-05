@@ -1,0 +1,20 @@
+.oauth {
+    display: flex;
+    flex-wrap: wrap;
+    width: max-content;
+    justify-content: center;
+    gap: 11px 12px;
+}
+
+.oauth,
+.oauth * {
+    outline: 1px dashed goldenrod;
+}
+
+.oauth::before {
+    /* display: inline-block; */
+    content: attr(aria-label);
+    text-transform: capitalize;
+    text-align: center;
+    width: 100%;
+}
