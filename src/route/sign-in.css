@@ -1,0 +1,30 @@
+main.sign-in {
+    display: flex;
+    flex-direction: column;
+    gap: calc(1rem * 34.56/16);
+}
+
+/* may need to make more specific */
+
+
+/* only for sign-in there */
+.form.sign-in>*:is(:not(:nth-child(1), :nth-child(2))) {
+    margin-top: calc(34.56/16 * 1rem);
+}
+
+.oauth {
+    font-weight: 400;
+    text-align: center;
+    font-size: medium;
+    width: 120px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px 12px;
+}
+
+.oauth [class*=icon] {
+    width: var(--icon-width);
+    height: var(--icon-width);
+}

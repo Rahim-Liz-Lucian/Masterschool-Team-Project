@@ -1,0 +1,28 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 34.58px 32px;
+}
+
+.header[class*=sign] {
+    /* margin: 0 auto; */
+    justify-content: center;
+}
+
+.header [class*=icon] {
+    fill: var(--green-primary);
+}
+
+.header [class*=hero] {
+    --icon-width: calc(1rem * 167/16);
+    fill: none;
+}
+
+.header__title {
+    text-transform: uppercase;
+    font-size: 2rem;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.6);
+    ;
+}
