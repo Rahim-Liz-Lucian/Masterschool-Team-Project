@@ -1,0 +1,21 @@
+.header {
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 38px;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.6);
+    text-align: center;
+
+    display: flex;
+    justify-content: space-between;
+    padding: 18px 32px;
+}
+
+.aside {
+    /* min-height: 70px; */
+}
+
+.main {
+    /* flex-grow: 1; */
+    padding: 12px 32px;
+}
