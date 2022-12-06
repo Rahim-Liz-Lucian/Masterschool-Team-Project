@@ -114,7 +114,7 @@ const parseDoc = async (doc: QueryDocumentSnapshot<DocumentData>) => {
     return { product, user };
 };
 
-type User = {
+export type User = {
     uid: string;
     displayName: string;
     email?: string;
@@ -126,7 +126,7 @@ type User = {
     rating: number;
 };
 
-type Product = {
+export type Product = {
     uid: string;
     title: string;
     description?: string;
