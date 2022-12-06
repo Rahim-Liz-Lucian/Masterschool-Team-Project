@@ -25,6 +25,7 @@ export function App() {
             <Route path="/products/:uid" >
                 {(params) => <Product uid={params.uid} />}
             </Route>
+            {/* NOTE find out why this is complaining */}
             <Protected user={user}>
                 <Route path="/upload" component={Upload} />
                 <Route path="/settings" component={Settings} />

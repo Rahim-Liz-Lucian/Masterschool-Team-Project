@@ -4,7 +4,7 @@ import { App } from "./app";
 import "./index.css";
 
 render(
-    //<StrictMode>
-    <App />
-    //</StrictMode>
+    <StrictMode>
+        <App />
+    </StrictMode>
     , document.getElementById("app") as HTMLElement);
