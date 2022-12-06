@@ -24,4 +24,23 @@
     text-transform: none;
 }
 
-.filter {}
+.filter {
+    /* TODO */
+}
+
+.form {
+    /* TODO */
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    /* justify-content: center; */
+    align-items: center;
+}
+
+.form button {
+    height: 60px;
+}
+
+.form a {
+    color: var(--green-primary);
+}

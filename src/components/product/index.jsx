@@ -1,15 +1,17 @@
 import styles from "./product.module.css";
-import thumbnailFallback from "~/assets/img/product-fallback.png";
-import { formatDate, formatRelativeDate } from "~/lib";
-import { UserCard } from "./user";
+import fallbackURL from "~/assets/img/product-fallback.png";
+import { flatten, formatDate, formatRelativeDate } from "~/lib";
+import { UserCard } from "../user";
 import { For } from "~/lib";
 import { Link } from "wouter-preact";
+import { Img } from "../assets";
 
-export const ProductCard = ({ data: { product: { thumbnailURL = thumbnailFallback, ...product }, user }, ...props }) => {
+export const ProductCard = ({ data: { product: { thumbnailURL = fallbackURL, ...product }, user }, ...props }) => {
+
     return (
         <article {...props} className={styles.card}>
-            <h3>{product.title}</h3>
-            <img src={thumbnailURL} alt="" />
+            <h3 className={styles.header}>{product.title}</h3>
+            <Img src={thumbnailURL} alt="" fallback={fallbackURL} />
 
             <ul>
                 <li>{user.location.city}</li>
@@ -20,11 +22,11 @@ export const ProductCard = ({ data: { product: { thumbnailURL = thumbnailFallbac
     );
 };
 
-export const ProductArticle = ({ data: { product: { thumbnailURL = thumbnailFallback, ...product }, user }, ...props }) => {
+export const ProductArticle = ({ data: { product, user }, ...props }) => {
     return (
-        <article className={styles.article}>
-            <h2>{product.title}</h2>
-            <img src={thumbnailURL} alt="" />
+        <article className={flatten(styles.article, props.className)}>
+            <h2 className={styles.header}>{product.title}</h2>
+            <Img src={product.thumbnailURL} alt="" fallback={fallbackURL} />
 
             <ul>
                 <li>{user.location.city}</li>
@@ -41,7 +43,7 @@ export const ProductArticle = ({ data: { product: { thumbnailURL = thumbnailFall
 
 export const ProductList = ({ products, ...props }) => {
     return (
-        <For {...props} type="section" items={products} className={styles.list}>
+        <For {...props} type="section" items={products} className={flatten(styles.list)}>
             {({ product, user }) => (
                 <Link to={`/products/${product.uid}`} replace>
                     <ProductCard data={{ product, user }} />

@@ -7,3 +7,11 @@ export const Button = ({ variant = "primary", children, ...props }) => {
         </button>
     );
 };
+
+export const A = ({ variant = "primary", children, ...props }) => {
+    return (
+        <a  {...props} className={styles[variant]}>
+            {children}
+        </a>
+    );
+};

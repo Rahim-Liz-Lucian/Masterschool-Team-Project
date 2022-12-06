@@ -1,0 +1,89 @@
+.header {
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.card {
+    cursor: pointer;
+
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 16px;
+
+    display: grid;
+    grid-template-areas: "image title" "image metadata";
+    grid-template-columns: max-content auto;
+
+    box-shadow: var(--drop-shadow-1);
+}
+
+.card img {
+    grid-area: image;
+}
+
+.card>:not(img) {
+    padding: 8px;
+}
+
+.card .header {
+    font-size: 15px;
+    line-height: 18px;
+}
+
+:where(.card, .article) ul {
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 16px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.article img {
+    --width: 100%;
+}
+
+.article ul {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+}
+
+:where(.card, .article) ul>:first-child {
+    text-transform: capitalize;
+
+    display: flex;
+    gap: 5px;
+}
+
+:where(.card, .article) ul>:first-child::before {
+    content: url(~/assets/icons/location.svg);
+}
+
+.article {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    /* padding: 16px 32px; */
+
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+}
+
+.article .header {
+    font-size: 32px;
+    line-height: 38px;
+}
+
+.article>:last-child {
+    margin-top: auto;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    /* padding: 4px 8px; */
+}

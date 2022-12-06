@@ -2,23 +2,20 @@
     font-size: 24px;
     line-height: 28.8px;
     font-weight: 600;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 2rem;
 }
 
 .banner img {
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
+    --width: 50px;
 }
 
 .card {
     font-weight: 400;
     font-size: 16px;
     line-height: 19px;
-    /* padding: 16px 32px; */
 
     display: flex;
     flex-direction: column;
@@ -26,28 +23,21 @@
 }
 
 .card img {
-    width: 20px;
-    height: 20px;
-    aspect-ratio: 1/1;
-    border-radius: 50%;
-    object-fit: cover;
+    --width: 20px;
 }
 
-.card>:first-child {
+.card .meta {
     display: flex;
     align-items: center;
     gap: 5px;
 }
 
-.card>:last-child {
-    display: grid;
-    grid-auto-flow: column;
-    place-items: center;
+.card .action {
+    display: flex;
     gap: 16px;
 }
 
-.card>:last-child button {
-    max-height: 45px;
+.card .action button {
     font-weight: 700;
     font-size: 24px;
     line-height: 29px;
@@ -59,7 +49,19 @@
 }
 
 .rating svg {
-    height: 8px;
-    width: 8px;
-    fill: var(--grey);
+    --width: 8px;
+}
+
+.menu {
+    display: flex;
+    justify-content: space-between;
+    grid-auto-flow: column;
+    column-gap: 16px;
+    padding: 16px 32px;
+}
+
+.menu :where(img, svg) {
+    --width: 35px;
+
+    cursor: pointer;
 }

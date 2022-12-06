@@ -1,0 +1,45 @@
+.square,
+.circle {
+    --width: 100px;
+
+    width: var(--width);
+
+    object-fit: cover;
+    aspect-ratio: 1/1;
+    max-width: 100%;
+}
+
+.circle {
+    border-radius: 50%;
+}
+
+
+.grey,
+.green,
+.google,
+.facebook {
+    --width: 35px;
+
+    width: var(--width);
+}
+
+.green {
+    fill: var(--green-primary)
+}
+
+.grey {
+    fill: var(--grey);
+}
+
+.google {
+    fill: var(--google-primary);
+}
+
+.facebook {
+    fill: var(--facebook-primary);
+}
+
+.logo {
+    width: 170px;
+    margin: 0 auto;
+}
