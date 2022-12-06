@@ -1,52 +1,40 @@
 import { useRef } from "preact/hooks";
 import { Link, useLocation } from "wouter-preact";
-import { Button, Logo, Control, Google, Facebook } from "~/components";
-import { Form, Header, Main } from "~/layout";
-import { OAuth } from "~/layout/oauth";
+import { OAuth, Button, Logo, Control, Google, Facebook, Form } from "~/components";
+import { Header, Main } from "~/layout";
 import { signInUser } from "~/lib";
+import { useSignInForm } from "~/lib/form";
 
 
 export default function Page() {
-    const form = useRef(null);
-    const [, setLocation] = useLocation();
-
-    const handleSubmit = async e => {
-        e.preventDefault();
-
-        const { email, password } = form.current.elements;
-
-        await signInUser(email.value, password.value);
-        setLocation("/");
-    };
+    const { form, handleSignIn } = useSignInForm();
 
     return (
         <>
-            <Header>
+            <Header className="flex">
                 <Logo />
             </Header>
-            <Main>
-                <article className="container">
-                    <Form ref={form} onSubmit={handleSubmit}>
-                        <Control required name="email" type="email">Email</Control>
-                        <Control name="password" type="password">Password</Control>
+            <Main classList={["column", "h-full"]}>
+                {/* TODO style this one as unique, with button having an auto margin-top */}
+                <Form ref={form} onSubmit={handleSignIn}>
+                    <Control required name="email" type="email">Email</Control>
 
-                        <Link to="/forgot-password">Forgot Password?</Link>
+                    <Control name="password" type="password">Password</Control>
 
-                        <OAuth aria-label="or sign up using">
-                            <Facebook />
-                            <Google />
-                        </OAuth>
+                    <Link to="/forgot-password">Forgot Password?</Link>
 
-                        <Button type="submit">Login</Button>
+                    <OAuth aria-label="or sign up using">
+                        <Facebook />
+                        <Google />
+                    </OAuth>
 
-                        <span>Don't have an account? <Link to="/sign-up">Sign Up</Link></span>
-                    </Form>
-                </article>
-                <aside>
-                    <Link to="/" replace>
-                        <Button variant="secondary">Browse</Button>
-                    </Link>
-                </aside>
+                    <Button type="submit">Login</Button>
+
+                    <span>Don't have an account? <Link to="/sign-up">Sign Up</Link></span>
+                </Form>
+                <Link to="/" replace>
+                    <Button style={{ marginTop: "auto" }} variant="secondary">Browse</Button>
+                </Link>
             </Main>
         </>
     );

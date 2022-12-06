@@ -1,6 +1,6 @@
 import { Link } from "wouter-preact";
-import { Back, LogoMini, ProductArticle } from "~/components";
-import { Header, Nav, Main } from "~/layout";
+import { Back, LogoMini, ProductArticle, UserMenu } from "~/components";
+import { ASide, Header, Main } from "~/layout";
 import { useFirebaseProductByID } from "~/lib/firebase";
 
 export default function Page({ uid }) {
@@ -19,12 +19,12 @@ export default function Page({ uid }) {
                 <h1>Product</h1>
                 <LogoMini />
             </Header>
-            <Main>
-                <ProductArticle data={data} />
-                <aside>
-                    <Nav />
-                </aside>
+            <Main className={"h-full column scroll-y"}>
+                <ProductArticle className={"h-full"} data={data} />
             </Main>
+            <ASide>
+                <UserMenu />
+            </ASide>
         </>
     );
 }
