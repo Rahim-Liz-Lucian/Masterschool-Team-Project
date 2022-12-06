@@ -1,7 +1,7 @@
 export * from "./errors";
 export * from "./firebase";
 export * from "./dom";
-// export * from "./form";
+export * from "./form";
 export * from "./io";
 export * from "./iterators";
 export * from "./routing";

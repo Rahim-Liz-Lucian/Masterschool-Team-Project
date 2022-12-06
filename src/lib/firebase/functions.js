@@ -1,6 +1,6 @@
 import { signal, useSignal } from "@preact/signals";
 import { initializeApp } from "firebase/app";
-import { createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, getAuth, onAuthStateChanged, reauthenticateWithCredential, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, getAuth, onAuthStateChanged, reauthenticateWithCredential, signInWithEmailAndPassword, signOut, updatePhoneNumber, updateProfile } from "firebase/auth";
 // TODO find the location of this function to 
 // minimise the import size
 import { addDoc, collection, doc, getDoc, getFirestore, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
@@ -8,8 +8,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect } from "preact/hooks";
 import { fireAuth, fireStorage, fireStore, fireUser } from "./firebase";
 
-
-export const useInitApplication = () => {
+export const useApplication = () => {
     const loading = useSignal(true);
 
     useEffect(() => {
@@ -101,10 +100,13 @@ export async function getUserProfile(userRef) {
 /**
  * Uploads user details to the path `users/:userId`
  * 
+ * TODO using the built-in `updatePhoneNumber` function to update the phone number
+ * 
  * Throws an error if any occur
  */
 export function updateUserProfile(user, details) {
     const detailsRef = doc(fireStore, `users/${user?.uid}`);
+
 
     return Promise.all([
         updateProfile(user, { displayName: details.displayName }),

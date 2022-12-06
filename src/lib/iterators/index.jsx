@@ -13,3 +13,6 @@ export const For = memo(({ type = "div", items, children, ...props }) => {
     return h(type, props, items.map(data => children(data)));
 });
 
+export const classList = (...classes) => {
+    return classes.join(" ");
+};
