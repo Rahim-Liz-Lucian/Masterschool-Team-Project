@@ -30,27 +30,38 @@
 
     --border-radius: calc(10/16 * 1rem);
 
+}
+
+#app {
     font-family: "Barlow", sans-serif;
-}
-
-.container {
-    container-type: inline-size;
-}
-
-.inline-container {
-    container-type: size;
-}
-
-#app {
-    container-type: size;
-}
-
-#app {
     max-width: 400px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    outline: 1px dashed goldenrod;
     height: 100vh;
-    /* height: 500px; */
+}
+
+.row {
+    display: flex;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+}
+
+.grid {
+    display: grid;
+}
+
+.h-full {
+    flex-grow: 1;
+}
+
+.scroll-y {
+    overflow-y: scroll;
+}
+
+.justify-between {
+    justify-content: space-between;
 }

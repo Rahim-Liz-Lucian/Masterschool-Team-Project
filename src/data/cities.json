@@ -1,9 +1,5 @@
 [
     {
-        "value": "all",
-        "label": "All"
-    },
-    {
         "value": "amsterdam",
         "label": "Amsterdam"
     },

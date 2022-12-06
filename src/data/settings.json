@@ -1,0 +1,26 @@
+[
+    {
+        "to": "/settings/reset-password",
+        "label": "Change Password"
+    },
+    {
+        "to": "/settings/rewards",
+        "label": "Rewards"
+    },
+    {
+        "to": "/settings/profile",
+        "label": "Profile Settings"
+    },
+    {
+        "to": "/settings/history",
+        "label": "History"
+    },
+    {
+        "to": "/about",
+        "label": "About"
+    },
+    {
+        "to": "/help",
+        "label": "Help"
+    }
+]

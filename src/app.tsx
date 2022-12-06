@@ -1,5 +1,4 @@
-import { useState } from "preact/hooks";
-import { Link, Redirect, Route, Switch, useLocation } from "wouter-preact";
+import { Route, Switch } from "wouter-preact";
 import Browse from "./routes";
 import SignIn from "./routes/sign-in";
 import SignUp from "./routes/sign-up";
@@ -7,12 +6,12 @@ import Upload from "./routes/upload";
 import Product from "./routes/products/[uid]";
 import Settings from "./routes/settings";
 import UpdateProfile from "./routes/settings/profile";
-import { useInitApplication } from "./lib/firebase";
+import { useApplication } from "./lib/firebase";
 import { Protected } from "./lib/routing";
 
 
 export function App() {
-    const { user, loading } = useInitApplication();
+    const { user, loading } = useApplication();
 
     if (loading) {
         return <div>Loading...</div>;
@@ -34,7 +33,3 @@ export function App() {
         </Switch>
     );
 }
-
-// const Protected = ({ user, children }) => {
-//     return (!user) ? <Redirect to="/" replace /> : children;
-// };
