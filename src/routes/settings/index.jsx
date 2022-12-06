@@ -24,7 +24,7 @@ export default function Page() {
             </Header>
             <Main className={"h-full column scroll-y"}>
                 <UserBanner user={user} />
-                <For style={{ flexGrow: 1 }} type="ul" items={settings}>
+                <For style={{ flexGrow: 1 }} tagName="ul" items={settings}>
                     {(item) => (
                         <li key={item.to}>
                             <Link to={item.to}>{item.label}</Link>
@@ -40,26 +40,3 @@ export default function Page() {
         </>
     );
 }
-
-const Settings = ({ settings, ...props }) => {
-    const [, setLocation] = useLocation();
-
-    const onSignOut = async (e) => {
-        await signOutUser();
-        setLocation("/");
-    };
-
-    return (
-        <section>
-            <For type="ul" className={"row"} items={settings}>
-                {(item) => (
-                    <li key={item.to}>
-                        <Link to={item.to}>{item.label}</Link>
-                    </li>
-                )}
-            </For>
-
-            <button onClick={onSignOut}>Sign Out</button>
-        </section>
-    );
-};
