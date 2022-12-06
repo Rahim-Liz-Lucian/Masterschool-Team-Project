@@ -1,12 +1,15 @@
 import styles from "./product.module.css";
 import fallbackURL from "~/assets/img/product-fallback.png";
-import { flatten, formatDate, formatRelativeDate } from "~/lib";
+import { flatten, formatDate, formatRelativeDate, Product, User } from "~/lib";
 import { UserCard } from "../user";
 import { For } from "~/lib";
 import { Link } from "wouter-preact";
 import { Img } from "../assets";
+import { Props } from "~/lib/types";
 
-export const ProductCard = ({ data: { product: { thumbnailURL = fallbackURL, ...product }, user }, ...props }) => {
+type CardProps = Props<HTMLElement, { product: Product, user: User; }>;
+
+export const ProductCard = ({ product: { thumbnailURL = fallbackURL, ...product }, user, ...props }: CardProps) => {
 
     return (
         <article {...props} className={styles.card}>
@@ -22,7 +25,9 @@ export const ProductCard = ({ data: { product: { thumbnailURL = fallbackURL, ...
     );
 };
 
-export const ProductArticle = ({ data: { product, user }, ...props }) => {
+type ArticleProps = Props<HTMLElement, { data: { product: Product, user: User; }; }>;
+
+export const ProductArticle = ({ data: { product, user }, ...props }: ArticleProps) => {
     return (
         <article className={flatten(styles.article, props.className)}>
             <h2 className={styles.header}>{product.title}</h2>
@@ -41,12 +46,14 @@ export const ProductArticle = ({ data: { product, user }, ...props }) => {
     );
 };
 
-export const ProductList = ({ products, ...props }) => {
+type ListProps = Props<HTMLElement, { products: { product: Product, user: User; }[]; }>;
+
+export const ProductList = ({ products, ...props }: ListProps) => {
     return (
-        <For {...props} type="section" items={products} className={flatten(styles.list)}>
+        <For {...props} tagName="section" items={products} className={flatten(styles.list)}>
             {({ product, user }) => (
                 <Link to={`/products/${product.uid}`} replace>
-                    <ProductCard data={{ product, user }} />
+                    <ProductCard product={product} user={user} />
                 </Link>
             )}
         </For>

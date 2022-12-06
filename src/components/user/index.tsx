@@ -5,28 +5,36 @@ import { A, Button } from "../buttons";
 import { Navigate } from "~/lib/routing";
 import { Add, Home, Message, More, Profile } from "../assets";
 import { flatten, useFirebaseAuth } from "~/lib";
+import { Props } from "~/lib/types";
+import { User } from "firebase/auth";
 
-export const UserBanner = ({ user, className, ...props }) => {
+type BannerProps =
+    & { user?: User | null; }
+    & Pick<Props<HTMLElement>, "className">;
+
+export const UserBanner = ({ user, className }: BannerProps) => {
     const fallback = `https://source.boringavatars.com/beam/${user?.uid}`;
 
     return (
         <figure className={styles.banner}>
-            <figcaption>{user.displayName}</figcaption>
-            <Img variant="circle" src={user?.photoURL} alt="" fallback={fallback} />
+            <figcaption>{user?.displayName}</figcaption>
+            <Img variant="circle" src={user?.photoURL ?? fallback} alt="" fallback={fallback} />
         </figure>
     );
 };
 
-export const UserCard = ({ user: { photoURL = photoFallback, ...user }, ...props }) => {
-    const fallback = `https://source.boringavatars.com/beam/${user?.uid}`;
+type CardProps =
+    & { user?: User | null; }
+    & Pick<Props<HTMLElement>, "className">;
 
-    // console.log(user?.photoURL);
+export const UserCard = ({ user, ...props }: CardProps) => {
+    const fallback = `https://source.boringavatars.com/beam/${user?.uid}`;
 
     return (
         <section className={flatten(styles.card, props.className)}>
             <div className={styles.meta}>
                 <Img variant="circle" src={user?.photoURL ?? ""} alt="" fallback={fallback} />
-                <h6>{user.displayName}</h6>
+                <h6>{user?.displayName}</h6>
                 <UserRating />
             </div>
 
@@ -44,6 +52,9 @@ export const UserCard = ({ user: { photoURL = photoFallback, ...user }, ...props
     );
 };
 
+/**
+ * FIXME - This is a placeholder for the actual rating component.
+ */
 export const UserRating = ({ ...props }) => {
     return (
         <div className={styles.rating}>
@@ -70,7 +81,7 @@ export function UserMenu() {
 
     return (
         <nav className={styles.menu}>
-            <Navigate to="/settings" component={<Img variant="circle" src={user?.photoURL} alt="" fallback={fallback} />} />
+            <Navigate to="/settings" component={<Img variant="circle" src={user?.photoURL ?? fallback} alt="" fallback={fallback} />} />
             <Navigate to="/upload" element={Add} />
             <Navigate element={Home} />
             <Navigate element={Message} />
