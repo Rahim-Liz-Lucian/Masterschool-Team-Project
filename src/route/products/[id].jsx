@@ -14,6 +14,7 @@ import {
   LinkAvatar,
   Avatar,
   WasteLessLite,
+  Anchor,
 } from "~/component/core";
 import NavMenu from "~/component/NavMenu";
 
@@ -96,10 +97,10 @@ export default function ProductPage({ id, ...props }) {
           </div>
         </div>
         <div className="buttons">
-          <Button classes="button">
+          <Anchor href={`tel:${user.phoneNumber}`} classes="button">
             <Telephone />
             Call
-          </Button>
+          </Anchor>
           <Button classes="button-secondary">
             <Share />
             Share

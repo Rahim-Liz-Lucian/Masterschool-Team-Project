@@ -3,6 +3,14 @@ import { Link } from "wouter-preact";
 import { Back } from "./icons";
 import "../../assets/styles/button.css";
 
+export const Anchor = ({ ...props }) => {
+  return (
+    <a className={props.classes} {...props}>
+      {props.children}
+    </a>
+  );
+};
+
 export const Button = ({ ...props }) => {
   return (
     <button className={props.classes} {...props}>
